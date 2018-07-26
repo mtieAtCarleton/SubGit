@@ -1,7 +1,7 @@
 from django import forms
-from upload.models import Document
+from upload.models import Submission
 
 class DocumentForm(forms.ModelForm):
     class Meta:
-        model = Document
+        model = Submission
         fields = ('description', 'document', )

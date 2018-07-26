@@ -18,5 +18,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.model_form_upload),
+    path('', views.model_form_upload,  name='model_form_upload'),
+    path('home/', views.home)
 ]

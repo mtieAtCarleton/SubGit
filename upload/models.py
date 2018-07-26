@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 
-class Document(models.Model):
+class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    document = models.FileField(upload_to='documents/')
-    # uploaded_at = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(upload_to='%Y/%m/%d/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
