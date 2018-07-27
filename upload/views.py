@@ -8,6 +8,7 @@ from upload.forms import DocumentForm
 def model_form_upload(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
+        print(request.FILES)
         if form.is_valid():
             form.save()
             return redirect('/home/')

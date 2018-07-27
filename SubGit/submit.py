@@ -8,6 +8,6 @@ file_list = [
 ]
 commit_message = 'Test GitPython commit/push'
 repo.index.add(file_list)
-repo.index.commit(commit_message)
+#repo.index.commit(commit_message)
 origin = repo.remote('origin')
-origin.push()
+#origin.push()

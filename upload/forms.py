@@ -4,4 +4,4 @@ from upload.models import Submission
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Submission
-        fields = ('description', 'document', )
+        fields = ('document', )
