@@ -1,3 +1,4 @@
+# from https://stackoverflow.com/questions/38594717/how-do-i-push-new-files-to-github
 from git import Repo
 
 repo_dir = '/Accounts/bergerg/Desktop/SubGit'
