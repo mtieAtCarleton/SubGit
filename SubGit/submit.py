@@ -6,7 +6,7 @@ def submit(gitUsername, fileName):
     repo_dir = '/Accounts/bergerg/Desktop/SubGit'
     repo = Repo(repo_dir)
     file_list = [
-        '{}/uploads/{}'.format(MEDIA_ROOT, fileName)
+        '{}/uploads/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
     ]
     print(file_list)
     # commit_message = 'Testing push of uploaded file 2'

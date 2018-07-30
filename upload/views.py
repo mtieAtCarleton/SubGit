@@ -10,7 +10,6 @@ import os.path
 import time
 from SubGit.settings import MEDIA_ROOT
 
-gitUsername = 'GalenWQ'
 
 def model_form_upload(request):
     if request.method == 'POST':
@@ -22,11 +21,11 @@ def model_form_upload(request):
                 time.sleep(1)
 
             if os.path.isfile(filePath):
-                submit(gitUsername, request.FILES['document'])
+                submit(request.user, request.FILES['document'])
             else:
-                raise ValueError("isn't a file!")
+                raise ValueError("File error: {} not found".format(request.FILES['document']))
 
-            return redirect('')
+            return redirect('/')
     else:
         form = SubmissionForm()
     return render(request, 'model_form_upload.html', {
