@@ -26,7 +26,7 @@ def model_form_upload(request):
             else:
                 raise ValueError("isn't a file!")
 
-            return redirect('/home/')
+            return redirect('')
     else:
         form = SubmissionForm()
     return render(request, 'model_form_upload.html', {

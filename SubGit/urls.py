@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from upload import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('upload.urls')),
-    re_path(r'', include('social_django.urls', namespace='social'))
+    re_path(r'', include('social_django.urls', namespace='social')),
+    #path('complete/github', views.home)
 ]
