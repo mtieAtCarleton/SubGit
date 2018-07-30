@@ -19,5 +19,6 @@ from . import views
 
 urlpatterns = [
     path('upload/', views.model_form_upload,  name='model_form_upload'),
-    path('', views.home)
+    path('', views.home),
+    path('logout/', views.logout)
 ]

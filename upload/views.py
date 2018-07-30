@@ -9,8 +9,10 @@ from upload.models import Submission
 import os.path
 import time
 from SubGit.settings import MEDIA_ROOT
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
 
-
+@login_required
 def model_form_upload(request):
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
@@ -34,3 +36,8 @@ def model_form_upload(request):
 
 def home(request):
     return render(request, 'home.html')
+
+def logout(request):
+    """Logs out user"""
+    auth_logout(request)
+    return redirect('/')

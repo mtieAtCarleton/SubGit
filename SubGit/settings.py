@@ -137,3 +137,23 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/upload/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/upload/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/upload/'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/upload/'
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
+
+LOGIN_URL = '/'
+LOGOUT_URL = '/logout/'
+
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    # Verifies that the social association can be disconnected from the current
+    # user (ensure that the user login mechanism is not compromised by this
+    # disconnection).
+    #'social_core.pipeline.disconnect.allowed_to_disconnect',
+
+    # Collects the social associations to disconnect.
+    'social_core.pipeline.disconnect.get_entries',
+
+    # Revoke any access_token when possible.
+    'social_core.pipeline.disconnect.revoke_tokens',
+
+    # Removes the social associations.
+    'social_core.pipeline.disconnect.disconnect',
+)
