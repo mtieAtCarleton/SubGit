@@ -8,6 +8,7 @@ from SubGit.submit import submit
 from upload.models import Submission
 import os.path
 import time
+from SubGit.settings import MEDIA_ROOT
 
 gitUsername = 'GalenWQ'
 
@@ -16,10 +17,11 @@ def model_form_upload(request):
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            while not os.path.exists('/Accounts/bergerg/Desktop/SubGit/media/uploads/{}'.format(request.FILES['document'])):
+            filePath = '{}/uploads/{}'.format(MEDIA_ROOT, request.FILES['document'])
+            while not os.path.exists(filePath):
                 time.sleep(1)
 
-            if os.path.isfile('/Accounts/bergerg/Desktop/SubGit/media/uploads/{}'.format(request.FILES['document'])):
+            if os.path.isfile(filePath):
                 submit(gitUsername, request.FILES['document'])
             else:
                 raise ValueError("isn't a file!")
