@@ -21,7 +21,7 @@ def model_form_upload(request):
             # upload the file
             form.save()
             filename = str(request.FILES['document']).replace(" ", "_")
-            filePath = '{}/uploads/{}/{}'.format(MEDIA_ROOT, request.user, filename)
+            filePath = '{}/{}/{}'.format(MEDIA_ROOT, request.user, filename)
 
             # wait until the upload has finished, then submit to Git
             while not os.path.exists(filePath):
@@ -39,7 +39,7 @@ def model_form_upload(request):
         form = SubmissionForm()
 
     # test if user already has a directory in the class repo
-    user_directory = '{}/uploads/{}/'.format(MEDIA_ROOT, request.user)
+    user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
     if os.path.exists(user_directory):
         return render(request, 'model_form_upload.html', {
             'form': form
