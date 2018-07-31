@@ -30,7 +30,7 @@ def model_form_upload(request):
             else:
                 raise ValueError("File error: {} not found".format(request.FILES['document']))
 
-            return redirect('/')
+            return redirect('/submitted/')
 
     # if no file is being uploaded, display an empty form
     else:
@@ -43,12 +43,24 @@ def model_form_upload(request):
             'form': form
         })
     else:
-        return redirect('/')
+        return redirect('/not_registered/')
 
 def home(request):
     return render(request, 'home.html')
 
+@login_required
 def logout(request):
     """Logs out user"""
     auth_logout(request)
     return redirect('/')
+
+@login_required
+def submitted(request):
+    return render(request, 'submitted.html')
+
+@login_required
+def not_registered(request):
+    return render(request, 'not_registered.html')
+
+def error(request):
+    return render(request, 'error.html')
