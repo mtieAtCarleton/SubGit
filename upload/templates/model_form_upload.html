@@ -1,12 +1,11 @@
 {% block content %}
     <h1>Upload your assignment here:</h1>
-    <p>{{ user.username }}</p>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Upload</button>
     </form>
-    <a href="/logout/">Logout</a>
+    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>
     <!--
     <form action="{% url 'social:disconnect' 'github' %}" method="post">
         {% csrf_token %}
