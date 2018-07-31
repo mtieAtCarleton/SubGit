@@ -8,7 +8,7 @@ def submit(gitUsername, fileName):
     print(repo_dir)
     repo = Repo(repo_dir)
     file_list = [
-        '{}/uploads/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
+        '{}/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
     ]
     print(file_list)
     # commit_message = 'Testing push of {}/{}'.format(gitUsername, fileName)
