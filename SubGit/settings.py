@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from SubGit.github_ids import CLIENT_ID, CLIENT_SECRET, DJANGO_SECRET_KEY
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = DJANGO_SECRET_KEY
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -131,8 +131,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-SOCIAL_AUTH_GITHUB_KEY = CLIENT_ID
-SOCIAL_AUTH_GITHUB_SECRET = CLIENT_SECRET
+SOCIAL_AUTH_GITHUB_KEY = config('CLIENT_ID')
+SOCIAL_AUTH_GITHUB_SECRET = config('CLIENT_SECRET')
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/upload/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/upload/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/upload/'

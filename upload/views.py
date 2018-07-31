@@ -1,8 +1,4 @@
-
-# Create your views here.
 from django.shortcuts import render, redirect
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from upload.forms import SubmissionForm
 from SubGit.submit import submit
 import upload.models
@@ -14,12 +10,18 @@ from django.contrib.auth import logout as auth_logout
 
 @login_required
 def model_form_upload(request):
+    # if a file is being uploaded
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
+            # update the model so it knows whose directory to upload to - this is janky and should be fixed
             upload.models.gitUsername = request.user
+
+            # upload the file
             form.save()
             filePath = '{}/uploads/{}/{}'.format(MEDIA_ROOT, request.user, request.FILES['document'])
+
+            # wait until the upload has finished, then submit to Git
             while not os.path.exists(filePath):
                 time.sleep(1)
 
@@ -29,11 +31,19 @@ def model_form_upload(request):
                 raise ValueError("File error: {} not found".format(request.FILES['document']))
 
             return redirect('/')
+
+    # if no file is being uploaded, display an empty form
     else:
         form = SubmissionForm()
-    return render(request, 'model_form_upload.html', {
-        'form': form
-    })
+
+    # test if user already has a directory in the class repo
+    user_directory = '{}/uploads/{}/'.format(MEDIA_ROOT, request.user)
+    if os.path.exists(user_directory):
+        return render(request, 'model_form_upload.html', {
+            'form': form
+        })
+    else:
+        return redirect('/')
 
 def home(request):
     return render(request, 'home.html')

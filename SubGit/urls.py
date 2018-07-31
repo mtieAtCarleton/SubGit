@@ -20,6 +20,6 @@ from upload import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('upload.urls')),
-    re_path(r'', include('social_django.urls', namespace='social')),
-    #path('complete/github', views.home)
+    #re_path(r'', include('social_django.urls', namespace='social')),
+    path('', include('social_django.urls', namespace='social'))
 ]

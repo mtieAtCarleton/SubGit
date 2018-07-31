@@ -1,9 +1,11 @@
 # from https://stackoverflow.com/questions/38594717/how-do-i-push-new-files-to-github
 from git import Repo
 from SubGit.settings import MEDIA_ROOT
+from decouple import config
 
 def submit(gitUsername, fileName):
-    repo_dir = '/Accounts/bergerg/Desktop/SubGit'
+    repo_dir = config('REPO_ROOT')
+    print(repo_dir)
     repo = Repo(repo_dir)
     file_list = [
         '{}/uploads/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
