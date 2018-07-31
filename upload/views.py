@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from upload.forms import SubmissionForm
+from upload.models import Submission
 from SubGit.submit import submit
 import upload.models
 import os.path
@@ -19,16 +20,17 @@ def model_form_upload(request):
 
             # upload the file
             form.save()
-            filePath = '{}/uploads/{}/{}'.format(MEDIA_ROOT, request.user, request.FILES['document'])
+            filename = str(request.FILES['document']).replace(" ", "_")
+            filePath = '{}/uploads/{}/{}'.format(MEDIA_ROOT, request.user, filename)
 
             # wait until the upload has finished, then submit to Git
             while not os.path.exists(filePath):
                 time.sleep(1)
 
             if os.path.isfile(filePath):
-                submit(request.user, request.FILES['document'])
+                submit(request.user, filename)
             else:
-                raise ValueError("File error: {} not found".format(request.FILES['document']))
+                raise ValueError("File error: {} not found".format(filename))
 
             return redirect('/submitted/')
 
@@ -56,6 +58,9 @@ def logout(request):
 
 @login_required
 def submitted(request):
+    # test of displaying submission history
+    # documents = Submission.objects.all()
+    # return render(request, 'submitted.html', {'documents': documents})
     return render(request, 'submitted.html')
 
 @login_required

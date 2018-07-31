@@ -7,12 +7,15 @@ def submit(gitUsername, fileName):
     repo_dir = config('REPO_ROOT')
     print(repo_dir)
     repo = Repo(repo_dir)
+    assert not repo.bare
+    for commit in repo.iter_commits():
+        print(commit)
     file_list = [
         '{}/uploads/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
     ]
     print(file_list)
-    # commit_message = 'Testing push of uploaded file 2'
-    # repo.index.add(file_list)
-    # repo.index.commit(commit_message)
-    # origin = repo.remote('origin')
-    # origin.push()
+    commit_message = 'Testing push of {}/{}'.format(gitUsername, fileName)
+    repo.index.add(file_list)
+    repo.index.commit(commit_message)
+    origin = repo.remote('origin')
+    origin.push()
