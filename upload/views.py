@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from upload.forms import SubmissionForm
 from SubGit.submit import submit
-from upload.models import Submission
+import upload.models
 import os.path
 import time
 from SubGit.settings import MEDIA_ROOT
@@ -17,8 +17,9 @@ def model_form_upload(request):
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
+            upload.models.gitUsername = request.user
             form.save()
-            filePath = '{}/uploads/{}'.format(MEDIA_ROOT, request.FILES['document'])
+            filePath = '{}/uploads/{}/{}'.format(MEDIA_ROOT, request.user, request.FILES['document'])
             while not os.path.exists(filePath):
                 time.sleep(1)
 
