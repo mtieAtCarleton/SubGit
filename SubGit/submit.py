@@ -7,9 +7,6 @@ def submit(gitUsername, fileName):
     repo_dir = config('REPO_ROOT')
     print(repo_dir)
     repo = Repo(repo_dir)
-    assert not repo.bare
-    for commit in repo.iter_commits():
-        print(commit)
     file_list = [
         '{}/uploads/{}/{}'.format(MEDIA_ROOT, gitUsername, fileName)
     ]
@@ -18,4 +15,5 @@ def submit(gitUsername, fileName):
     repo.index.add(file_list)
     repo.index.commit(commit_message)
     origin = repo.remote('origin')
+    origin.pull()
     origin.push()
