@@ -26,7 +26,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-54-187-127-96.us-west-2.compute.amazonaws.com']
+ALLOWED_HOSTS = ['ec2-54-187-127-96.us-west-2.compute.amazonaws.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -128,6 +128,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -138,6 +139,8 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/error/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/upload/'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/upload/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH_SECRET = config('GOOGLE_CLIENT_SECRET')
 
 LOGIN_URL = '/'
 LOGOUT_URL = '/logout/'
