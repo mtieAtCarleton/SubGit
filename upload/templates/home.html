@@ -12,7 +12,7 @@
 <p>Welcome to SubGit, a homework submission tool for the Carleton College Computer Science Department. </p>
 <p>This website uses GitHub for authentication. Before you log in, make sure that your GitHub account has been registered
     with your instructor.</p>
-<a href="{% url 'social:begin' 'github' %}">Login with GitHub</a>
+{% comment %}<a href="{% url 'social:begin' 'github' %}">Login with GitHub</a>{% endcomment %}
 <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
 {% comment %}<script>
       function onSignIn(googleUser) {

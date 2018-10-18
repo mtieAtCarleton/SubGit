@@ -2,6 +2,7 @@ from django.db import models
 import os
 
 gitUsername = ''
+username = ''
 
 def content_file_name(instance, filename):
     return os.path.join('%s/' % gitUsername, filename)

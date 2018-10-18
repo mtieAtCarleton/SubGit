@@ -9,7 +9,7 @@ from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 
-@login_required
+#@login_required
 def model_form_upload(request):
     # if a file is being uploaded
     if request.method == 'POST':
@@ -39,32 +39,42 @@ def model_form_upload(request):
         form = SubmissionForm()
 
     # test if user already has a directory in the class repo
-    print(request.user.email)
+    print(request.user)
+    if (request.user.email):
+        upload.models.username = str(request.user)
+        print(request.user.email)
     user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
     if os.path.exists(user_directory):
         return render(request, 'model_form_upload.html', {
             'form': form
         })
     else:
-        return redirect('/not_registered/')
+        return redirect('/register/')
 
 def home(request):
     return render(request, 'home.html')
 
-@login_required
+def register(request):
+    return render(request, 'register.html')
+
+def registered(request):
+    print(request.user)
+    return render(request, 'registered.html')
+
+#@login_required
 def logout(request):
     """Logs out user"""
     auth_logout(request)
     return redirect('/')
 
-@login_required
+#@login_required
 def submitted(request):
     # test of displaying submission history
     # documents = Submission.objects.all()
     # return render(request, 'submitted.html', {'documents': documents})
     return render(request, 'submitted.html')
 
-@login_required
+#@login_required
 def not_registered(request):
     return render(request, 'not_registered.html')
 
