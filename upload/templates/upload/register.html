@@ -1,0 +1,13 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+    <p>This website posts your homework to your personal GitHub repository. To continue, please connect your GitHub account.</p>
+    <form method="post">
+        GitHub username:<br>
+        <input type="text" name="username"><br>
+        {% csrf_token %}
+        <input type="submit" value="Submit">
+    </form>
+    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>
+
+{% endblock %}

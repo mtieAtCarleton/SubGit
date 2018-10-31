@@ -5,3 +5,4 @@
 - gitpython
 - pyopenssl
 - python-decouple
+- pygithub

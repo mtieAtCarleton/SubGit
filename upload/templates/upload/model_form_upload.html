@@ -1,3 +1,5 @@
+{%  extends "upload/header.html" %}
+
 {% block content %}
     <h1>Upload your assignment here:</h1>
     <form method="post" enctype="multipart/form-data">
@@ -6,12 +8,4 @@
         <button type="submit">Upload</button>
     </form>
     <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>
-    <!--
-    <form action="{% url 'social:disconnect' 'github' %}" method="post">
-        {% csrf_token %}
-        <button class="btn btn-warning btn-xs">
-            Logout
-    </button>
-    </form>
-    -->
 {% endblock %}

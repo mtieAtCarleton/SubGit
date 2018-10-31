@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Submitted</title>
-</head>
-<body>
-You've successfully submitted your assignment!
+{% extends "upload/header.html" %}
+
+{% block content %}
+<p>You've successfully submitted your assignment!</p>
 <!-- test document history: displays all past uploads
 {% if documents %}
         <ul>
@@ -17,7 +13,6 @@ You've successfully submitted your assignment!
         <p>No documents.</p>
 {% endif %}
 -->
-<p><a href="/upload/">Submit another file</a></p>
+<p><a href="/upload">Submit another file</a></p>
 <p><a href="/logout/">Log out</a></p>
-</body>
-</html>
+{% endblock %}
