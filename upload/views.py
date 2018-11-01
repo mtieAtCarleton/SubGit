@@ -8,6 +8,9 @@ from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from github import Github
+from decouple import config
+from git import Repo
+import sys
 
 def model_form_upload(request):
     # if a file is being uploaded
@@ -39,10 +42,6 @@ def model_form_upload(request):
         form = SubmissionForm()
 
     # test if user already has a directory in the class repo
-    print(request.user)
-    if (request.user.email):
-        upload.models.username = str(request.user)
-        print(request.user.email)
     user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
     if os.path.exists(user_directory):
         return render(request, 'upload/model_form_upload.html', {
@@ -72,13 +71,25 @@ def submitted(request):
 def register(request):
     if request.method == 'POST':
         gitUsername = request.POST.get('username')
-        print(gitUsername, request.user)
         user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
         try:
-            os.mkdir(user_directory)
-        except:
-            return redirect('/error/')
+            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+            admin = g.get_user()
 
+            repo_name = "csXXX-{}".format(request.user)
+            repo = admin.create_repo(repo_name)
+            repo.add_to_collaborators(gitUsername, "push")
+
+            os.mkdir(user_directory)
+            repo_directory = "{}/{}/".format(user_directory, repo_name)
+            os.mkdir(repo_directory)
+
+            repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+            Repo.clone_from(repo_url, user_directory)
+            return redirect('/upload/')
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            return redirect('/error/')
 
     return render(request, 'upload/register.html')
 

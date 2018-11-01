@@ -2,10 +2,11 @@ from django.db import models
 import os
 
 gitUsername = ''
-username = ''
+
 
 def content_file_name(instance, filename):
     return os.path.join('%s/' % gitUsername, filename)
+
 
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)

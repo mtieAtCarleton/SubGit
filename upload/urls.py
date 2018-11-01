@@ -25,4 +25,5 @@ urlpatterns = [
     path('not_registered/', views.not_registered),
     path('register/', views.register),
     path('registered/', views.registered),
+    path('error/', views.error)
 ]
