@@ -11,6 +11,8 @@ from github import Github
 from decouple import config
 from git import Repo
 import sys
+from upload.submit import submit
+
 
 def model_form_upload(request):
     # if a file is being uploaded
@@ -30,10 +32,11 @@ def model_form_upload(request):
                 time.sleep(1)
 
             if os.path.isfile(filePath):
-                #submit(request.user, filename)
+                submit(request.user, filename)
                 print("submit")
             else:
-                raise ValueError("File error: {} not found".format(filename))
+                print("file not found")
+                return redirect('/error/')
 
             return redirect('/submitted/')
 
@@ -50,23 +53,28 @@ def model_form_upload(request):
     else:
         return redirect('/register/')
 
+
 # Create your views here.
 def not_registered(request):
     return render(request, 'upload/not_registered.html')
 
+
 def error(request):
     return render(request, 'upload/error.html')
+
 
 def logout(request):
     """Logs out user"""
     auth_logout(request)
     return redirect('/')
 
+
 def submitted(request):
     # test of displaying submission history
     # documents = Submission.objects.all()
     # return render(request, 'submitted.html', {'documents': documents})
     return render(request, 'upload/submitted.html')
+
 
 def register(request):
     if request.method == 'POST':
@@ -78,24 +86,43 @@ def register(request):
 
             repo_name = "csXXX-{}".format(request.user)
             repo = admin.create_repo(repo_name)
-            repo.add_to_collaborators(gitUsername, "push")
+            #repo.add_to_collaborators(gitUsername, "push")
 
             os.mkdir(user_directory)
-            repo_directory = "{}/{}/".format(user_directory, repo_name)
-            os.mkdir(repo_directory)
+            #repo_directory = "{}/{}/".format(user_directory, repo_name)
+            #os.mkdir(repo_directory)
 
             repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-            Repo.clone_from(repo_url, user_directory)
+            local_repo = Repo.init(user_directory)
+
+            readme_path = "{}/{}".format(user_directory, "README.md")
+            print(readme_path)
+            with open(readme_path, "w+") as readme:
+                readme.write("Homework submission repository for " + str(request.user))
+                readme.close()
+
+            print("adding", readme_path)
+            local_repo.index.add([readme_path])
+            print("committing")
+            local_repo.index.commit("Initial commit")
+
+
+            origin = local_repo.create_remote('origin', repo_url)
+            local_repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master)
+            origin.push()
             return redirect('/upload/')
-        except:
+        except Exception as e:
+            print(e)
             print("Unexpected error:", sys.exc_info()[0])
             return redirect('/error/')
 
     return render(request, 'upload/register.html')
 
+
 def registered(request):
     print(request.user)
     return render(request, 'upload/registered.html')
+
 
 def home(request):
     return render(request, 'upload/home.html')
