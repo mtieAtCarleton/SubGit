@@ -79,7 +79,8 @@ def submitted(request):
 def register(request):
     if request.method == 'POST':
         gitUsername = request.POST.get('username')
-        user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
+        #user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
+        user_directory = os.path.join(MEDIA_ROOT, str(request.user))
         try:
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
             admin = g.get_user()
@@ -88,28 +89,34 @@ def register(request):
             repo = admin.create_repo(repo_name)
             #repo.add_to_collaborators(gitUsername, "push")
 
-            os.mkdir(user_directory)
+            #os.mkdir(user_directory)
             #repo_directory = "{}/{}/".format(user_directory, repo_name)
             #os.mkdir(repo_directory)
 
             repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-            local_repo = Repo.init(user_directory)
 
-            readme_path = "{}/{}".format(user_directory, "README.md")
+            local_repo = Repo.clone_from(repo_url, user_directory)
+            #readme_path = "{}/{}".format(user_directory, "README.md")
+            readme_path = os.path.join(user_directory, "README.md")
             print(readme_path)
             with open(readme_path, "w+") as readme:
                 readme.write("Homework submission repository for " + str(request.user))
                 readme.close()
 
-            print("adding", readme_path)
             local_repo.index.add([readme_path])
-            print("committing")
             local_repo.index.commit("Initial commit")
-
-
-            origin = local_repo.create_remote('origin', repo_url)
-            local_repo.create_head('master', origin.refs.master).set_tracking_branch(origin.refs.master)
+            origin = local_repo.remotes.origin
+            print("pushing")
             origin.push()
+            # local_repo = Repo.init(user_directory)
+            # local_repo.index.add([readme_path])
+            # print("committing")
+            # local_repo.index.commit("Initial commit")
+            #
+            # origin = local_repo.create_remote('origin', repo_url)
+            # master = local_repo.create_head('master', origin.refs.master)
+            # local_repo.head.set_reference(master)
+            # origin.push()
             return redirect('/upload/')
         except Exception as e:
             print(e)
