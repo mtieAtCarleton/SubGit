@@ -10,6 +10,7 @@ from django.contrib.auth import logout as auth_logout
 from github import Github
 from decouple import config
 from git import Repo
+from git import Git
 import sys
 from upload.submit import submit
 
@@ -79,7 +80,6 @@ def submitted(request):
 def register(request):
     if request.method == 'POST':
         gitUsername = request.POST.get('username')
-        #user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
         user_directory = os.path.join(MEDIA_ROOT, str(request.user))
         try:
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
@@ -89,14 +89,15 @@ def register(request):
             repo = admin.create_repo(repo_name)
             #repo.add_to_collaborators(gitUsername, "push")
 
-            #os.mkdir(user_directory)
-            #repo_directory = "{}/{}/".format(user_directory, repo_name)
-            #os.mkdir(repo_directory)
+            #repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+            repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
-            repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+            git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
+            git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
 
-            local_repo = Repo.clone_from(repo_url, user_directory)
-            #readme_path = "{}/{}".format(user_directory, "README.md")
+            with Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+                local_repo = Repo.clone_from(repo_url, user_directory)
+
             readme_path = os.path.join(user_directory, "README.md")
             print(readme_path)
             with open(readme_path, "w+") as readme:
@@ -108,15 +109,7 @@ def register(request):
             origin = local_repo.remotes.origin
             print("pushing")
             origin.push()
-            # local_repo = Repo.init(user_directory)
-            # local_repo.index.add([readme_path])
-            # print("committing")
-            # local_repo.index.commit("Initial commit")
-            #
-            # origin = local_repo.create_remote('origin', repo_url)
-            # master = local_repo.create_head('master', origin.refs.master)
-            # local_repo.head.set_reference(master)
-            # origin.push()
+
             return redirect('/upload/')
         except Exception as e:
             print(e)
