@@ -1,8 +1,11 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-<p>Welcome to SubGit, a homework submission tool for the Carleton College Computer Science Department. </p>
-<p>If you're registered for this class, please log in with your Carleton credentials below.</p>
-<a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
-
+    <div class="jumbotron">
+      <h1 class="display-4">SubGit</h1>
+      <p class="lead">Welcome to SubGit, a homework submission tool for the Carleton College Computer Science Department.</p>
+      <hr class="my-4">
+      <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
+    </div>
 {% endblock %}

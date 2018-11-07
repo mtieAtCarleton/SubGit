@@ -5,7 +5,7 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Upload</button>
+        <button type="submit" class="btn btn-primary">Upload</button>
     </form>
     <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>
 {% endblock %}
