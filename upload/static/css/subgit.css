@@ -1,0 +1,15 @@
+body > .container {
+    padding-top: 55px
+}
+
+.navbar {
+    background-color: #0b5091;
+}
+
+.dropdown {
+    list-style-type: none;
+}
+
+#navbarDropdownMenuLink {
+    color: white;
+}
