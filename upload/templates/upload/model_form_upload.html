@@ -1,11 +1,20 @@
 {%  extends "upload/header.html" %}
 
 {% block content %}
-    <h1>Upload your assignment here:</h1>
-    <form method="post" enctype="multipart/form-data">
+    <div class="jumbotron">
+      <h1 class="display-5">Upload your assignment here.</h1>
+      <p class="lead">It will be saved to the <a href="{{ url }}">csXXX-{{ user.username }}</a> repository on GitHub.</p>
+      <hr class="my-4">
+        {% if not user.username %}
+      <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
+    {% else %}
+    <form method="post" enctype="multipart/form-data" class="form-group">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
-    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>
+    {% endif %}
+    </div>
+{#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
 {% endblock %}

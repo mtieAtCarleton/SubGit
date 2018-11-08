@@ -47,9 +47,11 @@ def model_form_upload(request):
 
     # test if user already has a directory in the class repo
     user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
+    repo_name = "csXXX-{}".format(request.user)
     if os.path.exists(user_directory):
         return render(request, 'upload/model_form_upload.html', {
-            'form': form
+            'form': form,
+            'url': "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
         })
     else:
         return redirect('/register/')
