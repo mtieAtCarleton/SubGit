@@ -46,7 +46,7 @@ def model_form_upload(request):
         form = SubmissionForm()
 
     # test if user already has a directory in the class repo
-    user_directory = '{}/{}/'.format(MEDIA_ROOT, request.user)
+    user_directory = '{}/{}/.git'.format(MEDIA_ROOT, request.user)
     repo_name = "csXXX-{}".format(request.user)
     if os.path.exists(user_directory):
         return render(request, 'upload/model_form_upload.html', {

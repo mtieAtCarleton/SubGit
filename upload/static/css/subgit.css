@@ -13,3 +13,12 @@ body > .container {
 #navbarDropdownMenuLink {
     color: white;
 }
+
+.btn-primary {
+    background-color: #0b5091;
+    border-color: #0b5091;
+}
+
+.btn-primary:hover {
+    background-color: #083c6d;
+}
