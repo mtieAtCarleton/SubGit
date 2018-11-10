@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from upload.forms import SubmissionForm
 from upload.models import Submission
 import upload.models
+from upload.models import Student, Course
 import os.path
 import time
 from SubGit.settings import MEDIA_ROOT
@@ -33,7 +34,7 @@ def model_form_upload(request):
                 time.sleep(1)
 
             if os.path.isfile(filePath):
-                submit(request.user, filename)
+                submit(request.user.username, filename)
                 print("submit")
             else:
                 print("file not found")
@@ -46,11 +47,15 @@ def model_form_upload(request):
         form = SubmissionForm()
 
     # test if user already has a directory in the class repo
-    user_directory = '{}/{}/.git'.format(MEDIA_ROOT, request.user)
-    repo_name = "csXXX-{}".format(request.user)
+    #user_directory = '{}/{}/.git'.format(MEDIA_ROOT, request.user)
+    user_directory = os.path.join(MEDIA_ROOT, request.user.username, ".git")
     if os.path.exists(user_directory):
+        courseId = Student.objects.get(
+            username=request.user.username).courses.all().first().name
+        repo_name = "{}-{}".format(courseId, request.user.username)
         return render(request, 'upload/model_form_upload.html', {
             'form': form,
+            'course': courseId,
             'url': "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
         })
     else:
@@ -81,13 +86,23 @@ def submitted(request):
 
 def register(request):
     if request.method == 'POST':
+        username = request.user.username
         gitUsername = request.POST.get('username')
-        user_directory = os.path.join(MEDIA_ROOT, str(request.user))
+        courseId = request.POST.get('course-id')
+        course = Course.objects.get_or_create(name=courseId)[0]
+        course.save()
+        student = Student.objects.get_or_create(username=username)[0]
+        if not student.courses.filter(name=courseId).exists():
+            student.courses.add(course)
+            student.save()
+
+        user_directory = os.path.join(MEDIA_ROOT, username)
         try:
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
             admin = g.get_user()
 
-            repo_name = "csXXX-{}".format(request.user)
+            #repo_name = "{}-{}".format(courseId, username)
+            repo_name = "{}-{}".format(courseId, username)
             repo = admin.create_repo(repo_name)
             #repo.add_to_collaborators(gitUsername, "push")
 
@@ -103,7 +118,8 @@ def register(request):
             readme_path = os.path.join(user_directory, "README.md")
             print(readme_path)
             with open(readme_path, "w+") as readme:
-                readme.write("Homework submission repository for " + str(request.user))
+                readme.write("Homework submission repository for {}".format(
+                    request.user.username))
                 readme.close()
 
             local_repo.index.add([readme_path])

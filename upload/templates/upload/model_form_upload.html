@@ -3,7 +3,7 @@
 {% block content %}
     <div class="jumbotron">
       <h1 class="display-5">Upload your assignment here.</h1>
-      <p class="lead">It will be saved to the <a href="{{ url }}">csXXX-{{ user.username }}</a> repository on GitHub.</p>
+      <p class="lead">It will be saved to the <a href="{{ url }}">{{ course }}-{{ user.username }}</a> repository on GitHub.</p>
       <hr class="my-4">
         {% if not user.username %}
       <p>If you're registered for this class, please log in with your Carleton credentials below.</p>

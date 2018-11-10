@@ -127,6 +127,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/upload/'
