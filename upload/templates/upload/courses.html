@@ -11,7 +11,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
             <p class="card-text">Shared with GitHub accounts:</p>
-            <a href="/upload" class="btn btn-primary">Submit Homework for {{ course.number }}</a>
+            <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>
           </div>
         </div>
         <br>

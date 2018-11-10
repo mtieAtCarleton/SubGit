@@ -16,53 +16,44 @@ import sys
 from upload.submit import submit
 
 
-def model_form_upload(request):
+def handle_uploaded_file(f, file_path):
+    with open(file_path, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+def model_form_upload(request, course_id):
+    username = request.user.username
+    course_directory = os.path.join(MEDIA_ROOT, username, course_id)
     # if a file is being uploaded
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
-            courseId = Student.objects.get(
-                username=request.user.username).courses.all().first().id
-            directory = os.path.join(MEDIA_ROOT, request.user.username,
-                                    courseId)
+            filename = str(request.FILES['file']).replace(" ", "_")
+            file_path = os.path.join(course_directory, filename)
 
-            # update the model so it knows whose directory to upload to - this is janky and should be fixed
-            # TODO: fix this
-            upload.models.dir = directory
+            handle_uploaded_file(request.FILES['file'], file_path)
 
-            # upload the file
-            form.save()
-            filename = str(request.FILES['document']).replace(" ", "_")
-            #filePath = '{}/{}/{}'.format(MEDIA_ROOT, request.user, filename)
-            filePath = os.path.join(directory, filename)
             # wait until the upload has finished, then submit to Git
-            while not os.path.exists(filePath):
+            while not os.path.exists(file_path):
                 time.sleep(1)
 
-            if os.path.isfile(filePath):
-                submit(request.user.username, courseId, filename)
-                print("submit")
+            if os.path.isfile(file_path):
+                submit(username, course_id, filename)
             else:
-                print("file not found")
                 return redirect('/error/')
 
-            return redirect('/submitted/')
+            return redirect('/submitted/{}'.format(course_id))
 
     # if no file is being uploaded, display an empty form
     else:
         form = SubmissionForm()
 
-    # test if user already has a directory in the class repo
-    #user_directory = '{}/{}/.git'.format(MEDIA_ROOT, request.user)
-    #TODO: revert this to checking for a class-specific repo
-    user_directory = os.path.join(MEDIA_ROOT, request.user.username)
-    if os.path.exists(user_directory):
-        courseId = Student.objects.get(
-            username=request.user.username).courses.all().first().id
-        repo_name = "{}-{}".format(courseId, request.user.username)
+    repo_directory = os.path.join(course_directory, ".git")
+    if os.path.exists(repo_directory):
+        repo_name = "{}-{}".format(course_id, username)
         return render(request, 'upload/model_form_upload.html', {
             'form': form,
-            'course': courseId,
+            'course': course_id,
             'url': "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
         })
     else:
@@ -84,15 +75,13 @@ def logout(request):
     return redirect('/')
 
 
-def submitted(request):
+def submitted(request, course_id):
     # test of displaying submission history
     # documents = Submission.objects.all()
     # return render(request, 'submitted.html', {'documents': documents})
-    courseId = Student.objects.get(
-        username=request.user.username).courses.all().first().id
-    repo_name = "{}-{}".format(courseId, request.user.username)
+    repo_name = "{}-{}".format(course_id, request.user.username)
     return render(request, 'upload/submitted.html', {
-        'course': courseId,
+        'course': course_id,
         'url': "https://github.com/{}/{}".format(
             config("GITHUB_ADMIN_USERNAME"), repo_name)
     })

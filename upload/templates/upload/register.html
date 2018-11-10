@@ -11,7 +11,7 @@
 {#              <option value="cs111.00">CS 111.00 Intro to Computer Science (Anna Rafferty)</option>#}
 {#              <option value="cs111.01">CS 111.01 Intro to Computer Science (Dave Musicant)</option>#}
                 {% for course in courses %}
-                    <option value="{{ course.id }}">{{ course.number }}{{ course.section }} {{ course.name }} ({{ course.prof }})</option>
+                    <option value="{{ course.id }}">{{ course.number }}.{{ course.section }} {{ course.name }} ({{ course.prof }})</option>
                 {% endfor %}
             </select>
           </div>

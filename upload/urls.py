@@ -18,10 +18,11 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('upload/', views.model_form_upload,  name='model_form_upload'),
+    path('upload/<str:course_id>', views.model_form_upload,
+         name='model_form_upload'),
     path('', views.home),
     path('logout/', views.logout),
-    path('submitted/', views.submitted),
+    path('submitted/<str:course_id>', views.submitted),
     path('not_registered/', views.not_registered),
     path('register/', views.register),
     path('registered/', views.registered),
