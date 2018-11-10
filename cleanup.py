@@ -21,8 +21,11 @@ except FileNotFoundError:
 
 g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
 
-try:
-    repo = g.get_user().get_repo(repo_name)
+# try:
+#     repo = g.get_user().get_repo(repo_name)
+#     repo.delete()
+# except UnknownObjectException:
+#     print("Repo not found: {}".format(repo_name))
+
+for repo in g.get_user().get_repos():
     repo.delete()
-except UnknownObjectException:
-    print("Repo not found: {}".format(repo_name))

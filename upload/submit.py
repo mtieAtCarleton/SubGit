@@ -5,18 +5,16 @@ from decouple import config
 import os
 
 
-def submit(user, fileName):
+def submit(user, courseId, fileName):
     #repo_dir = '{}/{}/'.format(MEDIA_ROOT, user)
-    repo_dir = os.path.join(MEDIA_ROOT, user)
-    print(repo_dir)
+    repo_dir = os.path.join(MEDIA_ROOT, user, courseId)
     repo = Repo(repo_dir)
     # file_list = [
     #     '{}/{}/{}'.format(MEDIA_ROOT, user, fileName)
     # ]
     file_list = [
-        os.path.join(MEDIA_ROOT, user, fileName)
+        os.path.join(MEDIA_ROOT, user, courseId, fileName)
     ]
-    print(file_list)
     commit_message = 'Testing push of {}/{}'.format(user, fileName)
     repo.index.add(file_list)
     repo.index.commit(commit_message)

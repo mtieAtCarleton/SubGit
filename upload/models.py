@@ -1,16 +1,18 @@
 from django.db import models
 import os
 
-gitUsername = ''
+dir = ''
 
 
 def content_file_name(instance, filename):
-    return os.path.join('%s/' % gitUsername, filename)
+    return os.path.join('%s/' % dir, filename)
 
 
 class Course(models.Model):
     # students = models.ManyToManyField(Student)
     id = models.CharField(max_length=30, primary_key=True, unique=True)
+    number = models.CharField(max_length=15, null=True, blank=True)
+    section = models.CharField(max_length=3, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     prof = models.CharField(max_length=255, null=True, blank=True)
 

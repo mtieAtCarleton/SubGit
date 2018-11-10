@@ -1,19 +1,18 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <p class="mt-5">This website posts your homework to a GitHub repository that you can access through your GitHub account. To continue, please connect your GitHub account.</p>
+    <p class="mt-5">Please select the class that you want to register for.
+        If you are enrolled in multiple CS classes, you will have the opportunity to register for more later.</p>
     <form method="post" role="form">
         {% csrf_token %}
         <div class="form-group">
-            <label for="username">GitHub username</label>
-            <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Enter GitHub username">
-            <small id="usernameHelp" class="form-text text-muted">This will only be used to share your homework repository.</small>
-        </div>
-        <div class="form-group">
             <label for="course-id">Class</label>
             <select name="course-id" class="form-control" id="course-id" required>
-              <option value="cs111.00">CS 111.00 Intro to Computer Science (Anna Rafferty)</option>
-              <option value="cs111.01">CS 111.01 Intro to Computer Science (Dave Musicant)</option>
+{#              <option value="cs111.00">CS 111.00 Intro to Computer Science (Anna Rafferty)</option>#}
+{#              <option value="cs111.01">CS 111.01 Intro to Computer Science (Dave Musicant)</option>#}
+                {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.number }}{{ course.section }} {{ course.name }} ({{ course.prof }})</option>
+                {% endfor %}
             </select>
           </div>
         <input type="submit" value="Submit" class="submit btn btn-primary">
