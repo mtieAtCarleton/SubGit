@@ -15,7 +15,7 @@
         {% if user.username %}
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle show" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {{ user.username }}
+              {{ user.first_name }} {{ user.last_name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right menu" aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" href="https://moodle.carleton.edu">Moodle</a>

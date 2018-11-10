@@ -6,11 +6,11 @@
       <p class="lead">Welcome to SubGit, a homework submission tool for the Carleton College Computer Science Department.</p>
       <hr class="my-4">
         {% if not user.username %}
-      <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
+      <p>Please log in with your Carleton credentials below.</p>
       <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
     {% else %}
-    <p>Welcome, {{ user.username }}!</p>
-    <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Upload your Homework</a>
+    <p>Welcome, {{ user.first_name }}!</p>
+    <a class="btn btn-primary btn-lg" href="/courses" role="button">Upload your Homework</a>
     {% endif %}
     </div>
 {% endblock %}

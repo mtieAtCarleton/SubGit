@@ -1,0 +1,19 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+    <h1 class="mt-5">Currently registered courses:</h1>
+    <br>
+    {% for course in courses %}
+        <div class="card">
+          <div class="card-header">
+            {{ course.id }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
+            <p class="card-text">Shared with GitHub accounts:</p>
+            <a href="/upload" class="btn btn-primary">Submit Homework for {{ course.id }}</a>
+          </div>
+        </div>
+    {% endfor %}
+    <a class="btn btn-primary" href="/register">Add another course</a>
+{% endblock %}

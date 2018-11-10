@@ -27,7 +27,8 @@ def model_form_upload(request):
             # upload the file
             form.save()
             filename = str(request.FILES['document']).replace(" ", "_")
-            filePath = '{}/{}/{}'.format(MEDIA_ROOT, request.user, filename)
+            #filePath = '{}/{}/{}'.format(MEDIA_ROOT, request.user, filename)
+            filePath = os.path.join(MEDIA_ROOT, request.user.username, filename)
 
             # wait until the upload has finished, then submit to Git
             while not os.path.exists(filePath):
@@ -51,7 +52,7 @@ def model_form_upload(request):
     user_directory = os.path.join(MEDIA_ROOT, request.user.username, ".git")
     if os.path.exists(user_directory):
         courseId = Student.objects.get(
-            username=request.user.username).courses.all().first().name
+            username=request.user.username).courses.all().first().id
         repo_name = "{}-{}".format(courseId, request.user.username)
         return render(request, 'upload/model_form_upload.html', {
             'form': form,
@@ -81,7 +82,24 @@ def submitted(request):
     # test of displaying submission history
     # documents = Submission.objects.all()
     # return render(request, 'submitted.html', {'documents': documents})
-    return render(request, 'upload/submitted.html')
+    courseId = Student.objects.get(
+        username=request.user.username).courses.all().first().id
+    repo_name = "{}-{}".format(courseId, request.user.username)
+    return render(request, 'upload/submitted.html', {
+        'course': courseId,
+        'url': "https://github.com/{}/{}".format(
+            config("GITHUB_ADMIN_USERNAME"), repo_name)
+    })
+
+
+def courses(request):
+    user_directory = os.path.join(MEDIA_ROOT, request.user.username, ".git")
+    if os.path.exists(user_directory):
+        return render(request, 'upload/courses.html', {
+            'courses': Student.objects.get(username=request.user.username).courses.all()
+        })
+    else:
+        return redirect('/register/')
 
 
 def register(request):
@@ -89,10 +107,10 @@ def register(request):
         username = request.user.username
         gitUsername = request.POST.get('username')
         courseId = request.POST.get('course-id')
-        course = Course.objects.get_or_create(name=courseId)[0]
+        course = Course.objects.get_or_create(id=courseId)[0]
         course.save()
         student = Student.objects.get_or_create(username=username)[0]
-        if not student.courses.filter(name=courseId).exists():
+        if not student.courses.filter(id=courseId).exists():
             student.courses.add(course)
             student.save()
 
@@ -128,7 +146,7 @@ def register(request):
             print("pushing")
             origin.push()
 
-            return redirect('/upload/')
+            return redirect('/courses/')
         except Exception as e:
             print(e)
             print("Unexpected error:", sys.exc_info()[0])
@@ -138,7 +156,6 @@ def register(request):
 
 
 def registered(request):
-    print(request.user)
     return render(request, 'upload/registered.html')
 
 

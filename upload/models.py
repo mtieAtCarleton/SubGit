@@ -10,7 +10,9 @@ def content_file_name(instance, filename):
 
 class Course(models.Model):
     # students = models.ManyToManyField(Student)
-    name = models.CharField(max_length=30, primary_key=True, unique=True)
+    id = models.CharField(max_length=30, primary_key=True, unique=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    prof = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Student(models.Model):
