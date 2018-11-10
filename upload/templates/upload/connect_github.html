@@ -1,7 +1,10 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <p class="mt-5">This website posts your homework to a GitHub repository that you can access through your GitHub account. To continue, please connect your GitHub account.</p>
+    <p class="mt-5">This website posts your homework to a GitHub repository that you can access through your GitHub account.
+    </p>
+    <p>Please enter your GitHub username below to be added as a collaborator on the
+        <a href="{{ url }}">{{ course_id }}-{{ user.username }}</a> repository.</p>
     <form method="post" role="form">
         {% csrf_token %}
         <div class="form-group">
@@ -9,6 +12,8 @@
             <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Enter GitHub username">
             <small id="usernameHelp" class="form-text text-muted">This will only be used to share your homework repository.</small>
         </div>
-        <input type="submit" value="Submit" class="submit btn btn-primary">
+        <input type="submit" value="Submit" class="submit btn btn-primary btn-lg">
     </form>
+    <br>
+    <a href="/courses" class="btn btn-secondary" role="button">Cancel</a>
 {% endblock %}

@@ -21,6 +21,8 @@ def handle_uploaded_file(f, file_path):
         for chunk in f.chunks():
             destination.write(chunk)
 
+
+@login_required
 def model_form_upload(request, course_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
@@ -54,13 +56,13 @@ def model_form_upload(request, course_id):
         return render(request, 'upload/model_form_upload.html', {
             'form': form,
             'course': course_id,
-            'url': "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+            'url': "https://github.com/{}/{}" \
+                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name)
         })
     else:
         return redirect('/register/')
 
 
-# Create your views here.
 def not_registered(request):
     return render(request, 'upload/not_registered.html')
 
@@ -75,6 +77,7 @@ def logout(request):
     return redirect('/')
 
 
+@login_required
 def submitted(request, course_id):
     # test of displaying submission history
     # documents = Submission.objects.all()
@@ -87,8 +90,8 @@ def submitted(request, course_id):
     })
 
 
+@login_required
 def courses(request):
-    #TODO: revisit this
     user_directory = os.path.join(MEDIA_ROOT, request.user.username)
     if os.path.exists(user_directory):
         return render(request, 'upload/courses.html', {
@@ -98,12 +101,26 @@ def courses(request):
         return redirect('/register/')
 
 
-def connect_github(request):
+@login_required
+def connect_github(request, course_id):
+    repo_name = "{}-{}".format(course_id, request.user.username)
     if request.method == 'POST':
         gitUsername = request.POST.get('username')
-        # repo.add_to_collaborators(gitUsername, "push")
+        g = Github(config("GITHUB_ADMIN_USERNAME"),
+                   config("GITHUB_ADMIN_PASSWORD"))
+        repo = g.get_user().get_repo(repo_name)
+        repo.add_to_collaborators(gitUsername, "push")
+        return redirect("/courses/")
+
+    repo_url = "git@github.com:{}/{}.git".format(
+        config("GITHUB_ADMIN_USERNAME"), repo_name)
+    return render(request, "upload/connect_github.html", {
+        'url': repo_url,
+        'course_id': course_id
+    })
 
 
+@login_required
 def register(request):
     if request.method == 'POST':
         username = request.user.username
@@ -121,18 +138,16 @@ def register(request):
         user_directory = os.path.join(MEDIA_ROOT, username, courseId)
         os.makedirs(user_directory)
 
-        #TODO: break up this try block
+        # TODO: break up this try block
         try:
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-            admin = g.get_user()
-
             repo_name = "{}-{}".format(courseId, username)
-            repo = admin.create_repo(repo_name)
+            g.get_user().create_repo(repo_name)
 
             #repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
             repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
-            #TODO: move to environment variable
+            # TODO: move to environment variable
             git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
             git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
 
@@ -166,6 +181,7 @@ def make_readme(username, user_directory):
     return readme_path
 
 
+@login_required
 def registered(request):
     return render(request, 'upload/registered.html')
 
