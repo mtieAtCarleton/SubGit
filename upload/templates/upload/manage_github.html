@@ -1,0 +1,22 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+    <h1 class="mt-5">Manage GitHub accounts</h1>
+    {% for account in accounts %}
+        <div class="card">
+          <div class="card-header">
+            {{ account.username }}
+          </div>
+          <div class="card-body">
+              <form method="post">
+                  <button type="submit" class="btn btn-danger" value="{{ account.username }}" name="account">Disconnect</button>
+              </form>
+          </div>
+        </div>
+        <br>
+    {% endfor %}
+    <div>
+        <a class="btn btn-secondary" href="/connect_github">Connect another account</a>
+    </div>
+    <br>
+{% endblock %}

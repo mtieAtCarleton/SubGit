@@ -28,5 +28,6 @@ urlpatterns = [
     path('registered/', views.registered),
     path('error/', views.error),
     path('courses/', views.courses),
-    path('connect_github/<str:course_id>', views.connect_github)
+    path('connect_github/', views.connect_github),
+    path('manage_github/', views.manage_github)
 ]

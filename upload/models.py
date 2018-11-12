@@ -17,9 +17,15 @@ class Course(models.Model):
     prof = models.CharField(max_length=255, null=True, blank=True)
 
 
+class GitHubAccount(models.Model):
+    username = models.CharField(max_length=255, primary_key=True, unique=True)
+
+
 class Student(models.Model):
     username = models.CharField(max_length=30, primary_key=True, unique=True)
     courses = models.ManyToManyField(Course)
+    #github_username = models.CharField(max_length=255, null=True, blank=True)
+    github_accounts = models.ManyToManyField(GitHubAccount)
 
 
 class Submission(models.Model):
@@ -27,3 +33,5 @@ class Submission(models.Model):
     document = models.FileField(upload_to=content_file_name, null=False, verbose_name="")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     #student = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+

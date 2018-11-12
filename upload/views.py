@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from upload.forms import SubmissionForm
 from upload.models import Submission
 import upload.models
-from upload.models import Student, Course
+from upload.models import Student, Course, GitHubAccount
 import os.path
 import time
 from SubGit.settings import MEDIA_ROOT
@@ -98,26 +98,46 @@ def courses(request):
             'courses': Student.objects.get(username=request.user.username).courses.all()
         })
     else:
-        return redirect('/register/')
+        return redirect('/connect_github/')
 
+
+# @login_required
+# def connect_github(request, course_id):
+#     repo_name = "{}-{}".format(course_id, request.user.username)
+#     if request.method == 'POST':
+#         gitUsername = request.POST.get('username')
+#         g = Github(config("GITHUB_ADMIN_USERNAME"),
+#                    config("GITHUB_ADMIN_PASSWORD"))
+#         repo = g.get_user().get_repo(repo_name)
+#         repo.add_to_collaborators(gitUsername, "push")
+#         return redirect("/courses/")
+#
+#     repo_url = "git@github.com:{}/{}.git".format(
+#         config("GITHUB_ADMIN_USERNAME"), repo_name)
+#     return render(request, "upload/connect_github.html", {
+#         'url': repo_url,
+#         'course_id': course_id
+#     })
 
 @login_required
-def connect_github(request, course_id):
-    repo_name = "{}-{}".format(course_id, request.user.username)
+def connect_github(request):
     if request.method == 'POST':
-        gitUsername = request.POST.get('username')
-        g = Github(config("GITHUB_ADMIN_USERNAME"),
-                   config("GITHUB_ADMIN_PASSWORD"))
-        repo = g.get_user().get_repo(repo_name)
-        repo.add_to_collaborators(gitUsername, "push")
+        input_username = request.POST.get('username')
+        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+
+        student = Student.objects.get(username=request.user.username)
+        account = GitHubAccount.objects.create(username=input_username)
+        student.github_accounts.add(account)
+        student.save()
+
+        for course in student.courses.all():
+            repo_name = "{}-{}".format(course.id, request.user.username)
+            repo = g.get_user().get_repo(repo_name)
+            repo.add_to_collaborators(input_username, "push")
+
         return redirect("/courses/")
 
-    repo_url = "git@github.com:{}/{}.git".format(
-        config("GITHUB_ADMIN_USERNAME"), repo_name)
-    return render(request, "upload/connect_github.html", {
-        'url': repo_url,
-        'course_id': course_id
-    })
+    return render(request, "upload/connect_github.html")
 
 
 @login_required
@@ -142,7 +162,11 @@ def register(request):
         try:
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
             repo_name = "{}-{}".format(courseId, username)
-            g.get_user().create_repo(repo_name)
+            repo = g.get_user().create_repo(repo_name)
+
+            github_username = Student.objects.get(username=username).github_username
+            if github_username:
+                repo.add_to_collaborators(github_username, "push")
 
             #repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
             repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
@@ -184,6 +208,27 @@ def make_readme(username, user_directory):
 @login_required
 def registered(request):
     return render(request, 'upload/registered.html')
+
+
+@login_required
+def manage_github(request):
+    if request.method == "POST":
+        account = request.POST.get('account')
+        Student.objects.get(username=request.user.username).github_accounts.remove(account)
+
+        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+
+        student = Student.objects.get(username=request.user.username)
+
+        for course in student.courses.all():
+            repo_name = "{}-{}".format(course.id, request.user.username)
+            repo = g.get_user().get_repo(repo_name)
+            repo.remove_from_collaborators(account.username)
+
+    accounts = Student.objects.get(username=request.user.username).github_accounts.all()
+    return render(request, 'upload/manage_github.html', {
+        'accounts': accounts
+    })
 
 
 def home(request):

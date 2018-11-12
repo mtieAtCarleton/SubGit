@@ -1,8 +1,8 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <h1 class="mt-5">Connect to GitHub</h1>
-    <p class="lead">This website posts your homework to a GitHub repository that you can access through your GitHub account.
+    <h1 class="mt-5">Connected to GitHub</h1>
+    <p class="lead">You have successfully connected <a href="https://github.com/{{ user.github_username }}">{{ user.github_username }}</a> to your SubGit account.
     </p>
     <p>If you have a GitHub account, enter your username below to link it to your SubGit account. You can also choose to set this up later.</p>
     <form method="post" role="form">
