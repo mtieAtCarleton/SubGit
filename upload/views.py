@@ -9,6 +9,7 @@ from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from github import Github
+from github import GithubException
 from decouple import config
 from git import Repo
 from git import Git
@@ -159,14 +160,19 @@ def register(request):
         os.makedirs(user_directory)
 
         # TODO: break up this try block
-        try:
-            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-            repo_name = "{}-{}".format(courseId, username)
-            repo = g.get_user().create_repo(repo_name)
 
-            github_username = Student.objects.get(username=username).github_username
-            if github_username:
-                repo.add_to_collaborators(github_username, "push")
+        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+        repo_name = "{}-{}".format(courseId, username)
+
+        try:
+            repo = g.get_user().create_repo(repo_name)
+        except GithubException as e:
+            print(e)
+
+        try:
+            github_accounts = Student.objects.get(username=username).github_accounts.all()
+            for account in github_accounts:
+                repo.add_to_collaborators(account.username, "push")
 
             #repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
             repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
