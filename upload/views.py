@@ -124,19 +124,26 @@ def courses(request):
 def connect_github(request):
     if request.method == 'POST':
         input_username = request.POST.get('username')
-        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-
         student = Student.objects.get(username=request.user.username)
-        account = GitHubAccount.objects.create(username=input_username)
-        student.github_accounts.add(account)
-        student.save()
 
-        for course in student.courses.all():
-            repo_name = "{}-{}".format(course.id, request.user.username)
-            repo = g.get_user().get_repo(repo_name)
-            repo.add_to_collaborators(input_username, "push")
+        if input_username != config('GITHUB_ADMIN_USERNAME') and not student.github_accounts.filter(username=input_username).exists():
+            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
 
-        return redirect("/courses/")
+            account = GitHubAccount.objects.create(username=input_username)
+            student.github_accounts.add(account)
+            student.save()
+
+            try:
+                for course in student.courses.all():
+                    repo_name = "{}-{}".format(course.id, request.user.username)
+                    repo = g.get_user().get_repo(repo_name)
+                    repo.add_to_collaborators(input_username, "push")
+            except GithubException as e:
+                print(e)
+                account.delete()
+                return redirect('/error')
+
+            return redirect("/courses/")
 
     return render(request, "upload/connect_github.html")
 
@@ -229,7 +236,10 @@ def manage_github(request):
         for course in student.courses.all():
             repo_name = "{}-{}".format(course.id, request.user.username)
             repo = g.get_user().get_repo(repo_name)
-            repo.remove_from_collaborators(account.username)
+            try:
+                repo.remove_from_collaborators(account)
+            except GithubException as e:
+                print(e)
 
     accounts = Student.objects.get(username=request.user.username).github_accounts.all()
     return render(request, 'upload/manage_github.html', {

@@ -9,6 +9,7 @@
           </div>
           <div class="card-body">
               <form method="post">
+                  {% csrf_token %}
                   <button type="submit" class="btn btn-danger" value="{{ account.username }}" name="account">Disconnect</button>
               </form>
           </div>
