@@ -52,8 +52,9 @@ def model_form_upload(request, course_id):
         form = SubmissionForm()
 
     repo_directory = os.path.join(course_directory, ".git")
+    repo_name = "{}-{}".format(course_id, username)
+
     if os.path.exists(repo_directory):
-        repo_name = "{}-{}".format(course_id, username)
         return render(request, 'upload/model_form_upload.html', {
             'form': form,
             'course': course_id,
@@ -61,7 +62,29 @@ def model_form_upload(request, course_id):
                       .format(config("GITHUB_ADMIN_USERNAME"), repo_name)
         })
     else:
-        return redirect('/register/')
+        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+        try:
+            repo = g.get_user().get_repo(repo_name)
+        except GithubException as e:
+            print(e)
+            return redirect('/error/')
+
+        repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+        user_directory = os.path.join(MEDIA_ROOT, username, course_id)
+
+        # TODO: move to environment variable
+        git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
+        git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
+
+        with Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+            local_repo = Repo.clone_from(repo_url, user_directory)
+
+        return render(request, 'upload/model_form_upload.html', {
+            'form': form,
+            'course': course_id,
+            'url': "https://github.com/{}/{}" \
+                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+        })
 
 
 def not_registered(request):
@@ -147,7 +170,7 @@ def connect_github(request):
 
     return render(request, "upload/connect_github.html")
 
-
+#TODO: reject non-Carleton accounts
 @login_required
 def register(request):
     if request.method == 'POST':
@@ -175,6 +198,7 @@ def register(request):
             repo = g.get_user().create_repo(repo_name)
         except GithubException as e:
             print(e)
+            return redirect("/error")
 
         try:
             github_accounts = Student.objects.get(username=username).github_accounts.all()
