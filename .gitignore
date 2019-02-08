@@ -19,3 +19,5 @@
 !.gitignore
 *.db
 venv*
+*__pycache__*
+uploads/*
