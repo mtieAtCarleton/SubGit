@@ -5,9 +5,9 @@
     <br>
     {% for course in courses %}
         <div class="card">
-          <div class="card-header">
-            {{ course.id }}
-          </div>
+{#          <div class="card-header">#}
+{#            {{ course.id }}#}
+{#          </div>#}
           <div class="card-body">
             <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
             <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>

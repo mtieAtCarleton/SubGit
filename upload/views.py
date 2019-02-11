@@ -125,24 +125,6 @@ def courses(request):
         return redirect('/connect_github/')
 
 
-# @login_required
-# def connect_github(request, course_id):
-#     repo_name = "{}-{}".format(course_id, request.user.username)
-#     if request.method == 'POST':
-#         gitUsername = request.POST.get('username')
-#         g = Github(config("GITHUB_ADMIN_USERNAME"),
-#                    config("GITHUB_ADMIN_PASSWORD"))
-#         repo = g.get_user().get_repo(repo_name)
-#         repo.add_to_collaborators(gitUsername, "push")
-#         return redirect("/courses/")
-#
-#     repo_url = "git@github.com:{}/{}.git".format(
-#         config("GITHUB_ADMIN_USERNAME"), repo_name)
-#     return render(request, "upload/connect_github.html", {
-#         'url': repo_url,
-#         'course_id': course_id
-#     })
-
 @login_required
 def connect_github(request):
     if request.method == 'POST':
@@ -152,7 +134,7 @@ def connect_github(request):
         if input_username != config('GITHUB_ADMIN_USERNAME') and not student.github_accounts.filter(username=input_username).exists():
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
 
-            account = GitHubAccount.objects.create(username=input_username)
+            account, new = GitHubAccount.objects.get_or_create(username=input_username)
             student.github_accounts.add(account)
             student.save()
 
@@ -275,3 +257,9 @@ def home(request):
     if request.user.username:
         return redirect("/courses/")
     return render(request, 'upload/home.html')
+
+
+def carleton_test(backend, response, social, *args, **kwargs):
+    email = response.get("email")
+    if email.split("@")[1] != "carleton.edu":
+        return redirect("/error")
