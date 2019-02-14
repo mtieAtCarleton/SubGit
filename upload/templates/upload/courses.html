@@ -1,23 +1,25 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <h1 class="mt-5">Currently registered courses:</h1>
-    <br>
-    {% for course in courses %}
-        <div class="card">
-{#          <div class="card-header">#}
-{#            {{ course.id }}#}
-{#          </div>#}
-          <div class="card-body">
-            <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
-            <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>
-{#              <a href="/connect_github/{{ course.id }}" class="btn btn-secondary">Connect to GitHub</a>#}
-          </div>
+    <div class="jumbotron">
+        <h1 class="display-5">Registered Courses</h1>
+        <hr class="my-4">
+        {% for course in courses %}
+            <div class="card">
+    {#          <div class="card-header">#}
+    {#            {{ course.id }}#}
+    {#          </div>#}
+              <div class="card-body">
+                <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
+                <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>
+    {#              <a href="/connect_github/{{ course.id }}" class="btn btn-secondary">Connect to GitHub</a>#}
+              </div>
+            </div>
+            <br>
+        {% endfor %}
+        <div>
+            <a class="btn btn-secondary" href="/register">Add another course</a>
         </div>
         <br>
-    {% endfor %}
-    <div>
-        <a class="btn btn-secondary" href="/register">Add another course</a>
     </div>
-    <br>
 {% endblock %}

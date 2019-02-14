@@ -259,6 +259,10 @@ def home(request):
     return render(request, 'upload/home.html')
 
 
+def login_error(request):
+    return render(request, 'upload/login_error.html')
+
+
 def carleton_test(backend, response, social, *args, **kwargs):
     email = response.get("email")
     if email.split("@")[1] != "carleton.edu":
