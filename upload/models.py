@@ -28,9 +28,13 @@ class Student(models.Model):
     github_accounts = models.ManyToManyField(GitHubAccount)
 
 
+class File(models.Model):
+    file = models.FileField(upload_to=content_file_name, null=False, verbose_name="")
+
+
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    document = models.FileField(upload_to=content_file_name, null=False, verbose_name="")
+    files = models.ManyToManyField(File)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     #student = models.ForeignKey(Student, on_delete=models.CASCADE)
 

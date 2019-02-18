@@ -1,3 +1,6 @@
+import django, os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SubGit.settings")
+django.setup()
 from upload.models import Course
 
 Course.objects.get_or_create(id="cs111.00-f18", number="CS 111", section="00",
