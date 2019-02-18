@@ -31,17 +31,18 @@ def model_form_upload(request, course_id):
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
-            filename = str(request.FILES['file']).replace(" ", "_")
+            filename = str(request.FILES['document']).replace(" ", "_")
             file_path = os.path.join(course_directory, filename)
 
-            handle_uploaded_file(request.FILES['file'], file_path)
+            handle_uploaded_file(request.FILES['document'], file_path)
+            commitMessage = request.POST['description']
 
             # wait until the upload has finished, then submit to Git
             while not os.path.exists(file_path):
                 time.sleep(1)
 
             if os.path.isfile(file_path):
-                submit(username, course_id, filename)
+                submit(username, course_id, filename, commitMessage)
             else:
                 return redirect('/error/')
 

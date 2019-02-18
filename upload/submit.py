@@ -5,7 +5,7 @@ from decouple import config
 import os
 
 
-def submit(user, courseId, fileName):
+def submit(user, courseId, fileName, commitMessage):
     #repo_dir = '{}/{}/'.format(MEDIA_ROOT, user)
     repo_dir = os.path.join(MEDIA_ROOT, user, courseId)
     repo = Repo(repo_dir)
@@ -15,9 +15,8 @@ def submit(user, courseId, fileName):
     file_list = [
         os.path.join(MEDIA_ROOT, user, courseId, fileName)
     ]
-    commit_message = 'Testing push of {}/{}'.format(user, fileName)
     repo.index.add(file_list)
-    repo.index.commit(commit_message)
+    repo.index.commit(commitMessage)
     origin = repo.remote('origin')
     origin.pull()
     origin.push()
