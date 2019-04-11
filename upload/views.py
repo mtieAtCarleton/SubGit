@@ -28,36 +28,39 @@ def handle_uploaded_file(f, file_path):
 def model_form_upload(request, course_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
+    print(course_directory)
     # if a file is being uploaded
     if request.method == 'POST':
-        form = SubmissionForm(request.POST, request.FILES)
-        if form.is_valid():
-            submission = form.save(commit=False)
-            submission.student = Student.objects.get(username=username)
-            submission.course = Course.objects.get(id=course_id)
-            submission.save()
-            data = {'is_valid': True, 'name': submission.file.name, 'url': submission.file.url}
-        else:
-            data = {'is_valid': False}
-        return JsonResponse(data)
+        if "submit" in request.POST:
+            #TODO: check for vulnerabilities
+            commitMessage = request.POST["description"]
+            os_directory = os.fsencode(course_directory)
+            for file in os.listdir(os_directory):
+                #filename = str(file).replace(" ", "_")
+                filename = os.fsdecode(file)
+                #TODO: find better way of not commiting .git
+                if (filename[0] != "."):
+                    file_path = os.path.join(course_directory, filename)
 
-            # commitMessage = form.cleaned_data['description']
-            # for file in request.FILES.getlist('file'):
-            #     filename = str(file).replace(" ", "_")
-            #     file_path = os.path.join(course_directory, filename)
-            #
-            #     handle_uploaded_file(file, file_path)
-            #
-            #     # wait until the upload has finished, then submit to Git
-            #     while not os.path.exists(file_path):
-            #         time.sleep(1)
-            #
-            #     if os.path.isfile(file_path):
-            #         submit(username, course_id, filename, commitMessage)
-            #     else:
-            #         return redirect('/error/')
-            #
-            # return redirect('/submitted/{}'.format(course_id))
+                    print("submitting")
+                    if os.path.isfile(file_path):
+                        submit(username, course_id, filename, commitMessage)
+                    else:
+                        return redirect('/error/')
+
+            return redirect('/submitted/{}'.format(course_id))
+        else:
+            form = SubmissionForm(request.POST, request.FILES)
+            if form.is_valid():
+                submission = form.save(commit=False)
+                submission.student = Student.objects.get(username=username)
+                submission.course = Course.objects.get(id=course_id)
+                submission.save()
+                data = {'is_valid': True, 'name': submission.file.name, 'url': submission.file.url}
+                print(data)
+            else:
+                data = {'is_valid': False}
+            return JsonResponse(data)
 
     # if no file is being uploaded, display an empty form
     else:

@@ -14,11 +14,6 @@
 {#        {{ form.as_p }}#}
 {#        <button type="submit" class="btn btn-primary">Upload</button>#}
 {#    </form>#}
-            {# 1. BUTTON TO TRIGGER THE ACTION #}
-{#            <button type="button" class="btn btn-primary js-upload-files">#}
-{#              <span class="glyphicon glyphicon-cloud-upload"></span> Upload Files#}
-{#            </button>#}
-
             <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
               <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
               <h3>Drop Files Here to Upload</h3>
@@ -26,7 +21,6 @@
 
             {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
             <input id="fileupload" type="file" name="file" multiple
-{#                   style="display: none;"#}
                    data-url="{% url 'model_form_upload' course %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
@@ -45,6 +39,13 @@
 {#                {% endfor %}#}
               </tbody>
             </table>
+
+            <form method="post">
+            {% csrf_token %}
+                <label for="description">Description</label>
+                <input id="description" type="text" name="description">
+                <input id="submit" type="submit" name="submit" class="btn btn-primary">
+            </form>
     {% endif %}
         <a href="/courses" class="btn btn-secondary" role="button">< Back to courses</a>
     </div>
