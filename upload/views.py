@@ -31,8 +31,12 @@ def model_form_upload(request, course_id):
     if request.method == 'POST':
         form = SubmissionForm(request.POST, request.FILES)
         if form.is_valid():
+            submission = form.save(commit=False)
+            submission.student = Student.objects.get(username=username)
+            submission.course = Course.objects.get(id=course_id)
+            submission.save()
             commitMessage = form.cleaned_data['description']
-            for file in request.FILES.getlist('files'):
+            for file in request.FILES.getlist('file'):
                 filename = str(file).replace(" ", "_")
                 file_path = os.path.join(course_directory, filename)
 
@@ -124,7 +128,7 @@ def courses(request):
             'courses': Student.objects.get(username=request.user.username).courses.all()
         })
     else:
-        return redirect('/connect_github/')
+        return redirect('/register/')
 
 
 @login_required

@@ -1,11 +1,9 @@
 from django.db import models
 import os
 
-dir = ''
-
 
 def content_file_name(instance, filename):
-    return os.path.join('%s/' % dir, filename)
+    return os.path.join(instance.student.username, instance.course.id, filename)
 
 
 class Course(models.Model):
@@ -34,8 +32,7 @@ class File(models.Model):
 
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    files = models.ManyToManyField(File)
+    file = models.FileField(upload_to=content_file_name, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    #student = models.ForeignKey(Student, on_delete=models.CASCADE)
-
-
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
