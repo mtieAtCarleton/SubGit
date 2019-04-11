@@ -35,18 +35,15 @@ def model_form_upload(request, course_id):
             #TODO: check for vulnerabilities
             commitMessage = request.POST["description"]
             os_directory = os.fsencode(course_directory)
+            file_paths = []
             for file in os.listdir(os_directory):
-                #filename = str(file).replace(" ", "_")
                 filename = os.fsdecode(file)
                 #TODO: find better way of not commiting .git
                 if (filename[0] != "."):
                     file_path = os.path.join(course_directory, filename)
+                    file_paths.append(file_path)
 
-                    print("submitting")
-                    if os.path.isfile(file_path):
-                        submit(username, course_id, filename, commitMessage)
-                    else:
-                        return redirect('/error/')
+            submit(username, course_id, file_paths, commitMessage)
 
             return redirect('/submitted/{}'.format(course_id))
         else:

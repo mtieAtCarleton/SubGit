@@ -5,7 +5,7 @@ from decouple import config
 import os
 
 
-def submit(user, courseId, fileName, commitMessage):
+def submit(user, courseId, fileNames, commitMessage):
     #repo_dir = '{}/{}/'.format(MEDIA_ROOT, user)
     repo_dir = os.path.join(MEDIA_ROOT, user, courseId)
     repo = Repo(repo_dir)
@@ -13,7 +13,7 @@ def submit(user, courseId, fileName, commitMessage):
     #     '{}/{}/{}'.format(MEDIA_ROOT, user, fileName)
     # ]
     file_list = [
-        os.path.join(MEDIA_ROOT, user, courseId, fileName)
+        os.path.join(MEDIA_ROOT, user, courseId, fileName) for fileName in fileNames
     ]
     repo.index.add(file_list)
     repo.index.commit(commitMessage)
