@@ -6,12 +6,9 @@ import os
 
 
 def submit(user, courseId, fileNames, commitMessage):
-    #repo_dir = '{}/{}/'.format(MEDIA_ROOT, user)
     repo_dir = os.path.join(MEDIA_ROOT, user, courseId)
     repo = Repo(repo_dir)
-    # file_list = [
-    #     '{}/{}/{}'.format(MEDIA_ROOT, user, fileName)
-    # ]
+
     file_list = [
         os.path.join(MEDIA_ROOT, user, courseId, fileName) for fileName in fileNames
     ]

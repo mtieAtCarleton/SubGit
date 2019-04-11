@@ -9,45 +9,43 @@
       <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
       <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
     {% else %}
-{#    <form method="post" enctype="multipart/form-data" class="form-group">#}
-{#        {% csrf_token %}#}
-{#        {{ form.as_p }}#}
-{#        <button type="submit" class="btn btn-primary">Upload</button>#}
-{#    </form>#}
-            <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
-              <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
-              <h3>Drop Files Here to Upload</h3>
-            </div>
-
             {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+            <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
+            <span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload
+                {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
+                <table id="gallery" class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>File</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+    {#                {% for photo in photos %}#}
+    {#                  <tr>#}
+    {#                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>#}
+    {#                  </tr>#}
+    {#                {% endfor %}#}
+                  </tbody>
+                </table>
+            </label>
+            <span style="padding-left: 20px; padding-right: 20px">or</span> <label for="fileupload" class="btn btn-primary">Browse files</label>
             <input id="fileupload" type="file" name="file" multiple
                    data-url="{% url 'model_form_upload' course %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
-            {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
-            <table id="gallery" class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>File</th>
-                </tr>
-              </thead>
-              <tbody>
-{#                {% for photo in photos %}#}
-{#                  <tr>#}
-{#                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>#}
-{#                  </tr>#}
-{#                {% endfor %}#}
-              </tbody>
-            </table>
-
             <form method="post">
             {% csrf_token %}
-                <label for="description">Description</label>
-                <input id="description" type="text" name="description">
-                <input id="submit" type="submit" name="submit" class="btn btn-primary">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="decription-label">Description</span></div>
+                    <input type="text" class="form-control" name="description" placeholder="Enter the assignment name or other comments"
+                           aria-label="description" aria-describedby="description-label">
+                </div>
+                <input id="submit" type="submit" name="submit" class="btn btn-primary btn-lg">
             </form>
+            <br>
     {% endif %}
-        <a href="/courses" class="btn btn-secondary" role="button">< Back to courses</a>
+        <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
     </div>
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
     {% block javascript %}

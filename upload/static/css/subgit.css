@@ -22,3 +22,27 @@ body > .container {
 .btn-primary:hover {
     background-color: #083c6d;
 }
+
+#fileupload {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+#fileupload_box {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 3rem;
+    border: gray;
+    border-style: dashed;
+}
+
+#gallery {
+    font-size: medium;
+    align-content: left;
+}
