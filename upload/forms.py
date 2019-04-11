@@ -8,3 +8,5 @@ from upload.models import Submission
 
 class SubmissionForm(forms.Form):
     files = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    description = forms.CharField(max_length=255)
+

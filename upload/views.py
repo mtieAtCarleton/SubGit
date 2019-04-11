@@ -57,7 +57,7 @@ def model_form_upload(request, course_id):
     repo_name = "{}-{}".format(course_id, username)
 
     if os.path.exists(repo_directory):
-        return render(request, 'upload/model_form_upload.html', {
+        return render(request, 'upload/upload.html', {
             'form': form,
             'course': course_id,
             'url': "https://github.com/{}/{}" \
@@ -81,7 +81,7 @@ def model_form_upload(request, course_id):
         with Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
             local_repo = Repo.clone_from(repo_url, user_directory)
 
-        return render(request, 'upload/model_form_upload.html', {
+        return render(request, 'upload/upload.html', {
             'form': form,
             'course': course_id,
             'url': "https://github.com/{}/{}" \
@@ -154,7 +154,6 @@ def connect_github(request):
 
     return render(request, "upload/connect_github.html")
 
-#TODO: reject non-Carleton accounts
 @login_required
 def register(request):
     if request.method == 'POST':
@@ -212,9 +211,15 @@ def register(request):
             print("Unexpected error:", sys.exc_info()[0])
             return redirect('/error/')
 
-    return render(request, 'upload/register.html', {
-        'courses': Course.objects.all()
-    })
+    if request.user.is_authenticated:
+        student, new = Student.objects.get_or_create(username=request.user.username)
+        return render(request, 'upload/register.html', {
+            'courses': [course for course in Course.objects.all() if course not in student.courses.all()]
+        })
+    else:
+        return render(request, 'upload/register.html', {
+            'courses': Course.objects.all()
+        })
 
 
 def make_readme(username, user_directory):
