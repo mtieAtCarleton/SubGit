@@ -9,13 +9,49 @@
       <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
       <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
     {% else %}
-    <form method="post" enctype="multipart/form-data" class="form-group">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
+{#    <form method="post" enctype="multipart/form-data" class="form-group">#}
+{#        {% csrf_token %}#}
+{#        {{ form.as_p }}#}
+{#        <button type="submit" class="btn btn-primary">Upload</button>#}
+{#    </form>#}
+            {# 1. BUTTON TO TRIGGER THE ACTION #}
+            <button type="button" class="btn btn-primary js-upload-files">
+              <span class="glyphicon glyphicon-cloud-upload"></span> Upload Files
+            </button>
+
+            {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+            <input id="fileupload" type="file" name="file" multiple
+                   style="display: none;"
+                   data-url="{% url 'model_form_upload' course %}"
+                   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+
+            {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
+            <table id="gallery" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for photo in photos %}
+                  <tr>
+                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
     {% endif %}
         <a href="/courses" class="btn btn-secondary" role="button">< Back to courses</a>
     </div>
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
+    {% block javascript %}
+        {% load staticfiles %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+
+  {# PHOTOS PAGE SCRIPTS #}
+  <script src="{% static 'js/basic-upload.js' %}"></script>
+{% endblock %}
 {% endblock %}
