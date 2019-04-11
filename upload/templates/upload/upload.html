@@ -15,13 +15,18 @@
 {#        <button type="submit" class="btn btn-primary">Upload</button>#}
 {#    </form>#}
             {# 1. BUTTON TO TRIGGER THE ACTION #}
-            <button type="button" class="btn btn-primary js-upload-files">
-              <span class="glyphicon glyphicon-cloud-upload"></span> Upload Files
-            </button>
+{#            <button type="button" class="btn btn-primary js-upload-files">#}
+{#              <span class="glyphicon glyphicon-cloud-upload"></span> Upload Files#}
+{#            </button>#}
+
+            <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
+              <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
+              <h3>Drop Files Here to Upload</h3>
+            </div>
 
             {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
             <input id="fileupload" type="file" name="file" multiple
-                   style="display: none;"
+{#                   style="display: none;"#}
                    data-url="{% url 'model_form_upload' course %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
@@ -33,11 +38,11 @@
                 </tr>
               </thead>
               <tbody>
-                {% for photo in photos %}
-                  <tr>
-                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>
-                  </tr>
-                {% endfor %}
+{#                {% for photo in photos %}#}
+{#                  <tr>#}
+{#                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>#}
+{#                  </tr>#}
+{#                {% endfor %}#}
               </tbody>
             </table>
     {% endif %}
@@ -46,13 +51,13 @@
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
     {% block javascript %}
         {% load staticfiles %}
-  {# JQUERY FILE UPLOAD SCRIPTS #}
+        {# JQUERY FILE UPLOAD SCRIPTS #}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
-  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
-  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+        <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+        <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+        <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
 
-  {# PHOTOS PAGE SCRIPTS #}
-  <script src="{% static 'js/basic-upload.js' %}"></script>
-{% endblock %}
+        {# PHOTOS PAGE SCRIPTS #}
+        <script src="{% static 'js/basic-upload.js' %}"></script>
+    {% endblock %}
 {% endblock %}
