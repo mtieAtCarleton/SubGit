@@ -15,6 +15,7 @@ from git import Repo
 from git import Git
 import sys
 from upload.submit import submit
+from django.http import JsonResponse
 
 
 def handle_uploaded_file(f, file_path):
@@ -35,23 +36,28 @@ def model_form_upload(request, course_id):
             submission.student = Student.objects.get(username=username)
             submission.course = Course.objects.get(id=course_id)
             submission.save()
-            commitMessage = form.cleaned_data['description']
-            for file in request.FILES.getlist('file'):
-                filename = str(file).replace(" ", "_")
-                file_path = os.path.join(course_directory, filename)
+            data = {'is_valid': True, 'name': submission.file.name, 'url': submission.file.url}
+        else:
+            data = {'is_valid': False}
+        return JsonResponse(data)
 
-                handle_uploaded_file(file, file_path)
-
-                # wait until the upload has finished, then submit to Git
-                while not os.path.exists(file_path):
-                    time.sleep(1)
-
-                if os.path.isfile(file_path):
-                    submit(username, course_id, filename, commitMessage)
-                else:
-                    return redirect('/error/')
-
-            return redirect('/submitted/{}'.format(course_id))
+            # commitMessage = form.cleaned_data['description']
+            # for file in request.FILES.getlist('file'):
+            #     filename = str(file).replace(" ", "_")
+            #     file_path = os.path.join(course_directory, filename)
+            #
+            #     handle_uploaded_file(file, file_path)
+            #
+            #     # wait until the upload has finished, then submit to Git
+            #     while not os.path.exists(file_path):
+            #         time.sleep(1)
+            #
+            #     if os.path.isfile(file_path):
+            #         submit(username, course_id, filename, commitMessage)
+            #     else:
+            #         return redirect('/error/')
+            #
+            # return redirect('/submitted/{}'.format(course_id))
 
     # if no file is being uploaded, display an empty form
     else:
