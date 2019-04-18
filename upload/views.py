@@ -26,16 +26,19 @@ def history(request, course_id):
     username = request.user.username
     files = File.objects.filter(submission__isnull=False, student__username=username, course__id=course_id)
     submissions = {}
-    for file in files:
-        if file.submission in submissions:
-            submissions[file.submission].append(file)
-        else:
-            submissions[file.submission] = [file]
-
     repo_name = "{}-{}".format(course_id, username)
+    github_url = "https://github.com/{}/{}/blob/master/".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+    for file in files:
+        filename = file.file.name.split('/')[-1]
+        url = github_url + filename
+        if file.submission in submissions:
+            submissions[file.submission].append((file, url))
+        else:
+            submissions[file.submission] = [(file, url)]
+
     return render(request, 'upload/history.html', {
         'submissions' : submissions,
-        'course' : Course.objects.get(id=course_id)
+        'course' : Course.objects.get(id=course_id),
     })
 
 @login_required
@@ -43,7 +46,6 @@ def model_form_upload(request, course_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
     pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, course__id=course_id)
-    print(pending_submissions)
     # if a file is being uploaded
     if request.method == 'POST':
         if "submit" in request.POST:
@@ -75,7 +77,6 @@ def model_form_upload(request, course_id):
                 submission.course = Course.objects.get(id=course_id)
                 submission.save()
                 data = {'is_valid': True, 'name': submission.file.name, 'url': submission.file.url}
-                print(data)
             else:
                 data = {'is_valid': False}
             return JsonResponse(data)
