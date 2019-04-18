@@ -8,9 +8,10 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{ submission.description }}</h5>
-                  {% for file, url in files %}
-                    <a href="{{ url }}">{{ file.file.name }}</a><br>
+                  {% for file, url, filename in files %}
+                    <a href="{{ url }}">{{ filename }}</a><br>
                   {% endfor %}
+                <small class="text-muted">{{ submission.submitted_at }}</small>
               </div>
             </div>
             <br>

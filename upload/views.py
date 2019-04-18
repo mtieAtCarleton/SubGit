@@ -32,13 +32,13 @@ def history(request, course_id):
         filename = file.file.name.split('/')[-1]
         url = github_url + filename
         if file.submission in submissions:
-            submissions[file.submission].append((file, url))
+            submissions[file.submission].append((file, url, filename))
         else:
-            submissions[file.submission] = [(file, url)]
+            submissions[file.submission] = [(file, url, filename)]
 
     return render(request, 'upload/history.html', {
-        'submissions' : submissions,
-        'course' : Course.objects.get(id=course_id),
+        'submissions': submissions,
+        'course': Course.objects.get(id=course_id),
     })
 
 @login_required

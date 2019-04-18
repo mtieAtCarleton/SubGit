@@ -20,5 +20,6 @@ from upload import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('upload.urls')),
-    path('', include('social_django.urls', namespace='social'))
+    path('', include('social_django.urls', namespace='social')),
+    path('tz_detect/', include('tz_detect.urls'))
 ]

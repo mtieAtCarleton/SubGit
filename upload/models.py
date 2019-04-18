@@ -33,11 +33,11 @@ class Student(models.Model):
 
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
 #TODO: think more carefully about on_delete, nulls
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name, null=False)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)

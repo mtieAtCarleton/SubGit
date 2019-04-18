@@ -46,3 +46,7 @@ body > .container {
     font-size: medium;
     align-content: left;
 }
+
+.input-group {
+    max-width: 75%;
+}
