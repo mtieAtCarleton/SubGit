@@ -4,6 +4,9 @@ from SubGit.settings import MEDIA_ROOT
 
 
 def content_file_name(instance, filename):
+    """Returns the path to upload the given File instance and name, overwriting the current file at that path (if any).
+       Should only be called when a File object is initialized.
+    """
     filename = os.path.join(instance.student.username, instance.course.id, filename)
     filepath = os.path.join(MEDIA_ROOT, filename)
     if os.path.exists(filepath):
@@ -31,9 +34,16 @@ class Student(models.Model):
     github_accounts = models.ManyToManyField(GitHubAccount)
 
 
+class Assignment(models.Model):
+    title = models.CharField(max_length=255)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    deadline = models.DateTimeField(null=True, blank=True)
+
+
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+    assignment = models.ForeignKey(Assignment, on_delete=models.SET_NULL, null=True)
 
 #TODO: think more carefully about on_delete, nulls
 class File(models.Model):
@@ -41,6 +51,9 @@ class File(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
+
+
+
 
 # class Submission(models.Model):
 #     description = models.CharField(max_length=255, blank=True)
