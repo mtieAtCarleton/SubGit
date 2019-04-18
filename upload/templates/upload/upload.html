@@ -11,7 +11,9 @@
     {% else %}
             {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
             <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
+{#            {% if not pending %}#}
             <span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload
+{#            {% endif %}#}
                 {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
                 <table id="gallery" class="table table-bordered">
 {#                  <thead>#}
@@ -27,8 +29,8 @@
                     {% endfor %}
                   </tbody>
                 </table>
+                <label for="fileupload" class="btn btn-primary">Browse files</label>
             </label>
-            <span style="padding-left: 20px; padding-right: 20px">or</span> <label for="fileupload" class="btn btn-primary">Browse files</label>
             <input id="fileupload" type="file" name="file" multiple
                    data-url="{% url 'model_form_upload' course %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>

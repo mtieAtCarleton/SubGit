@@ -33,8 +33,9 @@ body > .container {
 }
 
 #fileupload_box {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     padding-left: 2rem;
     padding-right: 2rem;
     font-size: 2rem;
@@ -45,8 +46,4 @@ body > .container {
 #gallery {
     font-size: medium;
     align-content: left;
-}
-
-.input-group {
-    max-width: 75%;
 }
