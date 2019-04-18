@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from upload.forms import FileForm
-from upload.models import File, Submission
-from upload.models import Student, Course, GitHubAccount
+from upload.models import File, Submission, Student, Course, GitHubAccount, Assignment
 import os.path
 from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
@@ -20,6 +19,31 @@ def handle_uploaded_file(f, file_path):
     with open(file_path, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+
+#TODO: refactor course and history
+@login_required
+def course(request, course_id):
+    username = request.user.username
+    files = File.objects.filter(submission__isnull=False, student__username=username, course__id=course_id)
+    submissions = {}
+    repo_name = "{}-{}".format(course_id, username)
+    github_url = "https://github.com/{}/{}/blob/master/".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+
+    for file in files:
+        filename = file.file.name.split('/')[-1]
+        url = github_url + filename
+        if file.submission in submissions:
+            submissions[file.submission].append((file, url, filename))
+        else:
+            submissions[file.submission] = [(file, url, filename)]
+
+    assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
+
+    return render(request, 'upload/course.html', {
+        'submissions': submissions,
+        'course': Course.objects.get(id=course_id),
+        'assignments': assignments
+    })
 
 @login_required
 def history(request, course_id):
