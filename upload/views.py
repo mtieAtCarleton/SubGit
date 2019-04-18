@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
-from upload.forms import SubmissionForm
-from upload.models import Submission
-import upload.models
+from upload.forms import FileForm
+from upload.models import File, Submission
 from upload.models import Student, Course, GitHubAccount
 import os.path
-import time
 from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -23,12 +21,29 @@ def handle_uploaded_file(f, file_path):
         for chunk in f.chunks():
             destination.write(chunk)
 
+@login_required
+def history(request, course_id):
+    username = request.user.username
+    files = File.objects.filter(submission__isnull=False, student__username=username, course__id=course_id)
+    submissions = {}
+    for file in files:
+        if file.submission in submissions:
+            submissions[file.submission].append(file)
+        else:
+            submissions[file.submission] = [file]
+
+    repo_name = "{}-{}".format(course_id, username)
+    return render(request, 'upload/history.html', {
+        'submissions' : submissions,
+        'course' : Course.objects.get(id=course_id)
+    })
 
 @login_required
 def model_form_upload(request, course_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    print(course_directory)
+    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, course__id=course_id)
+    print(pending_submissions)
     # if a file is being uploaded
     if request.method == 'POST':
         if "submit" in request.POST:
@@ -45,9 +60,15 @@ def model_form_upload(request, course_id):
 
             submit(username, course_id, file_paths, commitMessage)
 
+            submission = Submission.objects.create(description=commitMessage)
+
+            for file in pending_submissions:
+                file.submission = submission
+                file.save()
+
             return redirect('/submitted/{}'.format(course_id))
         else:
-            form = SubmissionForm(request.POST, request.FILES)
+            form = FileForm(request.POST, request.FILES)
             if form.is_valid():
                 submission = form.save(commit=False)
                 submission.student = Student.objects.get(username=username)
@@ -61,7 +82,7 @@ def model_form_upload(request, course_id):
 
     # if no file is being uploaded, display an empty form
     else:
-        form = SubmissionForm()
+        form = FileForm()
 
     repo_directory = os.path.join(course_directory, ".git")
     repo_name = "{}-{}".format(course_id, username)
@@ -71,7 +92,8 @@ def model_form_upload(request, course_id):
             'form': form,
             'course': course_id,
             'url': "https://github.com/{}/{}" \
-                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name),
+            'pending' : pending_submissions
         })
     else:
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
@@ -95,7 +117,8 @@ def model_form_upload(request, course_id):
             'form': form,
             'course': course_id,
             'url': "https://github.com/{}/{}" \
-                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+                      .format(config("GITHUB_ADMIN_USERNAME"), repo_name),
+            'pending': pending_submissions
         })
 
 
@@ -115,9 +138,6 @@ def logout(request):
 
 @login_required
 def submitted(request, course_id):
-    # test of displaying submission history
-    # documents = Submission.objects.all()
-    # return render(request, 'submitted.html', {'documents': documents})
     repo_name = "{}-{}".format(course_id, request.user.username)
     return render(request, 'upload/submitted.html', {
         'course': course_id,

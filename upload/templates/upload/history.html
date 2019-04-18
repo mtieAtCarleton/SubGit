@@ -1,0 +1,21 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-5">{{ course.title }}</h1>
+        <hr class="my-4">
+        {% for submission, files in submissions.items %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ submission.description }}</h5>
+                  {% for file in files %}
+                    <a href="">{{ file.file.name }}</a><br>
+                  {% endfor %}
+              </div>
+            </div>
+            <br>
+        {% endfor %}
+        <br>
+    <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+    </div>
+{% endblock %}

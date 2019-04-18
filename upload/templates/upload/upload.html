@@ -14,17 +14,17 @@
             <span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload
                 {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
                 <table id="gallery" class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>File</th>
-                    </tr>
-                  </thead>
+{#                  <thead>#}
+{#                    <tr>#}
+{#                      <th>File</th>#}
+{#                    </tr>#}
+{#                  </thead>#}
                   <tbody>
-    {#                {% for photo in photos %}#}
-    {#                  <tr>#}
-    {#                    <td><a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>#}
-    {#                  </tr>#}
-    {#                {% endfor %}#}
+                    {% for file in pending %}
+                      <tr>
+                        <td><a href="{{ file.file.url }}">{{ file.file.name }}</a></td>
+                      </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
             </label>
@@ -33,7 +33,7 @@
                    data-url="{% url 'model_form_upload' course %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
-            <form method="post">
+            <form method="post" autocomplete="off">
             {% csrf_token %}
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">

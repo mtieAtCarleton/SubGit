@@ -1,9 +1,14 @@
 from django.db import models
 import os
+from SubGit.settings import MEDIA_ROOT
 
 
 def content_file_name(instance, filename):
-    return os.path.join(instance.student.username, instance.course.id, filename)
+    filename = os.path.join(instance.student.username, instance.course.id, filename)
+    filepath = os.path.join(MEDIA_ROOT, filename)
+    if os.path.exists(filepath):
+        os.remove(filepath)
+    return filename
 
 
 class Course(models.Model):
@@ -18,7 +23,7 @@ class Course(models.Model):
 class GitHubAccount(models.Model):
     username = models.CharField(max_length=255, primary_key=True, unique=True)
 
-
+#TODO: make GitHub accounts many-to-one
 class Student(models.Model):
     username = models.CharField(max_length=30, primary_key=True, unique=True)
     courses = models.ManyToManyField(Course)
@@ -26,13 +31,24 @@ class Student(models.Model):
     github_accounts = models.ManyToManyField(GitHubAccount)
 
 
-class File(models.Model):
-    file = models.FileField(upload_to=content_file_name, null=False, verbose_name="")
-
-
 class Submission(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    file = models.FileField(upload_to=content_file_name, null=True)
+
+#TODO: think more carefully about on_delete, nulls
+class File(models.Model):
+    file = models.FileField(upload_to=content_file_name, null=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
+
+# class Submission(models.Model):
+#     description = models.CharField(max_length=255, blank=True)
+#     uploaded_at = models.DateTimeField(auto_now_add=True)
+#     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+#     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+#
+#
+# class File(models.Model):
+#     file = models.FileField(upload_to=content_file_name, null=False)
+#     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
