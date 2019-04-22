@@ -1,6 +1,7 @@
 # SubGit
 
 ## Python dependencies:
+- django
 - python-social-auth[django]
 - gitpython
 - pyopenssl
