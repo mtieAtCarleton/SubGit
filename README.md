@@ -7,4 +7,4 @@
 - pyopenssl
 - python-decouple
 - pygithub
-- tz_detect
+- django-tz-detect
