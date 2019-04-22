@@ -6,3 +6,4 @@
 - pyopenssl
 - python-decouple
 - pygithub
+- tz_detect
