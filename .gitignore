@@ -22,3 +22,5 @@ venv*
 *__pycache__*
 uploads/*
 upload/__*
+upload/migrations
+*.sqlite3
