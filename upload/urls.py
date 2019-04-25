@@ -20,6 +20,7 @@ from . import views
 urlpatterns = [
     path('upload/<str:course_id>', views.model_form_upload,
          name='model_form_upload'),
+    path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment),
     path('', views.home),
     path('logout/', views.logout),
     path('submitted/<str:course_id>', views.submitted),

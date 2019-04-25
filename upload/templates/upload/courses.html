@@ -10,9 +10,9 @@
     {#            {{ course.id }}#}
     {#          </div>#}
               <div class="card-body">
-                <h5 class="card-title">{{ course.title }} - {{ course.prof }}</h5>
-                  <a href="/courses/{{ course.id }}" class="btn btn-primary">View History for {{ course.number }}</a>
-                    <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>
+                  <h5 class="card-title"><a href="/courses/{{ course.id }}">{{ course.title }} - {{ course.prof }}</a></h5>
+{#                  <a href="/courses/{{ course.id }}" class="btn btn-primary">View History for {{ course.number }}</a>#}
+{#                    <a href="/upload/{{ course.id }}" class="btn btn-primary">Submit Homework for {{ course.number }}</a>#}
     {#              <a href="/connect_github/{{ course.id }}" class="btn btn-secondary">Connect to GitHub</a>#}
               </div>
             </div>

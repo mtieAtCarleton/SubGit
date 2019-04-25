@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="jumbotron">
-      <h1 class="display-5">Upload your assignment here.</h1>
-      <p class="lead">It will be saved to the <a href="{{ url }}">{{ course }}-{{ user.username }}</a> repository on GitHub.</p>
+      <h2 class="display-5">Upload your assignment {{ assignment.title }} here.</h2>
+      <p class="lead">It will be saved to the <a href="{{ url }}">{{ course.id }}-{{ user.username }}</a> repository on GitHub.</p>
       <hr class="my-4">
         {% if not user.username %}
       <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
@@ -14,7 +14,6 @@
 {#            {% if not pending %}#}
             <span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload
 {#            {% endif %}#}
-                {# 3. TABLE TO DISPLAY THE UPLOADED PHOTOS #}
                 <table id="gallery" class="table table-bordered">
 {#                  <thead>#}
 {#                    <tr>#}
@@ -40,14 +39,14 @@
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="decription-label">Description</span></div>
-                    <input type="text" class="form-control" name="description" placeholder="Enter the assignment name or other comments"
+                    <input type="text" class="form-control" name="description" placeholder="Enter the assignment version or other comments"
                            aria-label="description" aria-describedby="description-label">
                 </div>
                 <input id="submit" type="submit" name="submit" class="btn btn-primary btn-lg">
             </form>
             <br>
     {% endif %}
-        <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+        <a href="/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
     </div>
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
     {% block javascript %}
