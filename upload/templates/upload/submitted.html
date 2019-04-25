@@ -16,11 +16,11 @@
 {#<p><a href="/upload">Submit another file</a></p>#}
 {#<p><a href="/logout/">Log out</a></p>#}
     <div class="jumbotron">
-      <h1 class="display-5">You've successfully submitted your assignment!</h1>
-      <p class="lead">It has been saved to the <a href="{{ url }}">{{ course }}-{{ user.username }}</a> repository on GitHub.</p>
+      <h1 class="display-5">You've successfully submitted your assignment {{ assignment.title }}!</h1>
+      <p class="lead">It has been saved to the <a href="{{ url }}">{{ course_id }}-{{ user.username }}</a> repository on GitHub.</p>
       <hr class="my-4">
-        <p><a href="/upload/{{ course }}" class="btn btn-primary">Submit another file</a></p>
-        <p><a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+        <p><a href="/upload/{{ course_id }}/{{ assignment.id }}" class="btn btn-primary">Submit another file</a></p>
+        <p><a href="/courses/{{ course_id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
         <p><a href="/logout/">Log out</a></p>
     </div>
 {% endblock %}

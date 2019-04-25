@@ -31,7 +31,7 @@
                 <label for="fileupload" class="btn btn-primary">Browse files</label>
             </label>
             <input id="fileupload" type="file" name="file" multiple
-                   data-url="{% url 'model_form_upload' course %}"
+                   data-url="{% url 'upload_assignment' course.id assignment.id %}"
                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
             <form method="post" autocomplete="off">

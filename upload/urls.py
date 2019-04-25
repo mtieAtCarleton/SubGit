@@ -18,12 +18,12 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('upload/<str:course_id>', views.model_form_upload,
-         name='model_form_upload'),
-    path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment),
+    #path('upload/<str:course_id>', views.model_form_upload,
+    #     name='model_form_upload'),
+    path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
     path('', views.home),
     path('logout/', views.logout),
-    path('submitted/<str:course_id>', views.submitted),
+    path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
     path('register/', views.register),
     path('registered/', views.registered),

@@ -76,6 +76,12 @@ def upload_assignment(request, course_id, assignment_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
     pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, course__id=course_id)
+
+    if Assignment.objects.filter(id=assignment_id).exists():
+        assignment = Assignment.objects.get(id=assignment_id)
+        assignment_title = assignment.title.replace(' ', '_')
+    else:
+        assignment, assignment_title = None, None
     # if a file is being uploaded
     if request.method == 'POST':
         if "submit" in request.POST:
@@ -90,7 +96,7 @@ def upload_assignment(request, course_id, assignment_id):
                     file_path = os.path.join(course_directory, filename)
                     file_paths.append(file_path)
 
-            submit(username, course_id, file_paths, commitMessage)
+            submit(username, course_id, file_paths, commitMessage, assignment_title)
 
             submission = Submission.objects.create(description=commitMessage)
 
@@ -98,7 +104,7 @@ def upload_assignment(request, course_id, assignment_id):
                 file.submission = submission
                 file.save()
 
-            return redirect('/submitted/{}'.format(course_id))
+            return redirect('/submitted/{}/{}'.format(course_id, assignment_id))
         else:
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
@@ -167,12 +173,17 @@ def logout(request):
 
 
 @login_required
-def submitted(request, course_id):
+def submitted(request, course_id, assignment_id):
     repo_name = "{}-{}".format(course_id, request.user.username)
+    if Assignment.objects.filter(id=assignment_id).exists():
+        assignment = Assignment.objects.get(id=assignment_id)
+    else:
+        assignment = None
     return render(request, 'upload/submitted.html', {
-        'course': course_id,
+        'course_id': course_id,
         'url': "https://github.com/{}/{}".format(
-            config("GITHUB_ADMIN_USERNAME"), repo_name)
+            config("GITHUB_ADMIN_USERNAME"), repo_name),
+        'assignment': assignment
     })
 
 
