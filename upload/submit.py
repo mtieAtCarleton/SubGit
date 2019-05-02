@@ -9,6 +9,9 @@ def submit(user, course_id, file_names, commit_message, branch):
     repo_dir = os.path.join(MEDIA_ROOT, user, course_id)
     repo = Repo(repo_dir)
 
+    master = repo.heads.master
+    repo.git.pull('origin', master)
+
     file_list = [
         os.path.join(MEDIA_ROOT, user, course_id, fileName) for fileName in file_names
     ]

@@ -7,7 +7,7 @@ def content_file_name(instance, filename):
     """Returns the path to upload the given File instance and name, overwriting the current file at that path (if any).
        Should only be called when a File object is initialized.
     """
-    filename = os.path.join(instance.student.username, instance.course.id, filename)
+    filename = os.path.join(instance.student.username, instance.assignment.course.id, filename)
     filepath = os.path.join(MEDIA_ROOT, filename)
     if os.path.exists(filepath):
         os.remove(filepath)
@@ -49,7 +49,7 @@ class Submission(models.Model):
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name, null=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
 
 

@@ -24,7 +24,7 @@ def handle_uploaded_file(f, file_path):
 @login_required
 def course(request, course_id):
     username = request.user.username
-    files = File.objects.filter(submission__isnull=False, student__username=username, course__id=course_id)
+    files = File.objects.filter(submission__isnull=False, student__username=username, assignment__course__id=course_id)
     submissions = {}
     repo_name = "{}-{}".format(course_id, username)
     github_url = "https://github.com/{}/{}/blob/master/".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
@@ -75,7 +75,7 @@ def model_form_upload(request, course_id):
 def upload_assignment(request, course_id, assignment_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, course__id=course_id)
+    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, assignment__id=assignment_id)
 
     if Assignment.objects.filter(id=assignment_id).exists():
         assignment = Assignment.objects.get(id=assignment_id)
@@ -87,32 +87,26 @@ def upload_assignment(request, course_id, assignment_id):
         if "submit" in request.POST:
             #TODO: check for vulnerabilities
             commitMessage = request.POST["description"]
-            os_directory = os.fsencode(course_directory)
-            file_paths = []
-            for file in os.listdir(os_directory):
-                filename = os.fsdecode(file)
-                #TODO: find better way of not commiting .git
-                if (filename[0] != "."):
-                    file_path = os.path.join(course_directory, filename)
-                    file_paths.append(file_path)
-
-            submit(username, course_id, file_paths, commitMessage, assignment_title)
-
             submission = Submission.objects.create(description=commitMessage)
 
+            file_paths = []
             for file in pending_submissions:
+                file_paths.append(os.path.join(MEDIA_ROOT, file.file.name))
                 file.submission = submission
                 file.save()
+
+            submit(username, course_id, file_paths, commitMessage, assignment_title)
 
             return redirect('/submitted/{}/{}'.format(course_id, assignment_id))
         else:
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
-                submission = form.save(commit=False)
-                submission.student = Student.objects.get(username=username)
-                submission.course = Course.objects.get(id=course_id)
-                submission.save()
-                data = {'is_valid': True, 'name': submission.file.name, 'url': submission.file.url}
+                file = form.save(commit=False)
+                file.student = Student.objects.get(username=username)
+                file.assignment = Assignment.objects.get(id=assignment_id)
+                file.save()
+                print("name: {}, url: {}".format(file.file.name, file.file.url))
+                data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url}
             else:
                 data = {'is_valid': False}
             return JsonResponse(data)
@@ -181,8 +175,8 @@ def submitted(request, course_id, assignment_id):
         assignment = None
     return render(request, 'upload/submitted.html', {
         'course_id': course_id,
-        'url': "https://github.com/{}/{}".format(
-            config("GITHUB_ADMIN_USERNAME"), repo_name),
+        'url': "https://github.com/{}/{}/tree/{}".format(
+            config("GITHUB_ADMIN_USERNAME"), repo_name, assignment.title.replace(" ", "_")),
         'assignment': assignment
     })
 
