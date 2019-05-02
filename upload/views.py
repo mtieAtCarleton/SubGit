@@ -27,11 +27,12 @@ def course(request, course_id):
     files = File.objects.filter(submission__isnull=False, student__username=username, assignment__course__id=course_id)
     submissions = {}
     repo_name = "{}-{}".format(course_id, username)
-    github_url = "https://github.com/{}/{}/blob/master/".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+    github_url = "https://github.com/{}/{}/blob".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
     for file in files:
         filename = file.file.name.split('/')[-1]
-        url = github_url + filename
+        assignment = file.assignment.title.replace(" ", "_")
+        url = "{}/{}/{}".format(github_url, assignment, filename)
         if file.submission in submissions:
             submissions[file.submission].append((file, url, filename))
         else:
@@ -87,7 +88,7 @@ def upload_assignment(request, course_id, assignment_id):
         if "submit" in request.POST:
             #TODO: check for vulnerabilities
             commitMessage = request.POST["description"]
-            submission = Submission.objects.create(description=commitMessage)
+            submission = Submission.objects.create(description=commitMessage, assignment=assignment)
 
             file_paths = []
             for file in pending_submissions:

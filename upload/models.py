@@ -46,6 +46,7 @@ class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.SET_NULL, null=True)
 
 #TODO: think more carefully about on_delete, nulls
+#TODO: should file know about assignment? if not, need a submitted bool in Submission to handle pending uploads
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name, null=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
