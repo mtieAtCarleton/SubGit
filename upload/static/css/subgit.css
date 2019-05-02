@@ -47,3 +47,23 @@ body > .container {
     font-size: medium;
     align-content: left;
 }
+
+.breadcrumb {
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+.jumbotron {
+    padding-top: 10px;
+}
+
+@media (max-width: 430px) {
+    .body > .container {
+        padding: 0;
+    }
+    .navbar {
+        position: relative;
+        width: 100%;
+        font-size: small;
+    }
+}

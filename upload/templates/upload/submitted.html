@@ -15,6 +15,13 @@
 {##}
 {#<p><a href="/upload">Submit another file</a></p>#}
 {#<p><a href="/logout/">Log out</a></p>#}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+        <li class="breadcrumb-item"><a href="/courses/{{ assignment.course.id }}">{{ assignment.course.id }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
+      </ol>
+    </nav>
     <div class="jumbotron">
       <h1 class="display-5">You've successfully submitted your assignment {{ assignment.title }}!</h1>
       <p class="lead">It has been saved to the <a href="{{ url }}">{{ course_id }}-{{ user.username }}</a> repository on GitHub.</p>

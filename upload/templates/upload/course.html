@@ -2,6 +2,12 @@
 
 {% block content %}
     <div class="jumbotron">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ course.id }}</li>
+        </ol>
+    </nav>
         <h1 class="display-5">{{ course.title }}</h1>
         <p class="lead">{{ course.id }} - {{ course.prof }}</p>
         <hr class="my-4">

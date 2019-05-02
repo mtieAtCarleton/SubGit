@@ -2,6 +2,11 @@
 
 {% block content %}
     <div class="jumbotron">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+{#            <li class="breadcrumb-item active" aria-current="page">Courses</li>#}
+        </ol>
+    </nav>
         <h1 class="display-5">Registered Courses</h1>
         <hr class="my-4">
         {% for course in courses %}

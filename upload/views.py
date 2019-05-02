@@ -20,6 +20,11 @@ def handle_uploaded_file(f, file_path):
         for chunk in f.chunks():
             destination.write(chunk)
 
+
+def get_branch_url(repo_name, assignment_title):
+    return "https://github.com/{}/{}/tree/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name, assignment_title.replace(" ", "_"))
+
+
 #TODO: refactor course and history
 @login_required
 def course(request, course_id):
@@ -106,7 +111,6 @@ def upload_assignment(request, course_id, assignment_id):
                 file.student = Student.objects.get(username=username)
                 file.assignment = Assignment.objects.get(id=assignment_id)
                 file.save()
-                print("name: {}, url: {}".format(file.file.name, file.file.url))
                 data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url}
             else:
                 data = {'is_valid': False}
@@ -134,8 +138,7 @@ def upload_assignment(request, course_id, assignment_id):
     return render(request, 'upload/upload.html', {
         'form': form,
         'course': Course.objects.get(id=course_id),
-        'url': "https://github.com/{}/{}" \
-                  .format(config("GITHUB_ADMIN_USERNAME"), repo_name),
+        'url': get_branch_url(repo_name, assignment.title),
         'pending': pending_submissions,
         'assignment': assignment
     })
@@ -176,8 +179,7 @@ def submitted(request, course_id, assignment_id):
         assignment = None
     return render(request, 'upload/submitted.html', {
         'course_id': course_id,
-        'url': "https://github.com/{}/{}/tree/{}".format(
-            config("GITHUB_ADMIN_USERNAME"), repo_name, assignment.title.replace(" ", "_")),
+        'url': get_branch_url(repo_name, assignment.title),
         'assignment': assignment
     })
 
