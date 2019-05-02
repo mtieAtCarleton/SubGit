@@ -10,25 +10,31 @@
     </nav>
         <h1 class="display-5">{{ course.title }}</h1>
         <p class="lead">{{ course.id }} - {{ course.prof }}</p>
-        <hr class="my-4">
+
+        <h4>Assignments</h4>
+        <hr class="my-3">
+        <ul class="list-group list-group-flush">
         {% for assignment in assignments %}
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><a href="/upload/{{ course.id }}/{{ assignment.id }}">{{ assignment.title }}</a></h5>
+            <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
+                <h5>{{ assignment.title }}</h5>
                 {% if assignment.deadline %}
                 <small class="text-muted">Due {{ assignment.deadline }}</small>
-                {% endif %}
-              </div>
-            </div>
+                {% else %}
+                <small class="text-muted">No due date</small>
+                {% endif %}</a>
         {% endfor %}
+        </ul>
         {% if not assignments %}
             <p>No assignments yet.</p>
         {% endif %}
-        <hr class="my-4">
+        <br>
+        <h4>Submission History</h4>
+        <hr class="my-3">
         {% for submission, files in submissions.items %}
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">{{ submission.assignment.title }}: {{ submission.description }}</h5>
+                <h5 class="card-title">{{ submission.description }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>
                   {% for file, url, filename in files %}
                     <a href="{{ url }}">{{ filename }}</a><br>
                   {% endfor %}

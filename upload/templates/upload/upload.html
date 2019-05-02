@@ -9,7 +9,7 @@
         <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
       </ol>
     </nav>
-      <h2 class="display-5">Upload your assignment {{ assignment.title }} here.</h2>
+      <h2 class="display-5">Upload your submission for {{ assignment.title }} here.</h2>
       <p class="lead">It will be saved to the <a href="{{ url }}">{{ course.id }}-{{ user.username }}</a> repository on GitHub.</p>
       <hr class="my-4">
         {% if not user.username %}
