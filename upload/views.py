@@ -93,16 +93,15 @@ def upload_assignment(request, course_id, assignment_id):
     # if a file is being uploaded
     if request.method == 'POST':
         if "clear" in request.POST:
-            file_to_clear = request.POST["clear"]
-            print(file_to_clear)
-            for file in pending_submissions:
-                # check to make sure the same file isn't being submitted for another assignment before deleting it
-                other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(assignment__id=assignment_id)
-                file_path = os.path.join(MEDIA_ROOT, file.file.name)
-                if os.path.exists(file_path) and not other_assignment_check:
-                    os.remove(file_path)
-                file.delete()
-            pending_submissions = []
+            file_id = request.POST["clear"]
+            file = File.objects.get(id=file_id)
+            # check to make sure the same file isn't being submitted for another assignment before deleting it
+            other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(assignment__id=assignment_id)
+            file_path = os.path.join(MEDIA_ROOT, file.file.name)
+            if os.path.exists(file_path) and not other_assignment_check:
+                os.remove(file_path)
+            file.delete()
+            pending_submissions.exclude(file=file)
             form = FileForm()
         elif "submit" in request.POST:
             #TODO: check for vulnerabilities
@@ -125,7 +124,7 @@ def upload_assignment(request, course_id, assignment_id):
                 file.student = Student.objects.get(username=username)
                 file.assignment = Assignment.objects.get(id=assignment_id)
                 file.save()
-                data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url}
+                data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url, 'id': file.id}
             else:
                 data = {'is_valid': False}
             return JsonResponse(data)

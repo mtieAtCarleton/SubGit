@@ -31,7 +31,7 @@
                                     <a href="{{ file.file.url }}"> {{ file.filename }}</a>
                                 </td>
                                   <td>
-                                      <button type="submit" class="btn-danger fas fa-times" id="clear" name="clear" value="Hello"></button>
+                                      <button type="submit" class="btn-danger fas fa-times" id="clear" name="clear" value="{{ file.id }}"></button>
                                   </td>
                               </tr>
                             {% endfor %}
