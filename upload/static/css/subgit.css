@@ -1,5 +1,7 @@
-body > .container {
-    padding-top: 55px
+body > .container-fluid {
+    padding-top: 55px;
+    padding-left: 70px;
+    padding-right: 70px;
 }
 
 .navbar {
@@ -57,10 +59,22 @@ body > .container {
     padding-top: 10px;
 }
 
-@media (max-width: 430px) {
-    .body > .container {
+.history-sidebar {
+    padding-top: 25px;
+}
+
+@media (max-width: 992px) {
+    .history-sidebar {
+        padding-top: 0;
+        padding-left: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .body > .container-fluid {
         padding: 0;
     }
+
     .navbar {
         position: relative;
         width: 100%;

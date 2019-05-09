@@ -1,74 +1,82 @@
 {%  extends "upload/header.html" %}
 
 {% block content %}
-    <div class="jumbotron">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-        <li class="breadcrumb-item"><a href="/courses/{{ course.id }}">{{ course.id }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
-      </ol>
-    </nav>
-      <h2 class="display-5">Upload your submission for {{ assignment.title }} here.</h2>
-      <p class="lead">It will be saved to the <a href="{{ url }}">{{ course.id }}-{{ user.username }}</a> repository on GitHub.</p>
-      <hr class="my-4">
-        {% if not user.username %}
-      <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
-      <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
-    {% else %}
-            {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
-            <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
-                <table id="gallery" class="table table-borderless table-sm">
-                  <tbody>
-                    {% for file in pending %}
-                      <tr>
-                        <td class="text-left"><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-            {% if not pending %}
-                <span id="fileupload-arrow"><span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload<br></span>
-            {% endif %}
-                <label for="fileupload" class="btn btn-primary">Browse files</label>
-            <form method="get">
-                {% csrf_token %}
-                <input value="Clear files" type="submit" name="clear" class="btn btn-danger btn-sm">
-            </form>
-            </label>
-            <input id="fileupload" type="file" name="file" multiple
-                   data-url="{% url 'upload_assignment' course.id assignment.id %}"
-                   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+    <div class="row">
+        <div class="col">
+            <div class="jumbotron">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+                <li class="breadcrumb-item"><a href="/courses/{{ course.id }}">{{ course.id }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
+              </ol>
+            </nav>
+              <h2 class="display-5">Upload your submission for {{ assignment.title }} here.</h2>
+              <p class="lead">It will be saved to the <a href="{{ url }}">{{ course.id }}-{{ user.username }}</a> repository on GitHub.</p>
+              <hr class="my-4">
+                {% if not user.username %}
+              <p>If you're registered for this class, please log in with your Carleton credentials below.</p>
+              <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
+            {% else %}
+                    {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+                    <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
+                        <table id="gallery" class="table table-borderless table-sm">
+                          <tbody>
+                            {% for file in pending %}
+                              <tr>
+                                <td class="text-left"><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                    {% if not pending %}
+                        <span id="fileupload-arrow"><span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload<br></span>
+                    {% endif %}
+                        <label for="fileupload" class="btn btn-primary">Browse files</label>
+                    <form method="get">
+                        {% csrf_token %}
+                        <input value="Clear files" type="submit" name="clear" class="btn btn-danger btn-sm">
+                    </form>
+                    </label>
+                    <input id="fileupload" type="file" name="file" multiple
+                           data-url="{% url 'upload_assignment' course.id assignment.id %}"
+                           data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
 
-            <form method="post" autocomplete="off">
-            {% csrf_token %}
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="decription-label">Description</span></div>
-                    <input type="text" class="form-control" name="description" placeholder="Enter the assignment version or other comments"
-                           aria-label="description" aria-describedby="description-label">
-                </div>
-                <input id="submit" type="submit" name="submit" class="btn btn-primary btn-lg">
-            </form>
-            <br>
-    {% endif %}
-        <a href="/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
-    {% if user.username %}
-        <br><br>
-        <h4>Submission History</h4>
-            <hr class="my-3">
-            <ul class="list-group list-group-flush">
-            {% for submission, files in submissions %}
-                <li class="list-group-item">
-                    <h5>{{ submission.description }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>
-                      {% for file, url, filename in files %}
-                        <a href="{{ url }}">{{ filename }}</a><br>
-                      {% endfor %}
-                    <small class="text-muted">{{ submission.submitted_at }}</small>
-                </li>
-            {% endfor %}
-            </ul>
+                    <form method="post" autocomplete="off">
+                    {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="decription-label">Description</span></div>
+                            <input type="text" class="form-control" name="description" placeholder="Enter the assignment version or other comments"
+                                   aria-label="description" aria-describedby="description-label">
+                        </div>
+                        <input id="submit" type="submit" name="submit" class="btn btn-primary btn-lg">
+                    </form>
+                    <br>
+            {% endif %}
+                <a href="/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
+                <br><br>
+            </div>
+        </div>
+        {% if user.username %}
+        <div class="col-lg-3">
+{#            <div class="history-sidebar">#}
+{#                <h4>Submission History</h4>#}
+{#                <ul class="list-group list-group-flush">#}
+{#                {% for submission, files in submissions %}#}
+{#                    <li class="list-group-item">#}
+{#                        <h5 class="lead">{{ submission.description }}</h5>#}
+    {#                    <h6 class="lead mb-2 text-muted">{{ submission.assignment.title }}</h6>#}
+{#                          {% for file, url, filename in files %}#}
+{#                            <a href="{{ url }}">{{ filename }}</a><br>#}
+{#                          {% endfor %}#}
+{#                        <small class="text-muted">{{ submission.submitted_at }}</small>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#                </ul>#}
+{#            </div>#}
+        {% include 'upload/history-sidebar.html' %}
+        </div>
     {% endif %}
     </div>
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}

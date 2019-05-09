@@ -1,51 +1,42 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <div class="jumbotron">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ course.id }}</li>
-        </ol>
-    </nav>
-        <h1 class="display-5">{{ course.title }}</h1>
-        <p class="lead">{{ course.id }} - {{ course.prof }}</p>
+    <div class="row">
+        <div class="col">
+            <div class="jumbotron">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ course.id }}</li>
+                </ol>
+            </nav>
+                <h1 class="display-5">{{ course.title }}</h1>
+                <p class="lead">{{ course.id }} - {{ course.prof }}</p>
 
-        <h4>Assignments</h4>
-        <hr class="my-3">
-        <ul class="list-group list-group-flush">
-        {% for assignment in assignments %}
-            <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
-                <h5>{{ assignment.title }}</h5>
-                {% if assignment.deadline %}
-                <small class="text-muted">Due {{ assignment.deadline }}</small>
-                {% else %}
-                <small class="text-muted">No due date</small>
-                {% endif %}</a>
-        {% endfor %}
-        </ul>
-        {% if not assignments %}
-            <p>No assignments yet.</p>
-        {% endif %}
-        <br>
-        <h4>Submission History</h4>
-        <hr class="my-3">
-        <ul class="list-group list-group-flush">
-        {% for submission, files in submissions %}
-            <li class="list-group-item">
-                <h5>{{ submission.description }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>
-                  {% for file, url, filename in files %}
-                    <a href="{{ url }}">{{ filename }}</a><br>
-                  {% endfor %}
-                <small class="text-muted">{{ submission.submitted_at }}</small>
-            </li>
-        {% endfor %}
-        </ul>
-        {% if not submissions %}
-            <p>No submissions yet.</p>
-        {% endif %}
-        <br>
-    <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+                <h4>Assignments</h4>
+                <hr class="my-3">
+                <ul class="list-group list-group-flush">
+                {% for assignment in assignments %}
+                    <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
+                        <h5>{{ assignment.title }}</h5>
+                        {% if assignment.deadline %}
+                        <small class="text-muted">Due {{ assignment.deadline }}</small>
+                        {% else %}
+                        <small class="text-muted">No due date</small>
+                        {% endif %}</a>
+                {% endfor %}
+                </ul>
+                {% if not assignments %}
+                    <p>No assignments yet.</p>
+                {% endif %}
+                <br>
+
+                <br>
+            <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            {% include "upload/history-sidebar.html" %}
+        </div>
     </div>
 {% endblock %}
