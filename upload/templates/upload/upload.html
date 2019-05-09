@@ -53,6 +53,23 @@
             <br>
     {% endif %}
         <a href="/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
+    {% if user.username %}
+        <br><br>
+        <h4>Submission History</h4>
+            <hr class="my-3">
+            <ul class="list-group list-group-flush">
+            {% for submission, files in submissions %}
+                <li class="list-group-item">
+                    <h5>{{ submission.description }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>
+                      {% for file, url, filename in files %}
+                        <a href="{{ url }}">{{ filename }}</a><br>
+                      {% endfor %}
+                    <small class="text-muted">{{ submission.submitted_at }}</small>
+                </li>
+            {% endfor %}
+            </ul>
+    {% endif %}
     </div>
 {#    <p>Logged in as {{ user.username }}.   <a href="/logout/">Logout</a></p>#}
     {% block javascript %}

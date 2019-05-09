@@ -145,12 +145,29 @@ def upload_assignment(request, course_id, assignment_id):
     else:
         assignment = None
 
+    files = File.objects.filter(submission__isnull=False, student__username=username, assignment__id=assignment_id)
+    submissions = {}
+    repo_name = "{}-{}".format(course_id, username)
+    github_url = "https://github.com/{}/{}/blob".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+
+    for file in files:
+        filename = file.file.name.split('/')[-1]
+        corresponding_assignment = file.assignment.title.replace(" ", "_")
+        url = "{}/{}/{}".format(github_url, corresponding_assignment, filename)
+        if file.submission in submissions:
+            submissions[file.submission].append((file, url, filename))
+        else:
+            submissions[file.submission] = [(file, url, filename)]
+
+    submissions_items = sorted(submissions.items(), key=lambda submission: submission[0].submitted_at, reverse=True)
+
     return render(request, 'upload/upload.html', {
         'form': form,
         'course': Course.objects.get(id=course_id),
         'url': get_branch_url(repo_name, assignment.title),
         'pending': pending_submissions,
-        'assignment': assignment
+        'assignment': assignment,
+        'submissions': submissions_items
     })
 
 
