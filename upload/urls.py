@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     #path('upload/<str:course_id>', views.model_form_upload,
@@ -34,4 +36,4 @@ urlpatterns = [
     path('login_error/', views.login_error),
     path('history/<str:course_id>', views.history),
     path('courses/<str:course_id>', views.course)
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,7 @@ $(function () {
     done: function (e, data) {  /* 3. PROCESS THE RESPONSE FROM THE SERVER */
       if (data.result.is_valid) {
         $("#gallery tbody").prepend(
-          "<tr><td class=\"text-left\"><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
+          "<tr><td class=\"text-left\"><a href='" + data.result.url + "'>" + data.result.name.split("/")[2] + "</a></td></tr>"
         );
         $("#fileupload-arrow").remove();
       }

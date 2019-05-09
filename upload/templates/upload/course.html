@@ -30,19 +30,28 @@
         <br>
         <h4>Submission History</h4>
         <hr class="my-3">
+        <ul class="list-group list-group-flush">
         {% for submission, files in submissions %}
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{ submission.description }}</h5>
+            <li class="list-group-item">
+                <h5>{{ submission.description }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>
                   {% for file, url, filename in files %}
                     <a href="{{ url }}">{{ filename }}</a><br>
                   {% endfor %}
                 <small class="text-muted">{{ submission.submitted_at }}</small>
-              </div>
-            </div>
-            <br>
+            </li>
+{#            <div class="card">#}
+{#              <div class="card-body">#}
+{#                <h5 class="card-title">{{ submission.description }}</h5>#}
+{#                <h6 class="card-subtitle mb-2 text-muted">{{ submission.assignment.title }}</h6>#}
+{#                  {% for file, url, filename in files %}#}
+{#                    <a href="{{ url }}">{{ filename }}</a><br>#}
+{#                  {% endfor %}#}
+{#                <small class="text-muted">{{ submission.submitted_at }}</small>#}
+{#              </div>#}
+{#            </div>#}
         {% endfor %}
+        </ul>
         {% if not submissions %}
             <p>No submissions yet.</p>
         {% endif %}

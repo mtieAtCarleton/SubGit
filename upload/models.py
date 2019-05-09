@@ -55,6 +55,9 @@ class File(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
 
+    def filename(self):
+        return os.path.basename(self.file.name)
+
 
 
 

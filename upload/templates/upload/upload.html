@@ -19,15 +19,10 @@
             {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
             <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
                 <table id="gallery" class="table table-borderless table-sm">
-{#                  <thead>#}
-{#                    <tr>#}
-{#                      <th>File</th>#}
-{#                    </tr>#}
-{#                  </thead>#}
                   <tbody>
                     {% for file in pending %}
                       <tr>
-                        <td class="text-left"><a href="{{ file.file.url }}">{{ file.file.name }}</a></td>
+                        <td class="text-left"><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -36,6 +31,10 @@
                 <span id="fileupload-arrow"><span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload<br></span>
             {% endif %}
                 <label for="fileupload" class="btn btn-primary">Browse files</label>
+            <form method="get">
+                {% csrf_token %}
+                <input value="Clear files" type="submit" name="clear" class="btn btn-danger btn-sm">
+            </form>
             </label>
             <input id="fileupload" type="file" name="file" multiple
                    data-url="{% url 'upload_assignment' course.id assignment.id %}"
