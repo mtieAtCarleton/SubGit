@@ -45,8 +45,10 @@ def course(request, course_id):
 
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
+    submissions_items = sorted(submissions.items(), key=lambda submission: submission[0].submitted_at, reverse=True)
+
     return render(request, 'upload/course.html', {
-        'submissions': submissions,
+        'submissions': submissions_items,
         'course': Course.objects.get(id=course_id),
         'assignments': assignments
     })

@@ -30,7 +30,7 @@
         <br>
         <h4>Submission History</h4>
         <hr class="my-3">
-        {% for submission, files in submissions.items %}
+        {% for submission, files in submissions %}
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">{{ submission.description }}</h5>
@@ -43,6 +43,9 @@
             </div>
             <br>
         {% endfor %}
+        {% if not submissions %}
+            <p>No submissions yet.</p>
+        {% endif %}
         <br>
     <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
     </div>

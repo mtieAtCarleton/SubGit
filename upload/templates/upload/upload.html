@@ -32,9 +32,9 @@
                     {% endfor %}
                   </tbody>
                 </table>
-            {#            {% if not pending %}#}
-            <span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload <br>
-{#            {% endif %}#}
+            {% if not pending %}
+                <span id="fileupload-arrow"><span class="fas fa-arrow-circle-up"></span> Drop Files Here to Upload<br></span>
+            {% endif %}
                 <label for="fileupload" class="btn btn-primary">Browse files</label>
             </label>
             <input id="fileupload" type="file" name="file" multiple

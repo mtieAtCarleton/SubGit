@@ -41,6 +41,8 @@ class Assignment(models.Model):
 
 
 class Submission(models.Model):
+    class Meta:
+        ordering = ["-submitted_at"]
     description = models.CharField(max_length=255, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
     assignment = models.ForeignKey(Assignment, on_delete=models.SET_NULL, null=True)
