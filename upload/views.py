@@ -92,7 +92,19 @@ def upload_assignment(request, course_id, assignment_id):
         assignment, assignment_title = None, None
     # if a file is being uploaded
     if request.method == 'POST':
-        if "submit" in request.POST:
+        if "clear" in request.POST:
+            file_to_clear = request.POST["clear"]
+            print(file_to_clear)
+            for file in pending_submissions:
+                # check to make sure the same file isn't being submitted for another assignment before deleting it
+                other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(assignment__id=assignment_id)
+                file_path = os.path.join(MEDIA_ROOT, file.file.name)
+                if os.path.exists(file_path) and not other_assignment_check:
+                    os.remove(file_path)
+                file.delete()
+            pending_submissions = []
+            form = FileForm()
+        elif "submit" in request.POST:
             #TODO: check for vulnerabilities
             commitMessage = request.POST["description"]
             submission = Submission.objects.create(description=commitMessage, assignment=assignment)
@@ -119,15 +131,6 @@ def upload_assignment(request, course_id, assignment_id):
             return JsonResponse(data)
     # if no file is being uploaded, display an empty form
     else:
-        if "clear" in request.GET:
-            for file in pending_submissions:
-                # check to make sure the same file isn't being submitted for another assignment before deleting it
-                other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(assignment__id=assignment_id)
-                file_path = os.path.join(MEDIA_ROOT, file.file.name)
-                if os.path.exists(file_path) and not other_assignment_check:
-                    os.remove(file_path)
-                file.delete()
-            pending_submissions = []
         form = FileForm()
 
     repo_directory = os.path.join(course_directory, ".git")
