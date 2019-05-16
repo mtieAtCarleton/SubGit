@@ -11,79 +11,48 @@ from decouple import config
 from git import Repo
 from git import Git
 import sys
-from upload.submit import submit
+from upload.utils import submit, get_branch_url, clear_file, clone_course_repo, \
+    get_submission_items, make_readme
 from django.http import JsonResponse
 
-
-def handle_uploaded_file(f, file_path):
-    with open(file_path, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+HISTORY_LENGTH = 5
 
 
-def get_branch_url(repo_name, assignment_title):
-    return "https://github.com/{}/{}/tree/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name, assignment_title.replace(" ", "_"))
+@login_required
+def courses(request):
+    user_directory = os.path.join(MEDIA_ROOT, request.user.username)
+    if os.path.exists(user_directory):
+        try:
+            return render(request, 'upload/courses.html', {
+                 'courses': Student.objects.get(username=request.user.username).courses.all()
+             })
+        except Student.DoesNotExist as e:
+            return redirect('/register/')
+    else:
+        return redirect('/register/')
 
 
-#TODO: refactor course and history
 @login_required
 def course(request, course_id):
     username = request.user.username
-    files = File.objects.filter(submission__isnull=False, student__username=username, assignment__course__id=course_id)
-    submissions = {}
-    repo_name = "{}-{}".format(course_id, username)
-    github_url = "https://github.com/{}/{}/blob".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-
-    for file in files:
-        filename = file.file.name.split('/')[-1]
-        assignment = file.assignment.title.replace(" ", "_")
-        url = "{}/{}/{}".format(github_url, assignment, filename)
-        if file.submission in submissions:
-            submissions[file.submission].append((file, url, filename))
-        else:
-            submissions[file.submission] = [(file, url, filename)]
+    submissions_items = get_submission_items(username, course_id, None)
 
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
-    submissions_items = sorted(submissions.items(), key=lambda submission: submission[0].submitted_at, reverse=True)
-
+    # TODO: display variable length history
     return render(request, 'upload/course.html', {
-        'submissions': submissions_items,
+        'submissions': submissions_items[:HISTORY_LENGTH],
         'course': Course.objects.get(id=course_id),
         'assignments': assignments
     })
-
-@login_required
-def history(request, course_id):
-    username = request.user.username
-    files = File.objects.filter(submission__isnull=False, student__username=username, course__id=course_id)
-    submissions = {}
-    repo_name = "{}-{}".format(course_id, username)
-    github_url = "https://github.com/{}/{}/blob/master/".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-    for file in files:
-        filename = file.file.name.split('/')[-1]
-        url = github_url + filename
-        if file.submission in submissions:
-            submissions[file.submission].append((file, url, filename))
-        else:
-            submissions[file.submission] = [(file, url, filename)]
-
-    return render(request, 'upload/history.html', {
-        'submissions': submissions,
-        'course': Course.objects.get(id=course_id),
-    })
-
-
-@login_required
-def model_form_upload(request, course_id):
-    upload_assignment(request, course_id, None)
 
 
 @login_required
 def upload_assignment(request, course_id, assignment_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username, assignment__id=assignment_id)
+    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username,
+                                              assignment__id=assignment_id)
 
     if Assignment.objects.filter(id=assignment_id).exists():
         assignment = Assignment.objects.get(id=assignment_id)
@@ -96,27 +65,26 @@ def upload_assignment(request, course_id, assignment_id):
             file_id = request.POST["clear"]
             file = File.objects.get(id=file_id)
             # check to make sure the same file isn't being submitted for another assignment before deleting it
-            other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(assignment__id=assignment_id)
-            file_path = os.path.join(MEDIA_ROOT, file.file.name)
-            if os.path.exists(file_path) and not other_assignment_check:
-                os.remove(file_path)
-            file.delete()
+            clear_file(assignment_id, file, username)
             pending_submissions.exclude(file=file)
             form = FileForm()
         elif "submit" in request.POST:
-            #TODO: check for vulnerabilities
-            commitMessage = request.POST["description"]
-            submission = Submission.objects.create(description=commitMessage, assignment=assignment)
+            # TODO: check for vulnerabilities
+            if pending_submissions:
+                commit_message = request.POST["description"]
+                submission = Submission.objects.create(description=commit_message, assignment=assignment)
 
-            file_paths = []
-            for file in pending_submissions:
-                file_paths.append(os.path.join(MEDIA_ROOT, file.file.name))
-                file.submission = submission
-                file.save()
+                file_paths = []
+                for file in pending_submissions:
+                    file_paths.append(os.path.join(MEDIA_ROOT, file.file.name))
+                    file.submission = submission
+                    file.save()
 
-            submit(username, course_id, file_paths, commitMessage, assignment_title)
+                submit(username, course_id, file_paths, commit_message, assignment_title)
 
-            return redirect('/submitted/{}/{}'.format(course_id, assignment_id))
+                return redirect('/submitted/{}/{}'.format(course_id, assignment_id))
+            else:
+                form = FileForm()
         else:
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
@@ -147,21 +115,8 @@ def upload_assignment(request, course_id, assignment_id):
     else:
         assignment = None
 
-    files = File.objects.filter(submission__isnull=False, student__username=username, assignment__id=assignment_id)
-    submissions = {}
-    repo_name = "{}-{}".format(course_id, username)
     github_url = "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-
-    for file in files:
-        filename = file.file.name.split('/')[-1]
-        corresponding_assignment = file.assignment.title.replace(" ", "_")
-        url = "{}/blob/{}/{}".format(github_url, corresponding_assignment, filename)
-        if file.submission in submissions:
-            submissions[file.submission].append((file, url, filename))
-        else:
-            submissions[file.submission] = [(file, url, filename)]
-
-    submissions_items = sorted(submissions.items(), key=lambda submission: submission[0].submitted_at, reverse=True)
+    submissions_items = get_submission_items(username, course_id, assignment_id)
 
     if submissions_items:
         url = get_branch_url(repo_name, assignment_title)
@@ -174,24 +129,36 @@ def upload_assignment(request, course_id, assignment_id):
         'url': url,
         'pending': pending_submissions,
         'assignment': assignment,
-        'submissions': submissions_items
+        'submissions': submissions_items[:HISTORY_LENGTH]
     })
 
 
-def clone_course_repo(course_id, repo_name, username):
-    g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-    repo = g.get_user().get_repo(repo_name)
-    repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-    user_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    # TODO: move to environment variable
-    git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
-    git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
-    with Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
-        local_repo = Repo.clone_from(repo_url, user_directory)
+@login_required
+def submitted(request, course_id, assignment_id):
+    username = request.user.username
+    repo_name = "{}-{}".format(course_id, username)
+    if Assignment.objects.filter(id=assignment_id).exists():
+        assignment = Assignment.objects.get(id=assignment_id)
+        submissions_items = get_submission_items(username, course_id, assignment_id)
+    else:
+        assignment = None
+        submissions_items = None
+    return render(request, 'upload/submitted.html', {
+        'course_id': course_id,
+        'url': get_branch_url(repo_name, assignment.title),
+        'assignment': assignment,
+        'submissions': submissions_items[:HISTORY_LENGTH]
+    })
 
 
-def not_registered(request):
-    return render(request, 'upload/not_registered.html')
+def home(request):
+    if request.user.username:
+        return redirect("/courses/")
+    return render(request, 'upload/home.html')
+
+
+def login_error(request):
+    return render(request, 'upload/login_error.html')
 
 
 def error(request):
@@ -205,82 +172,25 @@ def logout(request):
 
 
 @login_required
-def submitted(request, course_id, assignment_id):
-    repo_name = "{}-{}".format(course_id, request.user.username)
-    if Assignment.objects.filter(id=assignment_id).exists():
-        assignment = Assignment.objects.get(id=assignment_id)
-    else:
-        assignment = None
-    return render(request, 'upload/submitted.html', {
-        'course_id': course_id,
-        'url': get_branch_url(repo_name, assignment.title),
-        'assignment': assignment
-    })
-
-
-@login_required
-def courses(request):
-    user_directory = os.path.join(MEDIA_ROOT, request.user.username)
-    if os.path.exists(user_directory):
-        try:
-            return render(request, 'upload/courses.html', {
-                 'courses': Student.objects.get(username=request.user.username).courses.all()
-             })
-        except Student.DoesNotExist as e:
-            return redirect('/register/')
-    else:
-        return redirect('/register/')
-
-
-@login_required
-def connect_github(request):
-    if request.method == 'POST':
-        input_username = request.POST.get('username')
-        student = Student.objects.get(username=request.user.username)
-
-        if input_username != config('GITHUB_ADMIN_USERNAME') and not student.github_accounts.filter(username=input_username).exists():
-            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-
-            account, new = GitHubAccount.objects.get_or_create(username=input_username)
-            student.github_accounts.add(account)
-            student.save()
-
-            try:
-                for course in student.courses.all():
-                    repo_name = "{}-{}".format(course.id, request.user.username)
-                    repo = g.get_user().get_repo(repo_name)
-                    repo.add_to_collaborators(input_username, "push")
-            except GithubException as e:
-                print(e)
-                account.delete()
-                return redirect('/error')
-
-            return redirect("/courses/")
-
-    return render(request, "upload/connect_github.html")
-
-@login_required
 def register(request):
     if request.method == 'POST':
         username = request.user.username
 
-        courseId = request.POST.get('course-id')
-        course, new = Course.objects.get_or_create(id=courseId)
+        course_id = request.POST.get('course-id')
+        course, new = Course.objects.get_or_create(id=course_id)
         if new:
             course.save()
 
         student, new = Student.objects.get_or_create(username=username)
-        if not student.courses.filter(id=courseId).exists():
+        if not student.courses.filter(id=course_id).exists():
             student.courses.add(course)
             student.save()
 
-        user_directory = os.path.join(MEDIA_ROOT, username, courseId)
+        user_directory = os.path.join(MEDIA_ROOT, username, course_id)
         os.makedirs(user_directory)
 
-        # TODO: break up this try block
-
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-        repo_name = "{}-{}".format(courseId, username)
+        repo_name = "{}-{}".format(course_id, username)
 
         try:
             repo = g.get_user().create_repo(repo_name)
@@ -288,12 +198,12 @@ def register(request):
             print(e)
             return redirect("/error")
 
+        # TODO: break up this try block
         try:
             github_accounts = Student.objects.get(username=username).github_accounts.all()
             for account in github_accounts:
                 repo.add_to_collaborators(account.username, "push")
 
-            #repo_url = "https://github.com/{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
             repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
             # TODO: move to environment variable
@@ -327,18 +237,42 @@ def register(request):
         })
 
 
-def make_readme(username, user_directory):
-    readme_path = os.path.join(user_directory, "README.md")
-    with open(readme_path, "w+") as readme:
-        readme.write("Homework submission repository for {}".format(
-            username))
-        readme.close()
-    return readme_path
-
-
 @login_required
 def registered(request):
     return render(request, 'upload/registered.html')
+
+
+def not_registered(request):
+    return render(request, 'upload/not_registered.html')
+
+
+@login_required
+def connect_github(request):
+    if request.method == 'POST':
+        input_username = request.POST.get('username')
+        student = Student.objects.get(username=request.user.username)
+
+        if input_username != config('GITHUB_ADMIN_USERNAME') and \
+                not student.github_accounts.filter(username=input_username).exists():
+            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+
+            account, new = GitHubAccount.objects.get_or_create(username=input_username)
+            student.github_accounts.add(account)
+            student.save()
+
+            try:
+                for course in student.courses.all():
+                    repo_name = "{}-{}".format(course.id, request.user.username)
+                    repo = g.get_user().get_repo(repo_name)
+                    repo.add_to_collaborators(input_username, "push")
+            except GithubException as e:
+                print(e)
+                account.delete()
+                return redirect('/error')
+
+            return redirect("/courses/")
+
+    return render(request, "upload/connect_github.html")
 
 
 @login_required
@@ -363,16 +297,6 @@ def manage_github(request):
     return render(request, 'upload/manage_github.html', {
         'accounts': accounts
     })
-
-
-def home(request):
-    if request.user.username:
-        return redirect("/courses/")
-    return render(request, 'upload/home.html')
-
-
-def login_error(request):
-    return render(request, 'upload/login_error.html')
 
 
 def carleton_test(backend, response, social, *args, **kwargs):

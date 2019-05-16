@@ -20,8 +20,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    #path('upload/<str:course_id>', views.model_form_upload,
-    #     name='model_form_upload'),
     path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
     path('', views.home),
     path('logout/', views.logout),
@@ -34,6 +32,5 @@ urlpatterns = [
     path('connect_github/', views.connect_github),
     path('manage_github/', views.manage_github),
     path('login_error/', views.login_error),
-    path('history/<str:course_id>', views.history),
     path('courses/<str:course_id>', views.course)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
