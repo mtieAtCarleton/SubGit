@@ -7,7 +7,7 @@ $(function () {
         $("#gallery tbody").prepend(
           "<tr><td class=\"text-left\"><span class=\"fas fa-file\"></span><a href='" + data.result.url +
             "'>" + " " + data.result.name.split("/")[2] +
-            "</a></td><td><button type=\"submit\" class=\"btn-danger fas fa-times\" name=\"clear\" value='" + data.result.id +"'></button></td></tr>"
+            "</a></td><td class=\"text-right\"><button type=\"submit\" class=\"btn-danger fas fa-times\" name=\"clear\" value='" + data.result.id +"'></button></td></tr>"
         );
         $("#fileupload-arrow").remove();
       }

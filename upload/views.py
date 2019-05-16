@@ -222,9 +222,12 @@ def submitted(request, course_id, assignment_id):
 def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, request.user.username)
     if os.path.exists(user_directory):
-        return render(request, 'upload/courses.html', {
-            'courses': Student.objects.get(username=request.user.username).courses.all()
-        })
+        try:
+            return render(request, 'upload/courses.html', {
+                 'courses': Student.objects.get(username=request.user.username).courses.all()
+             })
+        except Student.DoesNotExist as e:
+            return redirect('/register/')
     else:
         return redirect('/register/')
 

@@ -22,7 +22,7 @@
                     <label id="fileupload_box" for="fileupload" class="well text-muted text-center">
                     <form method="post">
                     {% csrf_token %}
-                        <table id="gallery" class="table table-borderless table-sm table-striped">
+                        <table id="gallery" class="table table-borderless table-striped">
                           <tbody>
                             {% for file in pending %}
                               <tr>
@@ -30,8 +30,8 @@
                                     <span class="fas fa-file"></span>
                                     <a href="{{ file.file.url }}"> {{ file.filename }}</a>
                                 </td>
-                                  <td>
-                                      <button type="submit" class="btn-danger fas fa-times" id="clear" name="clear" value="{{ file.id }}"></button>
+                                  <td class="text-right">
+                                      <button type="submit" class="btn-danger fas fa-times" name="clear" value="{{ file.id }}"></button>
                                   </td>
                               </tr>
                             {% endfor %}
