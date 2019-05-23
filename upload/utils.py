@@ -1,3 +1,6 @@
+"""
+Miscellaneous functions for use in views.py and elsewhere.
+"""
 from git import Repo
 from SubGit.settings import MEDIA_ROOT
 from upload.models import File
@@ -5,6 +8,18 @@ from decouple import config
 import os
 import git
 from github import Github
+
+
+def clone_course_repo(course_id, repo_name, username):
+    g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+    g.get_user().get_repo(repo_name)
+    repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+    user_directory = os.path.join(MEDIA_ROOT, username, course_id)
+    # TODO: move to environment variable
+    git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
+    git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
+    with git.Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+        Repo.clone_from(repo_url, user_directory)
 
 
 def submit(user, course_id, file_names, commit_message, branch):
@@ -40,18 +55,6 @@ def clear_file(assignment_id, file, username):
     if os.path.exists(file_path) and not other_assignment_check:
         os.remove(file_path)
     file.delete()
-
-
-def clone_course_repo(course_id, repo_name, username):
-    g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-    g.get_user().get_repo(repo_name)
-    repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-    user_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    # TODO: move to environment variable
-    git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
-    git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
-    with git.Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
-        Repo.clone_from(repo_url, user_directory)
 
 
 def get_submission_items(username, course_id, assignment_id):

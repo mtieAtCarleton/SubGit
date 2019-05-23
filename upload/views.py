@@ -2,17 +2,12 @@ from django.shortcuts import render, redirect
 from upload.forms import FileForm
 from upload.models import File, Submission, Student, Course, GitHubAccount, Assignment
 import os.path
-from SubGit.settings import MEDIA_ROOT
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
-from github import Github
 from github import GithubException
-from decouple import config
-from git import Repo
 from git import Git
 import sys
-from upload.utils import submit, get_branch_url, clear_file, clone_course_repo, \
-    get_submission_items, make_readme
+from upload.utils import *
 from django.http import JsonResponse
 
 HISTORY_LENGTH = 5
@@ -192,6 +187,7 @@ def register(request):
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
         repo_name = "{}-{}".format(course_id, username)
 
+        # TODO: make repo private
         try:
             repo = g.get_user().create_repo(repo_name)
         except GithubException as e:

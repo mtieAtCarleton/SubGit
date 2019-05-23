@@ -1,3 +1,9 @@
+"""
+This file defines the structure of the database where all of the webapp’s data is stored.
+Every class represents a table in the database, and every class variable represents a column.
+
+For more information see: https://docs.djangoproject.com/en/2.2/topics/db/models/
+"""
 from django.db import models
 import os
 from SubGit.settings import MEDIA_ROOT
@@ -15,10 +21,19 @@ def content_file_name(instance, filename):
 
 
 class Course(models.Model):
+    # e.g. cs111.00-f18
     id = models.CharField(max_length=30, primary_key=True, unique=True)
+
+    # e.g. cs111
     number = models.CharField(max_length=15, null=True, blank=True)
+
+    # e.g. 00
     section = models.CharField(max_length=3, null=True, blank=True)
+
+    # e.g. Introduction to Computer Science
     title = models.CharField(max_length=255, null=True, blank=True)
+
+    # e.g. Eric Alexander
     prof = models.CharField(max_length=255, null=True, blank=True)
 
 
