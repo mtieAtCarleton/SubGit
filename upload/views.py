@@ -187,9 +187,9 @@ def register(request):
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
         repo_name = "{}-{}".format(course_id, username)
 
-        # TODO: make repo private
+        # TODO: create within organization?
         try:
-            repo = g.get_user().create_repo(repo_name)
+            repo = g.get_user().create_repo(repo_name, private=True)
         except GithubException as e:
             print(e)
             return redirect("/error")
@@ -203,10 +203,11 @@ def register(request):
             repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
             # TODO: move to environment variable
-            git_ssh_identity_file = os.path.expanduser('~/.ssh/id_rsa')
+            # see https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+            git_ssh_identity_file = os.path.expanduser(config('SSH_KEY_PATH'))
             git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
 
-            with Git().custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+            with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
                 local_repo = Repo.clone_from(repo_url, user_directory)
 
             readme_path = make_readme(username, user_directory)
