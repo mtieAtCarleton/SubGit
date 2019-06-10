@@ -34,7 +34,7 @@ def course(request, course_id):
 
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
-    # TODO: display variable length history
+    # TODO: display variable length history (GUI toggle like in Moodle?)
     return render(request, 'upload/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
         'course': Course.objects.get(id=course_id),
@@ -54,9 +54,10 @@ def upload_assignment(request, course_id, assignment_id):
         assignment_title = assignment.title.replace(' ', '_')
     else:
         assignment, assignment_title = None, None
-    # if a file is being uploaded
+
     if request.method == 'POST':
         if "clear" in request.POST:
+            # if a file was cleared out of the upload box, remove it from the pending submissions and delete it
             file_id = request.POST["clear"]
             file = File.objects.get(id=file_id)
             # check to make sure the same file isn't being submitted for another assignment before deleting it
@@ -64,7 +65,8 @@ def upload_assignment(request, course_id, assignment_id):
             pending_submissions.exclude(file=file)
             form = FileForm()
         elif "submit" in request.POST:
-            # TODO: check for vulnerabilities
+            # if the form is ready to submit, make a new submission entry in the database with the current pending files
+            # then add to Git, commit and push to GitHub
             if pending_submissions:
                 commit_message = request.POST["description"]
                 submission = Submission.objects.create(description=commit_message, assignment=assignment)
@@ -81,6 +83,8 @@ def upload_assignment(request, course_id, assignment_id):
             else:
                 form = FileForm()
         else:
+            # if a file was uploaded but not submitted yet, save it to the database and return its data so the
+            # JavaScript can display it in the upload box
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
                 file = form.save(commit=False)
@@ -110,13 +114,14 @@ def upload_assignment(request, course_id, assignment_id):
     else:
         assignment = None
 
-    github_url = "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
     submissions_items = get_submission_items(username, course_id, assignment_id)
 
+    # if a submission has been made, a branch corresponding to the assignment will have been created, so link to it.
+    # otherwise, link to the main github page
     if submissions_items:
         url = get_branch_url(repo_name, assignment_title)
     else:
-        url = github_url
+        url = get_github_url(repo_name)
 
     return render(request, 'upload/upload.html', {
         'form': form,
@@ -194,7 +199,7 @@ def register(request):
             print(e)
             return redirect("/error")
 
-        # TODO: break up this try block
+        # TODO: break up this try block, improve error handling
         try:
             github_accounts = Student.objects.get(username=username).github_accounts.all()
             for account in github_accounts:
@@ -211,7 +216,7 @@ def register(request):
                 local_repo = Repo.clone_from(repo_url, user_directory)
 
             readme_path = make_readme(username, user_directory)
-
+            # TODO: override any existing git config of username/password and use SubGitAdmin instead
             local_repo.index.add([readme_path])
             local_repo.index.commit("Initial commit")
             origin = local_repo.remotes.origin

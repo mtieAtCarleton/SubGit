@@ -48,6 +48,10 @@ def get_branch_url(repo_name, assignment_title):
                                                      assignment_title.replace(" ", "_"))
 
 
+def get_github_url(repo_name):
+    return "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+
+
 def clear_file(assignment_id, file, username):
     other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(
         assignment__id=assignment_id)
