@@ -42,11 +42,10 @@ class GitHubAccount(models.Model):
 
 
 # TODO: make GitHub accounts many-to-one
-class Student(models.Model):
+class Person(models.Model):
     username = models.CharField(max_length=30, primary_key=True, unique=True)
     courses = models.ManyToManyField(Course)
     github_accounts = models.ManyToManyField(GitHubAccount)
-
 
 class Assignment(models.Model):
     title = models.CharField(max_length=255)

@@ -195,7 +195,7 @@ def register(request):
         except OSError:
             print(e)
             return redirect("/error")
-            
+
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
         repo_name = "{}-{}".format(course_id, username)
 
