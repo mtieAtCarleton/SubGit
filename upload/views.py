@@ -164,14 +164,33 @@ def login_error(request):
 def error(request):
     return render(request, 'upload/error.html')
 
-
+@login_required
 def create_assignment(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        print(title)
+        course = request.POST.get('course')
+        due_date = request.POST.get('due_date')
+        Assignment.objects.get_or_create(title=title, course=course,
+                            deadline=due_date)
+        if form.is_valid():
+            return redirect('test/')
     return render(request, 'upload/create_assignment.html')
 
-
+@login_required
 def create_course(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        course_number = request.POST.get('course_number')
+        section = request.POST.get('section')
+        title = request.POST.get('title')
+        section = request.POST.get('prof_name')
+        Course.objects.get_or_create(id=id, course_number=course_number,
+        title=title, section=section)
     return render(request, 'upload/create_course.html')
 
+def test(request):
+    return render(request, 'upload/test.html')
 
 def logout(request):
     """Logs out user"""

@@ -6,7 +6,8 @@
   <h1>Create New Course</h1>
   <p>Please fill out the information for the course you want to create below</p>
 </div>
-<form action="/action_page.php">
+<form action="/test/" class="was-validated" role="form">
+  {% csrf_token %}
   <div class="form-group">
     <label for="id">ID:</label>
     <input type="id" class="form-control" placeholder="cs111.00-f18" id="id">

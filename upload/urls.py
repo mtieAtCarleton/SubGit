@@ -24,6 +24,7 @@ urlpatterns = [
     path('', views.home),
     path('create_assignment/', views.create_assignment),
     path('create_course/', views.create_course),
+    path('test/', views.test),
     path('logout/', views.logout),
     path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
