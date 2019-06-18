@@ -187,8 +187,15 @@ def register(request):
             student.save()
 
         user_directory = os.path.join(MEDIA_ROOT, username, course_id)
-        os.makedirs(user_directory)
 
+        if os.path.isdir(user_directory):
+            return redirect('/courses/')
+        try:
+            os.makedirs(user_directory)
+        except OSError:
+            print(e)
+            return redirect("/error")
+            
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
         repo_name = "{}-{}".format(course_id, username)
 
