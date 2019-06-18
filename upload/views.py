@@ -165,6 +165,14 @@ def error(request):
     return render(request, 'upload/error.html')
 
 
+def create_assignment(request):
+    return render(request, 'upload/create_assignment.html')
+
+
+def create_course(request):
+    return render(request, 'upload/create_course.html')
+
+
 def logout(request):
     """Logs out user"""
     auth_logout(request)
