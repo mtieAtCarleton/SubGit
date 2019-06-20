@@ -20,6 +20,9 @@ Course.objects.get_or_create(id="cs211.01-f18", number="CS 211", section="01",
 Course.objects.get_or_create(id="cs348.00-f18", number="CS 348", section="00",
                              title="Parallel and Distributed Computing",
                              prof="Dave Musicant")
+Course.objects.get_or_create(id="cs000-000", number="CS 000", section="00",
+                             title="testy test",
+                             prof="testy test")
 
 Assignment.objects.get_or_create(title="Language Modeling with N-Grams", course=intro)
 Assignment.objects.get_or_create(title="Solve a Maze", course=intro)

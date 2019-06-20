@@ -166,13 +166,14 @@ def error(request):
 
 @login_required
 def create_assignment(request):
+    print(request.POST)
     if request.method == 'POST':
+        print("I AM USING POST") #WHY IS THIS NOT RUNNING
         title = request.POST.get('title')
         print(title)
         course = request.POST.get('course')
         due_date = request.POST.get('due_date')
-        Assignment.objects.get_or_create(title=title, course=course,
-                            deadline=due_date)
+        #Assignment.objects.get_or_create(title=title, course=course, deadline=due_date)
         if form.is_valid():
             return redirect('test/')
     return render(request, 'upload/create_assignment.html')
@@ -180,6 +181,7 @@ def create_assignment(request):
 @login_required
 def create_course(request):
     if request.method == 'POST':
+        print("I AM USING POST")
         id = request.POST.get('id')
         course_number = request.POST.get('course_number')
         section = request.POST.get('section')
@@ -190,7 +192,8 @@ def create_course(request):
     return render(request, 'upload/create_course.html')
 
 def test(request):
-    return render(request, 'upload/test.html')
+    title = "Hi"
+    return render(request, 'upload/test.html', {'title': title})
 
 def logout(request):
     """Logs out user"""
@@ -200,7 +203,9 @@ def logout(request):
 
 @login_required
 def register(request):
+    print(request.POST)
     if request.method == 'POST':
+        print('hi')
         username = request.user.username
 
         course_id = request.POST.get('course-id')
