@@ -6,7 +6,7 @@
   <h1>Create New Course</h1>
   <p>Please fill out the information for the course you want to create below</p>
 </div>
-<form action="/test/" class="was-validated" role="form">
+<form method='POST' action="/test/" class="was-validated" role="form">
   {% csrf_token %}
   <div class="form-group">
     <label for="id">ID:</label>
@@ -28,7 +28,9 @@
     <label for="prof_name">Professor Name:</label>
     <input type="prof_name" class="form-control" placeholder="Mickey Mouse" id="prof_name">
   </div>
-  <button type="submit" class="btn btn-primary btn">Submit</button>
+  <div>
+      <a class="btn btn-secondary" href="/test">Create</a>
+  </div>
 </form>
 </body>
 {% endblock %}
