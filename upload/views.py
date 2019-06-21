@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from upload.forms import FileForm
-from upload.models import File, Submission, Student, Course, GitHubAccount, Assignment
+from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
 import os.path
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -20,9 +20,9 @@ def courses(request):
     if os.path.exists(user_directory):
         try:
             return render(request, 'upload/courses.html', {
-                 'courses': Student.objects.get(username=request.user.username).courses.all()
+                 'courses': Person.objects.get(username=request.user.username).courses.all()
              })
-        except Student.DoesNotExist as e:
+        except Person.DoesNotExist as e:
             return redirect('/register/')
     else:
         return redirect('/register/')
@@ -47,7 +47,7 @@ def course(request, course_id):
 def upload_assignment(request, course_id, assignment_id):
     username = request.user.username
     course_directory = os.path.join(MEDIA_ROOT, username, course_id)
-    pending_submissions = File.objects.filter(submission__isnull=True, student__username=username,
+    pending_submissions = File.objects.filter(submission__isnull=True, person__username=username,
                                               assignment__id=assignment_id)
 
     if Assignment.objects.filter(id=assignment_id).exists():
@@ -89,7 +89,7 @@ def upload_assignment(request, course_id, assignment_id):
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
                 file = form.save(commit=False)
-                file.student = Student.objects.get(username=username)
+                file.person = Person.objects.get(username=username)
                 file.assignment = Assignment.objects.get(id=assignment_id)
                 file.save()
                 data = {'is_valid': True, 'name': file.file.name, 'url': file.file.url, 'id': file.id}
@@ -191,7 +191,7 @@ def create_course(request):
         title = request.POST.get('title')
         term = request.POST.get('term')
         id = '%1.%2-%3'.format(course_number, section, term)
-        prof = request.user.username
+        prof = request.user.first_name + ' ' + request.user.last_name
         try:
             #TODO check for course existence
             course = Course(id=id, number=course_number,
@@ -203,10 +203,6 @@ def create_course(request):
             return redirect('/error')
         return redirect('/prof_home')
     return render(request, 'upload/create_course.html')
-
-def test(request):
-    title = "Hi"
-    return render(request, 'upload/test.html', {'title': title})
 
 def logout(request):
     """Logs out user"""
@@ -221,7 +217,6 @@ def prof_home(request):
 def register(request):
     print(request.POST)
     if request.method == 'POST':
-        print('hi')
         username = request.user.username
 
         course_id = request.POST.get('course-id')
@@ -229,10 +224,11 @@ def register(request):
         if new:
             course.save()
 
-        student, new = Student.objects.get_or_create(username=username)
-        if not student.courses.filter(id=course_id).exists():
-            student.courses.add(course)
-            student.save()
+        person, new = Person.objects.get_or_create(username=username)
+        # If person is not registered for the course
+        if not person.courses.filter(id=course_id).exists():
+            person.courses.add(course)
+            person.save()
 
         user_directory = os.path.join(MEDIA_ROOT, username, course_id)
         os.makedirs(user_directory)
@@ -249,7 +245,7 @@ def register(request):
 
         # TODO: break up this try block, improve error handling
         try:
-            github_accounts = Student.objects.get(username=username).github_accounts.all()
+            github_accounts = Person.objects.get(username=username).github_accounts.all()
             for account in github_accounts:
                 repo.add_to_collaborators(account.username, "push")
 
@@ -277,9 +273,9 @@ def register(request):
             return redirect('/error/')
 
     if request.user.is_authenticated:
-        student, new = Student.objects.get_or_create(username=request.user.username)
+        person, new = Person.objects.get_or_create(username=request.user.username)
         return render(request, 'upload/register.html', {
-            'courses': [course for course in Course.objects.all() if course not in student.courses.all()]
+            'courses': [course for course in Course.objects.all() if course not in person.courses.all()]
         })
     else:
         return render(request, 'upload/register.html', {
@@ -300,18 +296,18 @@ def not_registered(request):
 def connect_github(request):
     if request.method == 'POST':
         input_username = request.POST.get('username')
-        student = Student.objects.get(username=request.user.username)
+        person = Person.objects.get(username=request.user.username)
 
         if input_username != config('GITHUB_ADMIN_USERNAME') and \
-                not student.github_accounts.filter(username=input_username).exists():
+                not person.github_accounts.filter(username=input_username).exists():
             g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
 
             account, new = GitHubAccount.objects.get_or_create(username=input_username)
-            student.github_accounts.add(account)
-            student.save()
+            person.github_accounts.add(account)
+            person.save()
 
             try:
-                for course in student.courses.all():
+                for course in person.courses.all():
                     repo_name = "{}-{}".format(course.id, request.user.username)
                     repo = g.get_user().get_repo(repo_name)
                     repo.add_to_collaborators(input_username, "push")
@@ -329,13 +325,13 @@ def connect_github(request):
 def manage_github(request):
     if request.method == "POST":
         account = request.POST.get('account')
-        Student.objects.get(username=request.user.username).github_accounts.remove(account)
+        Person.objects.get(username=request.user.username).github_accounts.remove(account)
 
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
 
-        student = Student.objects.get(username=request.user.username)
+        person = Person.objects.get(username=request.user.username)
 
-        for course in student.courses.all():
+        for course in person.courses.all():
             repo_name = "{}-{}".format(course.id, request.user.username)
             repo = g.get_user().get_repo(repo_name)
             try:
@@ -343,7 +339,7 @@ def manage_github(request):
             except GithubException as e:
                 print(e)
 
-    accounts = Student.objects.get(username=request.user.username).github_accounts.all()
+    accounts = Person.objects.get(username=request.user.username).github_accounts.all()
     return render(request, 'upload/manage_github.html', {
         'accounts': accounts
     })

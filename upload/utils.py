@@ -53,7 +53,7 @@ def get_github_url(repo_name):
 
 
 def clear_file(assignment_id, file, username):
-    other_assignment_check = File.objects.filter(file=file.file, student__username=username).exclude(
+    other_assignment_check = File.objects.filter(file=file.file, person__username=username).exclude(
         assignment__id=assignment_id)
     file_path = os.path.join(MEDIA_ROOT, file.file.name)
     if os.path.exists(file_path) and not other_assignment_check:
@@ -63,9 +63,9 @@ def clear_file(assignment_id, file, username):
 
 def get_submission_items(username, course_id, assignment_id):
     if assignment_id:
-        files = File.objects.filter(submission__isnull=False, student__username=username, assignment__id=assignment_id)
+        files = File.objects.filter(submission__isnull=False, person__username=username, assignment__id=assignment_id)
     else:
-        files = File.objects.filter(submission__isnull=False, student__username=username,
+        files = File.objects.filter(submission__isnull=False, person__username=username,
                                     assignment__course__id=course_id)
     submissions = {}
     repo_name = "{}-{}".format(course_id, username)

@@ -13,7 +13,7 @@ def content_file_name(instance, filename):
     """Returns the path to upload the given File instance and name, overwriting the current file at that path (if any).
        Should only be called when a File object is initialized.
     """
-    filename = os.path.join(instance.student.username, instance.assignment.course.id, filename)
+    filename = os.path.join(instance.person.username, instance.assignment.course.id, filename)
     filepath = os.path.join(MEDIA_ROOT, filename)
     if os.path.exists(filepath):
         os.remove(filepath)
@@ -42,7 +42,7 @@ class GitHubAccount(models.Model):
 
 
 # TODO: make GitHub accounts many-to-one
-class Student(models.Model):
+class Person(models.Model):
     username = models.CharField(max_length=30, primary_key=True, unique=True)
     courses = models.ManyToManyField(Course)
     github_accounts = models.ManyToManyField(GitHubAccount)
@@ -66,7 +66,7 @@ class Submission(models.Model):
 # TODO: should file know about assignment? if not, need a submitted bool in Submission to handle pending uploads
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name, null=False)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, null=True)
 
