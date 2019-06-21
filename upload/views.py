@@ -19,7 +19,7 @@ def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, request.user.username)
     if os.path.exists(user_directory):
         try:
-            print(Person.objects.get(username=request.user.username).courses.all())Í
+            print(Person.objects.get(username=request.user.username).courses.all())
             return render(request, 'upload/courses.html', {
                  'courses': Person.objects.get(username=request.user.username).courses.all()
              })
