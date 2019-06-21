@@ -1,20 +1,25 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-<div class = "jumbotron">
-  <h1>Create New Assignment</h1>
-  <p>Please fill out the information for the assignment you want to create below</p>
-</div>
-<form method="post" role="form">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="title">Title:</label>
-    <input type="title" name="title" class="form-control" placeholder="Maze" id="title" required>
-    <label for="course">Course:</label>
-    <input type="course" name="course" class="form-control" placeholder="CS 111" id="course" required>
-    <label for="due_date">Date and Time Due:</label>
-    <input type="datetime-local" name="due_date" class="form-control" placeholder="03" id="due_date" required>
+  <div class = "jumbotron">
+    <h1>Create New Assignment</h1>
+    <p>Please fill out the information for the assignment you want to create below</p>
   </div>
-  <input type="submit" value="Submit" href = "/test" class="submit btn btn-primary">
-</form>
+  <form method="post" role="form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="title" name="title" class="form-control" placeholder="Maze" id="title" required>
+      <label for="course">Course:</label>
+      <select name="course-id" class="form-control" id="course-id" required>
+          {% for course in courses %}
+              <option value="{{ course.id }}">{{ course.number }}.{{ course.section }} {{ course.name }} ({{ course.prof }})</option>
+          {% endfor %}
+      </select>
+      <label for="due_date">Date and Time Due:</label>
+      <input type="datetime-local" name="due_date" class="form-control" placeholder="03" id="due_date" required>
+    </div>
+    <input type="submit" value="Create" class="submit btn btn-primary">
+  </form>
+  <a href="/" class="btn btn-secondary" role="button">Cancel</a>
 {% endblock %}

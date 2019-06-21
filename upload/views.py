@@ -9,6 +9,7 @@ from git import Git
 import sys
 from upload.utils import *
 from django.http import JsonResponse
+from datetime import datetime
 
 HISTORY_LENGTH = 5
 
@@ -166,29 +167,41 @@ def error(request):
 
 @login_required
 def create_assignment(request):
-    print(request.POST)
     if request.method == 'POST':
-        print("I AM USING POST") #WHY IS THIS NOT RUNNING
         title = request.POST.get('title')
-        print(title)
-        course = request.POST.get('course')
-        due_date = request.POST.get('due_date')
-        #Assignment.objects.get_or_create(title=title, course=course, deadline=due_date)
-        if form.is_valid():
-            return redirect('test/')
-    return render(request, 'upload/create_assignment.html')
+        course_id = request.POST.get('course-id')
+        #TODO: time zones
+        due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M')
+        try:
+            ## TODO: you can select any course, even ones you are not the prof of
+            course = Course.objects.get(id = course_id)
+            assignment = Assignment(title=title, course=course, deadline=due_date)
+            assignment.save()
+        except Exception as e:
+            print(e)
+            return redirect('/error')
+        return redirect('/prof_home')
+    return render(request, 'upload/create_assignment.html', {'courses': list(Course.objects.all())})
 
 @login_required
 def create_course(request):
     if request.method == 'POST':
-        print("I AM USING POST")
-        id = request.POST.get('id')
-        course_number = request.POST.get('course_number')
+        course_number= request.POST.get('course_number')
         section = request.POST.get('section')
         title = request.POST.get('title')
-        section = request.POST.get('prof_name')
-        Course.objects.get_or_create(id=id, course_number=course_number,
-        title=title, section=section)
+        term = request.POST.get('term')
+        id = '%1.%2-%3'.format(course_number, section, term)
+        prof = request.user.username
+        try:
+            #TODO check for course existence
+            course = Course(id=id, number=course_number,
+                            title=title, section=section, prof=prof)
+            print('course', course)
+            course.save()
+        except Exception as e:
+            print(e)
+            return redirect('/error')
+        return redirect('/prof_home')
     return render(request, 'upload/create_course.html')
 
 def test(request):
@@ -200,6 +213,9 @@ def logout(request):
     auth_logout(request)
     return redirect('/')
 
+@login_required
+def prof_home(request):
+    return render(request, 'upload/prof_home.html')
 
 @login_required
 def register(request):
