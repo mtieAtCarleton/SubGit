@@ -19,6 +19,7 @@ def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, request.user.username)
     if os.path.exists(user_directory):
         try:
+            print(Person.objects.get(username=request.user.username).courses.all())Í
             return render(request, 'upload/courses.html', {
                  'courses': Person.objects.get(username=request.user.username).courses.all()
              })
@@ -190,13 +191,12 @@ def create_course(request):
         section = request.POST.get('section')
         title = request.POST.get('title')
         term = request.POST.get('term')
-        id = '%1.%2-%3'.format(course_number, section, term)
-        prof = request.user.first_name + ' ' + request.user.last_name
+        id = '{0}.{1}-{2}'.format(course_number, section, term)
+        prof = Person.objects.get(pk=request.user.username)
         try:
             #TODO check for course existence
             course = Course(id=id, number=course_number,
                             title=title, section=section, prof=prof)
-            print('course', course)
             course.save()
         except Exception as e:
             print(e)

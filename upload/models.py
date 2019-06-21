@@ -33,8 +33,8 @@ class Course(models.Model):
     # e.g. Introduction to Computer Science
     title = models.CharField(max_length=255, null=True, blank=True)
 
-    # e.g. Eric Alexander
-    prof = models.CharField(max_length=255, null=True, blank=True)
+    #TODO: Maybe should be many to many, we'll deal with that later if needed
+    prof = models.ForeignKey('Person', on_delete=models.CASCADE, null=True)
 
 
 class GitHubAccount(models.Model):
@@ -44,6 +44,7 @@ class GitHubAccount(models.Model):
 # TODO: make GitHub accounts many-to-one
 class Person(models.Model):
     username = models.CharField(max_length=30, primary_key=True, unique=True)
+    full_name = models.CharField(max_length=30)
     courses = models.ManyToManyField(Course)
     github_accounts = models.ManyToManyField(GitHubAccount)
 
