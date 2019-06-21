@@ -211,14 +211,11 @@ def logout(request):
 @login_required
 def prof_home(request):
     prof = Person.objects.get(pk=request.user.username)
-    print(prof)
     courses = Course.objects.filter(prof__exact=prof).all()
-    print(courses)
     return render(request, 'upload/prof_home.html', {'courses': courses})
 
 @login_required
 def register(request):
-    print(request.POST)
     if request.method == 'POST':
         username = request.user.username
 
