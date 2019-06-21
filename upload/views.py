@@ -19,7 +19,6 @@ def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, request.user.username)
     if os.path.exists(user_directory):
         try:
-            print(Person.objects.get(username=request.user.username).courses.all())
             return render(request, 'upload/courses.html', {
                  'courses': Person.objects.get(username=request.user.username).courses.all()
              })
@@ -211,7 +210,11 @@ def logout(request):
 
 @login_required
 def prof_home(request):
-    return render(request, 'upload/prof_home.html')
+    prof = Person.objects.get(pk=request.user.username)
+    print(prof)
+    courses = Course.objects.filter(prof__exact=prof).all()
+    print(courses)
+    return render(request, 'upload/prof_home.html', {'courses': courses})
 
 @login_required
 def register(request):
