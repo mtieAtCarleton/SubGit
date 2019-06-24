@@ -59,7 +59,8 @@ ROOT_URLCONF = 'SubGit.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'upload/templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'upload/templates'),
+                 os.path.join(BASE_DIR, 'upload/templates/prof')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {

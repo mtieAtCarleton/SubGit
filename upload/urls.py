@@ -16,26 +16,29 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from . import prof
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
     path('', views.home),
-    path('create_assignment/', views.create_assignment),
-    path('create_course/', views.create_course),
     path('logout/', views.logout),
-    path('prof_home/', views.prof_home),
     path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
     path('register/', views.register),
     path('registered/', views.registered),
     path('error/', views.error),
+    path('login_error/', views.login_error),
     path('courses/', views.courses),
+    path('courses/<str:course_id>', views.course),
     path('connect_github/', views.connect_github),
     path('manage_github/', views.manage_github),
-    path('login_error/', views.login_error),
-    path('courses/<str:course_id>', views.course)
+    path('prof/', prof.courses),
+    path('prof/courses/', prof.courses),
+    path('prof/courses/<str:course_id>', prof.course),
+    path('prof/create_assignment/', prof.create_assignment),
+    path('prof/create_course/', prof.create_course),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO: remove the static urls before deployment, find a better way to serve static files

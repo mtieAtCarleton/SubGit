@@ -169,55 +169,10 @@ def login_error(request):
 def error(request):
     return render(request, 'upload/error.html')
 
-@login_required
-def create_assignment(request):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        course_id = request.POST.get('course-id')
-        #TODO: time zones
-        due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M')
-        try:
-            ## TODO: you can select any course, even ones you are not the prof of
-            course = Course.objects.get(id = course_id)
-            assignment = Assignment(title=title, course=course, deadline=due_date)
-            assignment.save()
-        except Exception as e:
-            print(e)
-            return redirect('/error')
-        return redirect('/prof_home')
-    return render(request, 'upload/create_assignment.html', {'courses': list(Course.objects.all())})
-
-@login_required
-def create_course(request):
-    if request.method == 'POST':
-        course_number= request.POST.get('course_number')
-        section = request.POST.get('section')
-        title = request.POST.get('title')
-        term = request.POST.get('term')
-        id = '{0}.{1}-{2}'.format(course_number, section, term)
-        prof = Person.objects.get(pk=request.user.username)
-        print(prof)
-        try:
-            #TODO check for course existence
-            course = Course(id=id, number=course_number,
-                            title=title, section=section, prof=prof)
-            course.save()
-        except Exception as e:
-            print(e)
-            return redirect('/error')
-        return redirect('/prof_home')
-    return render(request, 'upload/create_course.html')
-
 def logout(request):
     """Logs out user"""
     auth_logout(request)
     return redirect('/')
-
-@login_required
-def prof_home(request):
-    prof = Person.objects.get(pk=request.user.username)
-    courses = Course.objects.filter(prof__exact=prof).all()
-    return render(request, 'upload/prof_home.html', {'courses': courses})
 
 @login_required
 def register(request):

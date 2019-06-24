@@ -36,7 +36,6 @@ class Course(models.Model):
     #TODO: Maybe should be many to many, we'll deal with that later if needed
     prof = models.ForeignKey('Person', on_delete=models.CASCADE, null=True)
 
-
 class GitHubAccount(models.Model):
     username = models.CharField(max_length=255, primary_key=True, unique=True)
 
