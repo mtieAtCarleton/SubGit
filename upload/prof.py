@@ -48,7 +48,6 @@ def create_course(request):
         term = request.POST.get('term')
         id = '{0}.{1}-{2}'.format(course_number, section, term)
         prof = Person.objects.get(pk=request.user.username)
-        print(prof)
         try:
             #TODO check for course existence
             course = Course(id=id, number=course_number,
@@ -70,12 +69,13 @@ def courses(request):
 def course(request, course_id):
     username = request.user.username
     submissions_items = get_submission_items(username, course_id, None)
-
+    course = Course.objects.get(id=course_id)
+    print(course)
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
     # TODO: display variable length history (GUI toggle like in Moodle?)
     return render(request, 'upload/prof/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
-        'course': Course.objects.get(id=course_id),
+        'course': course,
         'assignments': assignments
     })
