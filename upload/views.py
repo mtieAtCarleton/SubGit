@@ -222,11 +222,9 @@ def prof_home(request):
 @login_required
 def register(request):
     if request.method == 'POST':
+        # Create user if not exists (done here since it is the main redirect)
         username = request.user.username
-        try:
-            person = Person.objects.get(username=username)
-        except ObjectDoesNotExist:
-            redirect('/error')
+        person = Person.objects.get(username=username)
 
         course_id = request.POST.get('course-id')
         try:
@@ -283,6 +281,9 @@ def register(request):
 
     if request.user.is_authenticated:
         person, new = Person.objects.get_or_create(username=request.user.username)
+        if new:
+            person.full_name = request.user.first_name + ' ' + request.user.last_name
+            person.save()
         return render(request, 'upload/register.html', {
             'courses': [course for course in Course.objects.all() if course not in person.courses.all()]
         })
