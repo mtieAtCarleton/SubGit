@@ -7,7 +7,7 @@ from datetime import datetime
 from django.utils.timezone import make_aware
 import pytz
 
-test_prof = Person(username="whiteg", full_name="Ginnie White")
+test_prof = Person(username="dln", full_name="David Liben-Nowell")
 test_prof.save()
 
 intro, new = Course.objects.get_or_create(id="cs111.00-f18", number="CS 111", section="00",
