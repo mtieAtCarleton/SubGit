@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SubGit</title>
-    {% load staticfiles %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/subgit.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <title>SubGit</title>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/subgit.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body class="body">
-    <div class="container-fluid">
-    <nav class="navbar navbar-dark fixed-top">
-        <a class="navbar-brand" href="/">SubGit@Carleton</a>
-        {% if user.username %}
+  <div class="container-fluid">
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="/">SubGit@Carleton</a>
+      {% if user.username %}
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle show" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {{ user.first_name }} {{ user.last_name }}
-            </a>
-            <div class="dropdown-menu dropdown-menu-right menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="/manage_github">Manage GitHub accounts</a>
-                <a class="dropdown-item" href="https://moodle.carleton.edu">Moodle</a>
-                <a class="dropdown-item" href="/prof_home">Professor Home Page</a>
-                <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/logout">Logout</a>
-            </div>
+          <a class="nav-link dropdown-toggle show" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ user.first_name }} {{ user.last_name }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/manage_github">Manage GitHub accounts</a>
+            <a class="dropdown-item" href="https://moodle.carleton.edu">Moodle</a>
+            <a class="dropdown-item" href="/prof_home">Professor Home Page</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout">Logout</a>
+          </div>
         </li>
-        {% endif %}
+      {% endif %}
     </nav>
 
     {% block content %}
     {% endblock %}
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    {% block javascript %}
-    {% endblock %}
-    {% load tz_detect %}
-    {% tz_detect %}
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  {% block javascript %}
+  {% endblock %}
+  {% load tz_detect %}
+  {% tz_detect %}
 </body>
 </html>

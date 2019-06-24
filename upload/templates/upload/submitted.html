@@ -4,37 +4,37 @@
 {#<p>You've successfully submitted your assignment!</p>#}
 {##}
 {#{% if documents %}#}
-{#        <ul>#}
-{#        {% for document in documents %}#}
-{#            <li><a href="{{ document.document.url }}">{{ document.document.name }}</a></li>#}
-{#        {% endfor %}#}
-{#        </ul>#}
-{#    {% else %}#}
-{#        <p>No documents.</p>#}
+{#  <ul>#}
+{#    {% for document in documents %}#}
+{#      <li><a href="{{ document.document.url }}">{{ document.document.name }}</a></li>#}
+{#    {% endfor %}#}
+{#  </ul>#}
+{#  {% else %}#}
+{#    <p>No documents.</p>#}
 {#{% endif %}#}
 {##}
 {#<p><a href="/upload">Submit another file</a></p>#}
 {#<p><a href="/logout/">Log out</a></p>#}
-    <div class="row">
-        <div class="col">
-            <div class="jumbotron">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-                <li class="breadcrumb-item"><a href="/courses/{{ assignment.course.id }}">{{ assignment.course.id }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
-              </ol>
-            </nav>
-              <h1 class="display-5">You've successfully submitted your assignment {{ assignment.title }}!</h1>
-              <p class="lead">It has been saved to the <a href="{{ url }}">{{ course_id }}-{{ user.username }}</a> repository on GitHub.</p>
-              <hr class="my-4">
-                <p><a href="/upload/{{ course_id }}/{{ assignment.id }}" class="btn btn-primary">Submit another file</a></p>
-                <p><a href="/courses/{{ course_id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
-                <p><a href="/logout/">Log out</a></p>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            {% include 'upload/history-sidebar.html' %}
-        </div>
+  <div class="row">
+    <div class="col">
+      <div class="jumbotron">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item"><a href="/courses/{{ assignment.course.id }}">{{ assignment.course.id }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
+          </ol>
+        </nav>
+        <h1 class="display-5">You've successfully submitted your assignment {{ assignment.title }}!</h1>
+        <p class="lead">It has been saved to the <a href="{{ url }}">{{ course_id }}-{{ user.username }}</a> repository on GitHub.</p>
+        <hr class="my-4">
+        <p><a href="/upload/{{ course_id }}/{{ assignment.id }}" class="btn btn-primary">Submit another file</a></p>
+        <p><a href="/courses/{{ course_id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to course</a>
+        <p><a href="/logout/">Log out</a></p>
+      </div>
     </div>
+    <div class="col-lg-3">
+      {% include 'upload/history-sidebar.html' %}
+    </div>
+  </div>
 {% endblock %}

@@ -1,22 +1,22 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <p class="mt-5">Please select the class that you want to register for.
-        If you are enrolled in multiple CS classes, you will have the opportunity to register for more later.</p>
-    <form method="post" role="form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="course-id">Class</label>
-            <select name="course-id" class="form-control" id="course-id" required>
-                {% for course in courses %}
-                    <option value="{{ course.id }}">{{ course.number }}.{{ course.section }} {{ course.name }} ({{ course.prof.full_name }})</option>
-                {% endfor %}
-            </select>
-          </div>
-        <div class = "container">
-          <input type="submit" value="Submit" class="submit btn btn-primary">
-          <a href="/" class="btn btn-secondary" role="button">Cancel</a>
-        </div>
-    </form>
-    <br>
+  <p class="mt-5">Please select the class that you want to register for.
+    If you are enrolled in multiple CS classes, you will have the opportunity to register for more later.</p>
+  <form method="post" role="form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="course-id">Class</label>
+      <select name="course-id" class="form-control" id="course-id" required>
+        {% for course in courses %}
+          <option value="{{ course.id }}">{{ course.number }}.{{ course.section }} {{ course.name }} ({{ course.prof.full_name }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class = "container">
+      <input type="submit" value="Submit" class="submit btn btn-primary">
+      <a href="/" class="btn btn-secondary" role="button">Cancel</a>
+    </div>
+  </form>
+  <br>
 {% endblock %}

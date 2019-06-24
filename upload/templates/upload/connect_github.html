@@ -1,19 +1,19 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <h1 class="mt-5">Connect to GitHub</h1>
-    <p class="lead">This website posts your homework to a GitHub repository that you can access through your GitHub account.
-    </p>
-    <p>If you have a GitHub account, enter your username below to link it to your SubGit account. You can also choose to set this up later.</p>
-    <form method="post" role="form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="username">GitHub username</label>
-            <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Enter GitHub username">
-            <small id="usernameHelp" class="form-text text-muted">This will only be used to share your homework repositories.</small>
-        </div>
-        <input type="submit" value="Submit" class="submit btn btn-primary btn-lg">
-    </form>
-    <br>
-    <a href="/courses" class="btn btn-secondary" role="button">Skip for now</a>
+  <h1 class="mt-5">Connect to GitHub</h1>
+  <p class="lead">This website posts your homework to a GitHub repository that you can access through your GitHub account.
+  </p>
+  <p>If you have a GitHub account, enter your username below to link it to your SubGit account. You can also choose to set this up later.</p>
+  <form method="post" role="form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">GitHub username</label>
+      <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Enter GitHub username">
+      <small id="usernameHelp" class="form-text text-muted">This will only be used to share your homework repositories.</small>
+    </div>
+    <input type="submit" value="Submit" class="submit btn btn-primary btn-lg">
+  </form>
+  <br>
+  <a href="/courses" class="btn btn-secondary" role="button">Skip for now</a>
 {% endblock %}
