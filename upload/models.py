@@ -48,6 +48,11 @@ class Person(models.Model):
     courses = models.ManyToManyField(Course)
     github_accounts = models.ManyToManyField(GitHubAccount)
 
+    def __str__(self):
+        return 'Person with username: {0}, full_name: {1}, courses: {2}, github_accounts: {3}'.format(
+            self.username, self.full_name, self.courses, self.github_accounts
+        )
+
 
 class Assignment(models.Model):
     title = models.CharField(max_length=255)

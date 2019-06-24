@@ -192,6 +192,7 @@ def create_course(request):
         term = request.POST.get('term')
         id = '{0}.{1}-{2}'.format(course_number, section, term)
         prof = Person.objects.get(pk=request.user.username)
+        print(prof)
         try:
             #TODO check for course existence
             course = Course(id=id, number=course_number,
