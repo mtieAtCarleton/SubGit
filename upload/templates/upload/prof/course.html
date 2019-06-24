@@ -1,0 +1,29 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {#<li class="breadcrumb-item active" aria-current="page">Courses</li>#}
+      </ol>
+    </nav>
+    <h1 class="display-4">Prof Courses</h1>
+    <hr class="my-4">
+    <ul class="list-group list-group-flush">
+      {% for course in courses %}
+        <a class="list-group-item list-group-item-action" href="/prof/courses/{{ course.id }}">
+          <h5>{{ course.title }}</h5>
+          {{ course.prof.full_name }}
+        </a>
+      {% endfor %}
+    </ul>
+    <div>
+      <a class="btn btn-secondary" href="/prof/create_assignment">Create Assignment</a>
+    </div>
+    <br>
+      <div>
+        <a class="btn btn-secondary" href="/prof">Home</a>
+      </div>
+    </br>
+  </div>
+{% endblock %}
