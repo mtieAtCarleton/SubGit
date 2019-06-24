@@ -1,15 +1,19 @@
-from django.shortcuts import render, redirect
 from upload.forms import FileForm
 from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
+from upload.utils import *
+
+from datetime import datetime
 import os.path
-from django.contrib.auth.decorators import login_required
+import sys
+
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+
 from github import GithubException
 from git import Git
-import sys
-from upload.utils import *
-from django.http import JsonResponse
-from datetime import datetime
 
 HISTORY_LENGTH = 5
 
@@ -219,13 +223,17 @@ def prof_home(request):
 def register(request):
     if request.method == 'POST':
         username = request.user.username
+        try:
+            person = Person.objects.get(username=username)
+        except ObjectDoesNotExist:
+            redirect('/error')
 
         course_id = request.POST.get('course-id')
-        course, new = Course.objects.get_or_create(id=course_id)
-        if new:
-            course.save()
+        try:
+            course = Course.objects.get(id=course_id)
+        except ObjectDoesNotExist:
+            redirect('/error')
 
-        person, new = Person.objects.get_or_create(username=username)
         # If person is not registered for the course
         if not person.courses.filter(id=course_id).exists():
             person.courses.add(course)
