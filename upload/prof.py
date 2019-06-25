@@ -39,6 +39,7 @@ def create_assignment(request):
                   'upload/prof/create_assignment.html',
                   {'courses': list(Course.objects.all())})
 
+
 @login_required
 def create_course(request):
     if request.method == 'POST':
@@ -59,11 +60,19 @@ def create_course(request):
         return redirect('/prof')
     return render(request, 'upload/prof/create_course.html')
 
+
+def home(request):
+    if request.user.username:
+        return redirect("/prof/courses/")
+    return render(request, 'upload/home.html')
+
+
 @login_required
 def courses(request):
     prof = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(prof__exact=prof).all()
     return render(request, 'upload/prof/courses.html', {'courses': courses})
+
 
 @login_required
 def course(request, course_id):

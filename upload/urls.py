@@ -34,7 +34,7 @@ urlpatterns = [
     path('courses/<str:course_id>', views.course),
     path('connect_github/', views.connect_github),
     path('manage_github/', views.manage_github),
-    path('prof/', prof.courses),
+    path('prof/', prof.home),
     path('prof/courses/', prof.courses),
     path('prof/courses/<str:course_id>', prof.course),
     path('prof/create_assignment/', prof.create_assignment),
