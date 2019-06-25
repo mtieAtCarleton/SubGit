@@ -21,13 +21,13 @@ HISTORY_LENGTH = 5
 
 @login_required
 def create_assignment(request, course_id):
+    course = Course.objects.get(id = course_id)
     if request.method == 'POST':
         title = request.POST.get('title')
         #TODO: time zones
         due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M')
         try:
             ## TODO: you can select any course, even ones you are not the prof of
-            course = Course.objects.get(id = course_id)
             assignment = Assignment(title=title, course=course, deadline=due_date)
             assignment.save()
         except Exception as e:
@@ -35,7 +35,7 @@ def create_assignment(request, course_id):
             return redirect('/error')
         return redirect('/prof/')
     return render(request,
-                  'upload/prof/create_assignment.html')
+                  'upload/prof/create_assignment.html',{'course':course})
 
 
 @login_required
