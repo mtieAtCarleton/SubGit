@@ -281,7 +281,7 @@ def connect_github(request):
                 account.delete()
                 return redirect('/error')
 
-            return redirect("/courses/")
+            return redirect("/manage_github/")
 
     return render(request, "upload/connect_github.html")
 
