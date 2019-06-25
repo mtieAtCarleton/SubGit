@@ -5,6 +5,8 @@ from upload.utils import *
 from datetime import datetime
 import os.path
 import sys
+import pytz
+from pytz import timezone
 
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -25,7 +27,8 @@ def create_assignment(request, course_id):
     if request.method == 'POST':
         title = request.POST.get('title')
         #TODO: time zones
-        due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M')
+        central = timezone('US/Central')
+        due_date = central.localize(datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M'))
         try:
             ## TODO: you can select any course, even ones you are not the prof of
             assignment = Assignment(title=title, course=course, deadline=due_date)
