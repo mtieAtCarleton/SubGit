@@ -20,7 +20,7 @@
             <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
             <h5>{{ assignment.title }}</h5>
             {% if assignment.deadline %}
-              <small class="text-muted">Due {{ assignment.deadline }}</small>
+              <small class="text-muted">Due {{ assignment.deadline }} CST</small>
             {% else %}
               <small class="text-muted">No due date</small>
             {% endif %}</a>
