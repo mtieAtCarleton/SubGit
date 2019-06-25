@@ -37,7 +37,8 @@ urlpatterns = [
     path('prof/', prof.home),
     path('prof/courses/', prof.courses),
     path('prof/courses/<str:course_id>', prof.course),
-    path('prof/create_assignment/', prof.create_assignment),
+    #path('prof/create_assignment/', prof.create_assignment),
+    path('prof/courses/<str:course_id>/create_assignment',prof.create_assignment),
     path('prof/create_course/', prof.create_course),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

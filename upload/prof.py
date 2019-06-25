@@ -20,10 +20,9 @@ HISTORY_LENGTH = 5
 
 
 @login_required
-def create_assignment(request):
+def create_assignment(request, course_id):
     if request.method == 'POST':
         title = request.POST.get('title')
-        course_id = request.POST.get('course-id')
         #TODO: time zones
         due_date = datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M')
         try:
@@ -36,8 +35,7 @@ def create_assignment(request):
             return redirect('/error')
         return redirect('/prof/')
     return render(request,
-                  'upload/prof/create_assignment.html',
-                  {'courses': list(Course.objects.all())})
+                  'upload/prof/create_assignment.html')
 
 
 @login_required
