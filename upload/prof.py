@@ -26,12 +26,13 @@ def create_assignment(request, course_id):
     course = Course.objects.get(id = course_id)
     if request.method == 'POST':
         title = request.POST.get('title')
+        description = request.POST.get('description')
         #TODO: time zones
         central = timezone('US/Central')
         due_date = central.localize(datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M'))
         try:
             ## TODO: you can select any course, even ones you are not the prof of
-            assignment = Assignment(title=title, course=course, deadline=due_date)
+            assignment = Assignment(title=title, description=description, course=course, deadline=due_date)
             assignment.save()
         except Exception as e:
             print(e)

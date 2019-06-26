@@ -55,6 +55,7 @@ class Person(models.Model):
 
 class Assignment(models.Model):
     title = models.CharField(max_length=255)
+    description = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True, blank=True)
 
