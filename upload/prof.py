@@ -40,6 +40,8 @@ def create_assignment(request, course_id):
     return render(request,
                   'upload/prof/create_assignment.html',{'course':course})
 
+def assignment_description(request, course_id, assignment_id):
+    return render (request, 'upload/prof/assignment_description.html', {'assignment_id': assignment_id})
 
 @login_required
 def create_course(request):
