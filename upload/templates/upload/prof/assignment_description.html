@@ -1,1 +1,38 @@
 {% extends "upload/header.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <div class="jumbotron">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/prof/courses">Courses</a></li>
+            <li class="breadcrumb-item"><a href="/prof/courses/{{ course.id }}">{{ course.id }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
+            </ol>
+        </nav>
+        <h1 class="display-5">{{ course.title }}</h1>
+        <p class="lead">{{ course.id }} - {{ course.prof.full_name }}</p>
+        <h3 class="display-5">{{ assignment.title }}</h1>
+        {% if assignment.deadline %}
+          <p>Due {{ assignment.deadline }}</p>
+        {% else %}
+          <pclass="text-muted">No due date</p>
+        {% endif %}</a>
+
+        <br>
+        <div>
+          <a href="#" class="btn btn-warning" role="button">Edit Assignment</a>
+        </div>
+        <br>
+        <div>
+          <a href="#" class="btn btn-danger" role="button">Delete Assignment</a>
+        </div>
+        <br>
+          <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to Assignments</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endblock %}
