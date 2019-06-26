@@ -1,4 +1,8 @@
 {% extends "upload/header.html" %}
+<!-- Allows a professor to create a new assignment for a given course. Contains 3 fields:
+ 'title', 'description', and 'due_date'.
+ Called from prof.py. 'request', 'course_id', and 'assignment_id' are passed in.
+Accessed from course.html. Directs back to course.html.-->
 
 {% block content %}
   <div class = "jumbotron">
