@@ -1,12 +1,17 @@
 """
 Miscellaneous functions for use in views.py and elsewhere.
 """
-from git import Repo
 from SubGit.settings import MEDIA_ROOT
-from upload.models import File
-from decouple import config
+from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
+
 import os
+import sys
+import time
+
+from decouple import config
 import git
+from git import Git
+from git import Repo
 from github import Github
 
 
@@ -41,6 +46,47 @@ def submit(user, course_id, file_names, commit_message, branch):
     repo.index.add(file_list)
     repo.index.commit(commit_message)
     repo.git.push('--set-upstream', 'origin', branch)
+
+
+def add_student_to_course(username, course_id):
+    user_directory = os.path.join(MEDIA_ROOT, username, course_id)
+    os.makedirs(user_directory)
+
+    g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+    repo_name = "{}-{}".format(course_id, username)
+
+    # TODO: create within organization?
+    try:
+        repo = g.get_user().create_repo(repo_name, private=True)
+    except GithubException as e:
+        print(e)
+
+    # TODO: break up this try block, improve error handling
+    try:
+        github_accounts = Person.objects.get(username=username).github_accounts.all()
+        for account in github_accounts:
+            repo.add_to_collaborators(account.username, "push")
+
+        repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+
+        # TODO: move to environment variable
+        # see https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+        git_ssh_identity_file = os.path.expanduser(config('SSH_KEY_PATH'))
+        git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
+        time.sleep(10)
+        with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+            local_repo = Repo.clone_from(repo_url, user_directory)
+
+        readme_path = make_readme(username, user_directory)
+        # TODO: override any existing git config of username/password and use SubGitAdmin instead
+        local_repo.index.add([readme_path])
+        local_repo.index.commit("Initial commit")
+        origin = local_repo.remotes.origin
+        origin.push()
+
+    except Exception as e:
+        print(e)
+        print("Unexpected error:", sys.exc_info()[0])
 
 
 def get_branch_url(repo_name, assignment_title):

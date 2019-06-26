@@ -5,6 +5,8 @@ from upload.utils import *
 from datetime import datetime
 import os.path
 import sys
+import time
+import threading
 
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -70,6 +72,7 @@ def upload_assignment(request, course_id, assignment_id):
             pending_submissions.exclude(file=file)
             form = FileForm()
         elif "submit" in request.POST:
+
             # if the form is ready to submit, make a new submission entry in the database with the current pending files
             # then add to Git, commit and push to GitHub
             if pending_submissions:
@@ -192,47 +195,11 @@ def register(request):
             person.courses.add(course)
             person.save()
 
-        user_directory = os.path.join(MEDIA_ROOT, username, course_id)
-        os.makedirs(user_directory)
-
-        g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-        repo_name = "{}-{}".format(course_id, username)
-
-        # TODO: create within organization?
-        try:
-            repo = g.get_user().create_repo(repo_name, private=True)
-        except GithubException as e:
-            print(e)
-            return redirect("/error")
-
-        # TODO: break up this try block, improve error handling
-        try:
-            github_accounts = Person.objects.get(username=username).github_accounts.all()
-            for account in github_accounts:
-                repo.add_to_collaborators(account.username, "push")
-
-            repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
-
-            # TODO: move to environment variable
-            # see https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-            git_ssh_identity_file = os.path.expanduser(config('SSH_KEY_PATH'))
-            git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
-
-            with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
-                local_repo = Repo.clone_from(repo_url, user_directory)
-
-            readme_path = make_readme(username, user_directory)
-            # TODO: override any existing git config of username/password and use SubGitAdmin instead
-            local_repo.index.add([readme_path])
-            local_repo.index.commit("Initial commit")
-            origin = local_repo.remotes.origin
-            origin.push()
-
-            return redirect('/courses/')
-        except Exception as e:
-            print(e)
-            print("Unexpected error:", sys.exc_info()[0])
-            return redirect('/error/')
+        target = threading.Thread(target=add_student_to_course,
+                                  args=(username, course_id),
+                                  daemon=True)
+        target.start()
+        return redirect('/courses')
 
     if request.user.is_authenticated:
         person, new = Person.objects.get_or_create(username=request.user.username)
@@ -246,7 +213,6 @@ def register(request):
         return render(request, 'upload/register.html', {
             'courses': Course.objects.all()
         })
-
 
 @login_required
 def registered(request):
