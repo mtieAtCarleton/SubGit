@@ -2,10 +2,8 @@ from upload.forms import FileForm
 from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
 from upload.utils import *
 
-from datetime import datetime
 import os.path
 import sys
-import time
 import threading
 
 from django.contrib.auth import logout as auth_logout
