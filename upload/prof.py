@@ -66,8 +66,12 @@ def edit_assignment(request, course_id, assignment_id):
 
 def assignment_description(request, course_id, assignment_id):
     assignment = Assignment.objects.get(pk=assignment_id)
+    if request.method == 'POST':
+        #TODO Delete already submitted assignments
+        assignment.delete()
+        return redirect('/prof/courses/{0}'.format(course_id))
     course = Course.objects.get(pk=course_id)
-    return render (request, 'upload/prof/assignment_description.html', {'assignment': assignment, 'course': course})
+    return render(request, 'upload/prof/assignment_description.html', {'assignment': assignment, 'course': course})
 
 
 

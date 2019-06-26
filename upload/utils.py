@@ -83,7 +83,6 @@ def add_student_to_course(username, course_id):
         local_repo.index.commit("Initial commit")
         origin = local_repo.remotes.origin
         origin.push()
-
     except Exception as e:
         print(e)
         print("Unexpected error:", sys.exc_info()[0])
