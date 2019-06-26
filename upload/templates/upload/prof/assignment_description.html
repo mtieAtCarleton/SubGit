@@ -1,5 +1,13 @@
 {% extends "upload/header.html" %}
 
+<style>
+.btn-edit {
+    background-color: #0b5091;
+    border-color: #0b5091;
+}
+</style>
+
+
 {% block content %}
   <div class="row">
     <div class="col">
@@ -15,23 +23,26 @@
         <p class="lead">{{ course.id }} - {{ course.prof.full_name }}</p>
         <h3 class="display-5">{{ assignment.title }}</h1>
         {% if assignment.deadline %}
-          <p>Due {{ assignment.deadline }}</p>
+          <p>Due: {{ assignment.deadline }}</p>
         {% else %}
           <pclass="text-muted">No due date</p>
         {% endif %}</a>
-
-        <br>
-        <div>
-          <a href="#" class="btn btn-warning" role="button">Edit Assignment</a>
+        <h5> Assignment Description: </h5>
+        <div class="col-sm-12">
+          <p> {{ assignment.description }} </p>
         </div>
         <br>
-        <div>
-          <a href="#" class="btn btn-danger" role="button">Delete Assignment</a>
+        <div class="row">
+          <div class="col-sm-1">
+            <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary btn-block span" role="button"><span class="fas fa-arrow-left"></span>Back</a>
+          </div>
+          <div class="col-sm-1">
+            <a href="/prof/courses/{{ course.id }}/{{ assignment.id }}/edit_assignment" class="btn btn-edit btn-block" role="button">Edit</a>
+          </div>
+          <div class="col-sm-1">
+            <a href="#" class="btn btn-danger btn-block" role="button">Delete</a>
+          </div>
         </div>
-        <br>
-          <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to Assignments</a>
-        </div>
-
       </div>
     </div>
   </div>

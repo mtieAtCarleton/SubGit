@@ -41,10 +41,35 @@ def create_assignment(request, course_id):
     return render(request,
                   'upload/prof/create_assignment.html',{'course':course})
 
+@login_required
+def edit_assignment(request, course_id, assignment_id):
+    assignment = Assignment.objects.get(pk=assignment_id)
+    course = Course.objects.get(pk=course_id)
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        #TODO: time zones
+        central = timezone('US/Central')
+        due_date = central.localize(datetime.strptime(request.POST.get('due_date'), '%Y-%m-%dT%H:%M'))
+        try:
+            #assignment = Assignment(title=title, description=description, course=course, deadline=due_date)
+            assignment.title=title
+            assignment.description=description
+            assignment.course=course
+            assignment.deadline=due_date
+            assignment.save()
+        except Exception as e:
+            print(e)
+            return redirect('/error')
+        return redirect('/prof/courses/{0}/{1}/assignment_description'.format(course.id,assignment.id))
+    return render (request, 'upload/prof/edit_assignment.html', {'assignment': assignment, 'course': course})
+
 def assignment_description(request, course_id, assignment_id):
     assignment = Assignment.objects.get(pk=assignment_id)
     course = Course.objects.get(pk=course_id)
     return render (request, 'upload/prof/assignment_description.html', {'assignment': assignment, 'course': course})
+
+
 
 @login_required
 def create_course(request):

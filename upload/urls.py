@@ -37,6 +37,7 @@ urlpatterns = [
     path('prof/', prof.home),
     path('prof/courses/', prof.courses),
     path('prof/courses/<str:course_id>', prof.course),
+    path('prof/courses/<str:course_id>/<str:assignment_id>/edit_assignment', prof.edit_assignment),
     #path('prof/create_assignment/', prof.create_assignment),
     path('prof/courses/<str:course_id>/create_assignment', prof.create_assignment),
     path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description', prof.assignment_description),

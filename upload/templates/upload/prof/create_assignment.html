@@ -21,9 +21,8 @@
       <label for="due_date">Date and Time Due:</label>
       <input type="datetime-local" name="due_date" class="form-control" placeholder="03" id="due_date" required>
     </div>
-    <div class = "container">
-      <input type="submit" value="Create" class="submit btn btn-primary">
-      <a href="/prof" class="btn btn-secondary" role="button">Cancel</a>
-    </div>
+    <br></br>
+    <input type="submit" value="Create" class="submit btn btn-primary">
+    <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button">Cancel</a>
   </form>
 {% endblock %}

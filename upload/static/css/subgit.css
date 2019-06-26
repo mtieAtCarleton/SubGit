@@ -12,6 +12,18 @@ body > .container-fluid {
     list-style-type: none;
 }
 
+.btn-edit {
+    color: white;
+    background-color: #f5c73d;
+    border-color: #f5c73d;
+}
+
+.btn-edit:hover {
+  background-color: #f2b90d;
+  color: white;
+}
+
+
 #navbarDropdownMenuLink {
     color: white;
 }
