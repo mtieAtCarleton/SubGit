@@ -77,6 +77,9 @@ def add_student_to_course(username, course_id):
         git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
         time.sleep(2)
         with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
+            course_directory = os.path.join(MEDIA_ROOT, username, course_id)
+            repo_directory = os.path.join(course_directory, ".git")
+            #if not os.path.exists(repo_directory):
             local_repo = Repo.clone_from(repo_url, user_directory)
 
         readme_path = make_readme(username, user_directory)
