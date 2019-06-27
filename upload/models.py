@@ -52,6 +52,12 @@ class Person(models.Model):
             self.username, self.full_name, self.courses, self.github_accounts
         )
 
+class Error(models.Model):
+    text = models.TextField()
+    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.text
 
 class Assignment(models.Model):
     title = models.CharField(max_length=255)

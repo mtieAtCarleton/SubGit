@@ -2,7 +2,7 @@
 Miscellaneous functions for use in views.py and elsewhere.
 """
 from SubGit.settings import MEDIA_ROOT
-from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
+from upload.models import *
 
 import os
 import sys
@@ -60,6 +60,8 @@ def add_student_to_course(username, course_id):
         repo = g.get_user().create_repo(repo_name, private=True)
     except GithubException as e:
         print(e)
+        error = Error(text=repr(e), user=Person.objects.get(username=username))
+        error.save()
 
     # TODO: break up this try block, improve error handling
     try:
@@ -86,6 +88,8 @@ def add_student_to_course(username, course_id):
     except Exception as e:
         print(e)
         print("Unexpected error:", sys.exc_info()[0])
+        error = Error(text=repr(e), user=Person.objects.get(username=username))
+        error.save()
 
 
 def get_branch_url(repo_name, assignment_title):

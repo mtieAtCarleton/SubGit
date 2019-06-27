@@ -1,5 +1,5 @@
 from upload.forms import FileForm
-from upload.models import File, Submission, Person, Course, GitHubAccount, Assignment
+from upload.models import *
 from upload.utils import *
 
 import os.path
@@ -20,14 +20,14 @@ HISTORY_LENGTH = 5
 
 @login_required
 def courses(request):
-    user_directory = os.path.join(MEDIA_ROOT, request.user.username)
-    if os.path.exists(user_directory):
-        try:
-            return render(request, 'upload/courses.html', {
-                 'courses': Person.objects.get(username=request.user.username).courses.all()
-             })
-        except Person.DoesNotExist as e:
-            return redirect('/register/')
+    username = request.user.username
+    user_directory = os.path.join(MEDIA_ROOT, username)
+    if Person.objects.filter(username=username).exists():
+        person = Person.objects.get(username=username)
+        return render(request, 'upload/courses.html', {
+             'courses' : person.courses.all(),
+             'errors'  : Error.objects.filter(user=person).all()
+         })
     else:
         return redirect('/register/')
 
@@ -157,7 +157,7 @@ def submitted(request, course_id, assignment_id):
     })
 
 
-def home(request):
+def home(request, next=''):
     if request.user.username:
         return redirect("/courses/")
     return render(request, 'upload/home.html')

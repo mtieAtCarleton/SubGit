@@ -28,7 +28,12 @@
         </li>
       {% endif %}
     </nav>
-
+    {% for error in errors %}
+      <div class="alert alert-danger alert-dismissible fade show">
+        <strong>{{ error }}</strong>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endfor %}
     {% block content %}
     {% endblock %}
   </div>
@@ -39,5 +44,6 @@
   {% endblock %}
   {% load tz_detect %}
   {% tz_detect %}
+
 </body>
 </html>

@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
     path('', views.home),
+    path('accounts/login/', views.home, name='next'),
     path('logout/', views.logout),
     path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
@@ -38,7 +39,6 @@ urlpatterns = [
     path('prof/courses/', prof.courses),
     path('prof/courses/<str:course_id>', prof.course),
     path('prof/courses/<str:course_id>/<str:assignment_id>/edit_assignment', prof.edit_assignment),
-    #path('prof/create_assignment/', prof.create_assignment),
     path('prof/courses/<str:course_id>/create_assignment', prof.create_assignment),
     path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description', prof.assignment_description),
     path('prof/create_course/', prof.create_course),
