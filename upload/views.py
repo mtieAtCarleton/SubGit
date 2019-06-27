@@ -21,6 +21,11 @@ HISTORY_LENGTH = 5
 @login_required
 def courses(request):
     username = request.user.username
+    if request.POST.get('error'):
+        print('hi')
+        errors = Error.objects.filter(user=username)
+        if errors.exists():
+            errors.delete()
     user_directory = os.path.join(MEDIA_ROOT, username)
     if Person.objects.filter(username=username).exists():
         person = Person.objects.get(username=username)
