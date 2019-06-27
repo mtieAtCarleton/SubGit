@@ -24,3 +24,20 @@ def courses(request):
     grader = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(grader__exact=grader).all()
     return render(request, 'upload/grader/courses.html', {'courses': courses})
+
+@login_required
+def course(request, course_id):
+    course = Course.objects.get(id=course_id)
+    if request.method == 'POST':
+        '''figure out what to do in this instance'''
+
+    username = request.user.username
+    assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
+
+    submissions_items = get_submission_items(username, course_id, None)
+    # TODO: display variable length history (GUI toggle like in Moodle?)
+    return render(request, 'upload/grader/course.html', {
+        'submissions': submissions_items[:HISTORY_LENGTH],
+        'course': course,
+        'assignments': assignments
+    })
