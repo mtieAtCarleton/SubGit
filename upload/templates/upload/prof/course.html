@@ -1,5 +1,9 @@
 {% extends "upload/header.html" %}
-
+<!-- Allows a professor to look at details of a specific course. Displays course details and
+ list of hyperlinks to assignments. Has buttons to create new assignments.
+Called from prof.py. 'request' and 'course_id' are passed.
+Accessed from courses.html. Directs to 'create_assignment.html', 'assignment_description.html',
+and back to 'courses.html'-->
 {% block content %}
   <div class="row">
     <div class="col">

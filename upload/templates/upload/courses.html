@@ -12,7 +12,8 @@
     <ul class="list-group list-group-flush">
       {% for course in courses %}
         <a class="list-group-item list-group-item-action" href="/courses/{{ course.id }}">
-          <h5>{{ course.title }}</h5>
+          <h5>{{ course.title }} </h5>
+          <h6> {{ course.id }} </h6>
           {{ course.prof.full_name }}
         </a>
       {% endfor %}
