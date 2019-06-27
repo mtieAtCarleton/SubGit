@@ -91,22 +91,22 @@ def create_course(request):
             course.save()
         except Exception as e:
             print(e)
-            return redirect(request, '/error')
-        return redirect(request, '/prof')
-    return render(request, 'upload/prof/create_course.html')
+            return hredirect(request, '/error')
+        return hredirect(request, '/prof')
+    return hrender(request, 'upload/prof/create_course.html')
 
 
 def home(request):
     if request.user.username:
-        return redirect(request, "/prof/courses/")
-    return render(request, 'upload/home.html')
+        return hredirect(request, "/prof/courses/")
+    return hrender(request, 'upload/home.html')
 
 
 @login_required
 def courses(request):
     prof = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(prof__exact=prof).all()
-    return render(request, 'upload/prof/courses.html', {'courses': courses})
+    return hrender(request, 'upload/prof/courses.html', {'courses': courses})
 
 
 @login_required
@@ -114,14 +114,14 @@ def course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
         course.delete()
-        return redirect(request, '/prof/courses/')
+        return hredirect(request, '/prof/courses/')
 
     username = request.user.username
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
     submissions_items = get_submission_items(username, course_id, None)
     # TODO: display variable length history (GUI toggle like in Moodle?)
-    return render(request, 'upload/prof/course.html', {
+    return hrender(request, 'upload/prof/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
         'course': course,
         'assignments': assignments
@@ -136,5 +136,5 @@ def assign_grader(request, course_id):
             grader = Person.objects.get(pk=grader_username)
         except Exception as e:
             print(e)
-            return redirect('/error')
-    return render(request, 'upload/prof/assign_grader.html', {'course':course})
+            return hredirect('/error')
+    return hrender(request, 'upload/prof/assign_grader.html', {'course':course})
