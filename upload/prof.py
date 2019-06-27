@@ -131,4 +131,7 @@ def course(request, course_id):
 @login_required
 def assign_grader(request, course_id):
     course = Course.objects.get(id = course_id)
+    if request.method == 'POST':
+        grader_username = request.POST.get('username')
+        grader = Person.objects.get(pk=username)
     return render(request, 'upload/prof/assign_grader.html', {'course':course})
