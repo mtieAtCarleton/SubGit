@@ -50,6 +50,8 @@ def submit(user, course_id, file_names, commit_message, branch):
 
 
 def add_student_to_course(username, course_id):
+    error = Error(text="test 123", user=Person.objects.get(username=username))
+    error.save()
     user_directory = os.path.join(MEDIA_ROOT, username, course_id)
     os.makedirs(user_directory)
 
