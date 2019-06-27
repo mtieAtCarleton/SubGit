@@ -133,5 +133,9 @@ def assign_grader(request, course_id):
     course = Course.objects.get(id = course_id)
     if request.method == 'POST':
         grader_username = request.POST.get('username')
-        grader = Person.objects.get(pk=username)
+        try:
+            grader = Person.objects.get(pk=grader_username)
+        except:
+            print(e)
+            return redirect('/error')    
     return render(request, 'upload/prof/assign_grader.html', {'course':course})
