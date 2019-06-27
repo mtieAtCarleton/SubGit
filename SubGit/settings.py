@@ -60,7 +60,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'upload/templates'),
-                 os.path.join(BASE_DIR, 'upload/templates/prof')]
+                 os.path.join(BASE_DIR, 'upload/templates/prof'),
+                 os.path.join(BASE_DIR, 'upload/templates/grader')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {

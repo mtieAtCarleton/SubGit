@@ -13,13 +13,17 @@ test_prof.save()
 test_prof2 = Person(username="ealexander", full_name="Eric Alexander")
 test_prof2.save()
 
+testgrader = Person(username="kemptond", full_name="Dylan Kempton")
+testgrader.save()
+
 intro, new = Course.objects.get_or_create(id="cs111.00-f18", number="CS 111", section="00",
                              title="Introduction to Computer Science",
                              prof=test_prof)
 
-intro2, new = Course.objects.get_or_create(id="cs201.00-f18", number="CS 201", section="00",
+datastruct, new = Course.objects.get_or_create(id="cs201.00-f18", number="CS 201", section="00",
                              title="Data Structures",
-                             prof=test_prof2)
+                             prof=test_prof2,
+                             grader=testgrader)
 
 Assignment.objects.get_or_create(title="Arrayed Against Us", course=intro,
                                  deadline=datetime(2019, 5, 27, 22, tzinfo=pytz.UTC))

@@ -34,7 +34,9 @@ class Course(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
 
     #TODO: Maybe should be many to many, we'll deal with that later if needed
-    prof = models.ForeignKey('Person', on_delete=models.CASCADE, null=True)
+    prof = models.ForeignKey('Person', related_name = "prof", on_delete=models.CASCADE, null=True)
+
+    grader = models.ForeignKey('Person', related_name = "grader", on_delete=models.SET_NULL, null=True)
 
 class GitHubAccount(models.Model):
     username = models.CharField(max_length=255, primary_key=True, unique=True)
