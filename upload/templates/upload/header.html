@@ -31,7 +31,9 @@
     {% for error in errors %}
       <div class="alert alert-danger alert-dismissible fade show">
         <strong>{{ error }}</strong>
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <form action="#" method="post">
+         <input type="submit" class="close" name="error" data-dismiss="alert">&times;</button>
+        </form>
       </div>
     {% endfor %}
     {% block content %}
