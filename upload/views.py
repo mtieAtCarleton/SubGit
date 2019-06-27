@@ -21,8 +21,7 @@ HISTORY_LENGTH = 5
 @login_required
 def courses(request):
     username = request.user.username
-    if request.POST.get('error'):
-        print('hi')
+    if request.GET.get('error'):
         errors = Error.objects.filter(user=username)
         if errors.exists():
             errors.delete()
