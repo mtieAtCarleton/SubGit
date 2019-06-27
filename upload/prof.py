@@ -127,3 +127,8 @@ def course(request, course_id):
         'course': course,
         'assignments': assignments
     })
+
+@login_required
+def assign_grader(request, course_id):
+    course = Course.objects.get(id = course_id)
+    return render(request, 'upload/prof/assign_grader.html', {'course':course})
