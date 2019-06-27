@@ -117,6 +117,9 @@ def course(request, course_id):
     course = Course.objects.get(id=course_id)
     print(course)
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
+    if request.method == 'POST':
+        course.delete()
+        return redirect('/prof/courses/')
 
     # TODO: display variable length history (GUI toggle like in Moodle?)
     return render(request, 'upload/prof/course.html', {
