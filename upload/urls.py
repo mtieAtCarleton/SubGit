@@ -42,7 +42,8 @@ urlpatterns = [
     path('prof/courses/<str:course_id>/create_assignment', prof.create_assignment),
     path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description', prof.assignment_description),
     path('prof/create_course/', prof.create_course),
-    path('grader/courses/', grader.courses)
+    path('grader/courses/', grader.courses),
+    path('grader/courses/<str:course_id>', grader.course)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO: remove the static urls before deployment, find a better way to serve static files
