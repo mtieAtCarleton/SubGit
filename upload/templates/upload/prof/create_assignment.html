@@ -11,7 +11,7 @@ Accessed from course.html. Directs back to course.html.-->
     <h2> {{ course.title }}: <small> {{ course.id }} </small> </h2>
     <p>Please fill out the information for the assignment you want to create below</p>
   </div>
-  <form method="post" role="form">
+  <form method="post" class="was-validated role="form">
     {% csrf_token %}
     <div class="form-group">
       <label for="title">Title:</label>
