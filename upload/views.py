@@ -40,10 +40,12 @@ def courses(request):
 def course(request, course_id):
     username = request.user.username
     course = Course.objects.get(id=course_id)
+    # TODO: think about deleting github repos
     if request.method == 'POST':
-        course.delete()
-        
-        return redirect('/prof/courses/')
+        student = Person.objects.get(username=username)
+        student.courses.remove(course)
+        student.save()
+        return redirect('/courses/')
 
     submissions_items = get_submission_items(username, course_id, None)
 
