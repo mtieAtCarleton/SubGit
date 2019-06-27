@@ -78,7 +78,6 @@ def add_student_to_course(username, course_id):
         # see https://help.github.com/en/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
         git_ssh_identity_file = os.path.expanduser(config('SSH_KEY_PATH'))
         git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
-        time.sleep(2)
         with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
             course_directory = os.path.join(MEDIA_ROOT, username, course_id)
             repo_directory = os.path.join(course_directory, ".git")
