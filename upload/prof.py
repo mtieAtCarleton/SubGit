@@ -112,15 +112,15 @@ def courses(request):
 
 @login_required
 def course(request, course_id):
-    username = request.user.username
-    submissions_items = get_submission_items(username, course_id, None)
     course = Course.objects.get(id=course_id)
-    print(course)
-    assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
     if request.method == 'POST':
         course.delete()
         return redirect('/prof/courses/')
 
+    username = request.user.username
+    assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
+
+    submissions_items = get_submission_items(username, course_id, None)
     # TODO: display variable length history (GUI toggle like in Moodle?)
     return render(request, 'upload/prof/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
