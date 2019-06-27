@@ -14,12 +14,12 @@ body > .container-fluid {
 
 .btn-edit {
     color: white;
-    background-color: #f5c73d;
-    border-color: #f5c73d;
+    background-color: #13b03d;
+    border-color: #13b03d;
 }
 
 .btn-edit:hover {
-  background-color: #f2b90d;
+  background-color: #0c822b;
   color: white;
 }
 
