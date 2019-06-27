@@ -64,6 +64,7 @@ def edit_assignment(request, course_id, assignment_id):
         return redirect('/prof/courses/{0}/{1}/assignment_description'.format(course.id,assignment.id))
     return render (request, 'upload/prof/edit_assignment.html', {'assignment': assignment, 'course': course})
 
+@login_required
 def assignment_description(request, course_id, assignment_id):
     assignment = Assignment.objects.get(pk=assignment_id)
     if request.method == 'POST':
