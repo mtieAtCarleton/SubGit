@@ -135,7 +135,7 @@ def assign_grader(request, course_id):
         grader_username = request.POST.get('username')
         try:
             grader = Person.objects.get(pk=grader_username)
-        except:
+        except Exception as e:
             print(e)
-            return redirect('/error')    
+            return redirect('/error')
     return render(request, 'upload/prof/assign_grader.html', {'course':course})
