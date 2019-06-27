@@ -10,7 +10,6 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
 
 from github import GithubException
 from git import Git
@@ -23,4 +22,4 @@ def courses(request):
     print("hello world")
     grader = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(grader__exact=grader).all()
-    return render(request, 'upload/grader/courses.html', {'courses': courses})
+    return hrender(request, 'upload/grader/courses.html', {'courses': courses})

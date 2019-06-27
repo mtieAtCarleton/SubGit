@@ -10,6 +10,7 @@ import time
 
 from decouple import config
 from django.contrib import messages
+from django.shortcuts import render, redirect
 import git
 from git import Git
 from git import Repo
@@ -143,3 +144,27 @@ def make_readme(username, user_directory):
             username))
         readme.close()
     return readme_path
+
+def hrender(request, url, vars=None, person=None):
+    if vars == None:
+        vars = {}
+    if request.user.is_authenticated:
+        if person == None:
+            person, new = Person.objects.get_or_create(username=request.user.username)
+            if new:
+                person.full_name = request.user.first_name + ' ' + request.user.last_name
+                person.save()
+        vars['errors'] = Error.objects.filter(user=person).all()
+    return render(request, url, vars)
+
+def hredirect(request, url, vars=None, person=None):
+    if vars == None:
+        vars = {}
+    if request.user.is_authenticated:
+        if person == None:
+            person, new = Person.objects.get_or_create(username=request.user.username)
+            if new:
+                person.full_name = request.user.first_name + ' ' + request.user.last_name
+                person.save()
+        vars['errors'] = Error.objects.filter(user=person).all()
+    return redirect(url, vars)

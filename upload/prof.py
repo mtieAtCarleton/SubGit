@@ -12,7 +12,6 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
 
 from github import GithubException
 from git import Git
@@ -36,9 +35,9 @@ def create_assignment(request, course_id):
             assignment.save()
         except Exception as e:
             print(e)
-            return redirect('/error')
-        return redirect('/prof/')
-    return render(request,
+            return hredirect(request, '/error')
+        return hredirect(request, '/prof/')
+    return hrender(request,
                   'upload/prof/create_assignment.html',{'course':course})
 
 @login_required
@@ -60,9 +59,9 @@ def edit_assignment(request, course_id, assignment_id):
             assignment.save()
         except Exception as e:
             print(e)
-            return redirect('/error')
-        return redirect('/prof/courses/{0}/{1}/assignment_description'.format(course.id,assignment.id))
-    return render (request, 'upload/prof/edit_assignment.html', {'assignment': assignment, 'course': course})
+            return hredirect(request, '/error')
+        return hredirect(request, '/prof/courses/{0}/{1}/assignment_description'.format(course.id,assignment.id))
+    return hrender(request, 'upload/prof/edit_assignment.html', {'assignment': assignment, 'course': course})
 
 @login_required
 def assignment_description(request, course_id, assignment_id):
@@ -70,9 +69,9 @@ def assignment_description(request, course_id, assignment_id):
     if request.method == 'POST':
         #TODO Delete already submitted assignments
         assignment.delete()
-        return redirect('/prof/courses/{0}'.format(course_id))
+        return hredirect(request, '/prof/courses/{0}'.format(course_id))
     course = Course.objects.get(pk=course_id)
-    return render(request, 'upload/prof/assignment_description.html', {'assignment': assignment, 'course': course})
+    return hrender(request, 'upload/prof/assignment_description.html', {'assignment': assignment, 'course': course})
 
 
 
@@ -92,14 +91,14 @@ def create_course(request):
             course.save()
         except Exception as e:
             print(e)
-            return redirect('/error')
-        return redirect('/prof')
+            return redirect(request, '/error')
+        return redirect(request, '/prof')
     return render(request, 'upload/prof/create_course.html')
 
 
 def home(request):
     if request.user.username:
-        return redirect("/prof/courses/")
+        return redirect(request, "/prof/courses/")
     return render(request, 'upload/home.html')
 
 
@@ -115,7 +114,7 @@ def course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
         course.delete()
-        return redirect('/prof/courses/')
+        return redirect(request, '/prof/courses/')
 
     username = request.user.username
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')

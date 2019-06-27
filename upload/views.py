@@ -10,7 +10,6 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
 
 from github import GithubException
 from git import Git
@@ -28,12 +27,10 @@ def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, username)
     if Person.objects.filter(username=username).exists():
         person = Person.objects.get(username=username)
-        return render(request, 'upload/courses.html', {
-             'courses' : person.courses.all(),
-             'errors'  : Error.objects.filter(user=person).all()
-         })
+        return hrender(request, 'upload/courses.html', {
+             'courses' : person.courses.all()})
     else:
-        return redirect('/register/')
+        return hredirect(request, '/register/')
 
 
 @login_required
@@ -45,14 +42,14 @@ def course(request, course_id):
         student = Person.objects.get(username=username)
         student.courses.remove(course)
         student.save()
-        return redirect('/courses/')
+        return hredirect(request, '/courses/')
 
     submissions_items = get_submission_items(username, course_id, None)
 
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
     # TODO: display variable length history (GUI toggle like in Moodle?)
-    return render(request, 'upload/course.html', {
+    return hrender(request, 'upload/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
         'course': course,
         'assignments': assignments
@@ -97,7 +94,7 @@ def upload_assignment(request, course_id, assignment_id):
 
                 submit(username, course_id, file_paths, commit_message, assignment_title)
 
-                return redirect('/submitted/{}/{}'.format(course_id, assignment_id))
+                return hredirect(request, '/submitted/{}/{}'.format(course_id, assignment_id))
             else:
                 form = FileForm()
         else:
@@ -125,7 +122,7 @@ def upload_assignment(request, course_id, assignment_id):
             clone_course_repo(course_id, repo_name, username)
         except GithubException as e:
             print(e)
-            return redirect('/error/')
+            return hredirect(request, '/error/')
 
     if Assignment.objects.filter(id=assignment_id).exists():
         assignment = Assignment.objects.get(id=assignment_id)
@@ -141,7 +138,7 @@ def upload_assignment(request, course_id, assignment_id):
     else:
         url = get_github_url(repo_name)
 
-    return render(request, 'upload/upload.html', {
+    return hrender(request, 'upload/upload.html', {
         'form': form,
         'course': Course.objects.get(id=course_id),
         'url': url,
@@ -161,7 +158,7 @@ def submitted(request, course_id, assignment_id):
     else:
         assignment = None
         submissions_items = None
-    return render(request, 'upload/submitted.html', {
+    return hrender(request, 'upload/submitted.html', {
         'course_id': course_id,
         'url': get_branch_url(repo_name, assignment.title),
         'assignment': assignment,
@@ -171,21 +168,21 @@ def submitted(request, course_id, assignment_id):
 
 def home(request, next=''):
     if request.user.username:
-        return redirect("/courses/")
-    return render(request, 'upload/home.html')
+        return hredirect(request, "/courses/")
+    return hrender(request, 'upload/home.html')
 
 
 def login_error(request):
-    return render(request, 'upload/login_error.html')
+    return hrender(request, 'upload/login_error.html')
 
 
 def error(request):
-    return render(request, 'upload/error.html')
+    return hrender(request, 'upload/error.html')
 
 def logout(request):
     """Logs out user"""
     auth_logout(request)
-    return redirect('/')
+    return hredirect(request, '/')
 
 @login_required
 def register(request):
@@ -198,7 +195,7 @@ def register(request):
         try:
             course = Course.objects.get(id=course_id)
         except ObjectDoesNotExist:
-            redirect('/error')
+            hredirect(request, '/error')
 
         # If person is not registered for the course
         if not person.courses.filter(id=course_id).exists():
@@ -209,28 +206,25 @@ def register(request):
                                   args=(username, course_id),
                                   daemon=True)
         target.start()
-        return redirect('/courses')
+        return hredirect(request, '/courses')
 
     if request.user.is_authenticated:
-        person, new = Person.objects.get_or_create(username=request.user.username)
-        if new:
-            person.full_name = request.user.first_name + ' ' + request.user.last_name
-            person.save()
-        return render(request, 'upload/register.html', {
+        person = Person.objects.get(username=request.user.username)
+        return hrender(request, 'upload/register.html', {
             'courses': [course for course in Course.objects.all() if course not in person.courses.all()]
         })
     else:
-        return render(request, 'upload/register.html', {
+        return hrender(request, 'upload/register.html', {
             'courses': Course.objects.all()
         })
 
 @login_required
 def registered(request):
-    return render(request, 'upload/registered.html')
+    return hrender(request, 'upload/registered.html')
 
 
 def not_registered(request):
-    return render(request, 'upload/not_registered.html')
+    return hrender(request, 'upload/not_registered.html')
 
 
 @login_required
@@ -255,11 +249,11 @@ def connect_github(request):
             except GithubException as e:
                 print(e)
                 account.delete()
-                return redirect('/error')
+                return hredirect(request, '/error')
 
-            return redirect("/manage_github/")
+            return hredirect(request, "/manage_github/")
 
-    return render(request, "upload/connect_github.html")
+    return hrender(request, "upload/connect_github.html")
 
 
 @login_required
@@ -281,7 +275,7 @@ def manage_github(request):
                 print(e)
 
     accounts = Person.objects.get(username=request.user.username).github_accounts.all()
-    return render(request, 'upload/manage_github.html', {
+    return hrender(request, 'upload/manage_github.html', {
         'accounts': accounts
     })
 
@@ -289,4 +283,4 @@ def manage_github(request):
 def carleton_test(backend, response, social, *args, **kwargs):
     email = response.get("email")
     if email.split("@")[1] != "carleton.edu":
-        return redirect("/error")
+        return hredirect(request, "/error")
