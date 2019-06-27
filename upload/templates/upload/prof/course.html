@@ -33,13 +33,16 @@ and back to 'courses.html'-->
         {% if not assignments %}
           <p>No assignments yet.</p>
         {% endif %}
-
-        <br>
-        <div>
+        <br/>
+        <div class="btn-group mr-2">
         <a href="/prof/courses/{{ course.id }}/create_assignment" class="btn btn-primary" role="button"> Create Assignment</a>
         </div>
-        <br>
+        <div class="btn-group mr-2">
+          <a class="btn btn-danger"  href="#">Delete This Course</a>
+        </div>
+        <div class="btn-group mr-2">
         <a href="/prof/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+        </div>
       </div>
     </div>
     <div class="col-lg-3">
