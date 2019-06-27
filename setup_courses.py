@@ -21,5 +21,5 @@ intro2, new = Course.objects.get_or_create(id="cs201.00-f18", number="CS 201", s
                              title="Data Structures",
                              prof=test_prof2)
 
-#Assignment.objects.get_or_create(title="Arrayed Against Us", course=ds1,
-                                 #deadline=datetime(2019, 5, 27, 22, tzinfo=pytz.UTC))
+Assignment.objects.get_or_create(title="Arrayed Against Us", course=intro,
+                                 deadline=datetime(2019, 5, 27, 22, tzinfo=pytz.UTC))
