@@ -1,9 +1,9 @@
 from upload.forms import FileForm
-from upload.models import *
-from upload.utils import *
-
+from upload.models import Assignment, Course, Error, File, GitHubAccount, Person, Submission
+from SubGit.settings import MEDIA_ROOT
+from upload.utils import add_student_to_course, clear_file, config, hredirect, hrender, submit
+from upload.utils import get_github_url, get_branch_url, get_submission_items, clone_course_repo
 import os.path
-import sys
 import threading
 
 from django.contrib.auth import logout as auth_logout
@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
-from github import GithubException
 from git import Git
+from github import Github, GithubException
 
 HISTORY_LENGTH = 5
 
@@ -27,8 +27,10 @@ def courses(request):
     user_directory = os.path.join(MEDIA_ROOT, username)
     if Person.objects.filter(username=username).exists():
         person = Person.objects.get(username=username)
-        return hrender(request, 'upload/courses.html', {
-             'courses' : person.courses.all()})
+        return hrender(request,
+                       'upload/courses.html',
+                       {'courses': person.courses.all()},
+                       person)
     else:
         return hredirect(request, '/register/')
 
@@ -42,13 +44,14 @@ def course(request, course_id):
         student = Person.objects.get(username=username)
         student.courses.remove(course)
         student.save()
-        return hredirect(request, '/courses/')
+        return hredirect(request, '/courses/', person=student)
 
     submissions_items = get_submission_items(username, course_id, None)
 
     assignments = Assignment.objects.filter(course__id=course_id).order_by('deadline')
 
-    # TODO: display variable length history (GUI toggle like in Moodle?)
+    # TODO: display variable length history
+    # (GUI toggle like in Moodle?)
     return hrender(request, 'upload/course.html', {
         'submissions': submissions_items[:HISTORY_LENGTH],
         'course': course,
@@ -71,16 +74,19 @@ def upload_assignment(request, course_id, assignment_id):
 
     if request.method == 'POST':
         if "clear" in request.POST:
-            # if a file was cleared out of the upload box, remove it from the pending submissions and delete it
+            # if a file was cleared out of the upload box, remove it
+            # from the pending submissions and delete it
             file_id = request.POST["clear"]
             file = File.objects.get(id=file_id)
-            # check to make sure the same file isn't being submitted for another assignment before deleting it
+            # check to make sure the same file isn't being submitted
+            # for another assignment before deleting it
             clear_file(assignment_id, file, username)
             pending_submissions.exclude(file=file)
             form = FileForm()
         elif "submit" in request.POST:
 
-            # if the form is ready to submit, make a new submission entry in the database with the current pending files
+            # if the form is ready to submit, make a new submission entry
+            # in the database with the current pending files
             # then add to Git, commit and push to GitHub
             if pending_submissions:
                 commit_message = request.POST["description"]
@@ -98,7 +104,8 @@ def upload_assignment(request, course_id, assignment_id):
             else:
                 form = FileForm()
         else:
-            # if a file was uploaded but not submitted yet, save it to the database and return its data so the
+            # if a file was uploaded but not submitted yet,
+            # save it to the database and return its data so the
             # JavaScript can display it in the upload box
             form = FileForm(request.POST, request.FILES)
             if form.is_valid():
@@ -131,7 +138,8 @@ def upload_assignment(request, course_id, assignment_id):
 
     submissions_items = get_submission_items(username, course_id, assignment_id)
 
-    # if a submission has been made, a branch corresponding to the assignment will have been created, so link to it.
+    # if a submission has been made, a branch corresponding
+    # to the assignment will have been created, so link to it.
     # otherwise, link to the main github page
     if submissions_items:
         url = get_branch_url(repo_name, assignment_title)
@@ -179,10 +187,12 @@ def login_error(request):
 def error(request):
     return hrender(request, 'upload/error.html')
 
+
 def logout(request):
     """Logs out user"""
     auth_logout(request)
     return hredirect(request, '/')
+
 
 @login_required
 def register(request):
@@ -217,6 +227,7 @@ def register(request):
         return hrender(request, 'upload/register.html', {
             'courses': Course.objects.all()
         })
+
 
 @login_required
 def registered(request):
@@ -278,9 +289,3 @@ def manage_github(request):
     return hrender(request, 'upload/manage_github.html', {
         'accounts': accounts
     })
-
-
-def carleton_test(backend, response, social, *args, **kwargs):
-    email = response.get("email")
-    if email.split("@")[1] != "carleton.edu":
-        return hredirect(request, "/error")

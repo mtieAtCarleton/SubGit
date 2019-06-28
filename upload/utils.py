@@ -2,19 +2,17 @@
 Miscellaneous functions for use in views.py and elsewhere.
 """
 from SubGit.settings import MEDIA_ROOT
-from upload.models import *
+from upload.models import Person, Error, File
 
 import os
 import sys
-import time
 
 from decouple import config
-from django.contrib import messages
 from django.shortcuts import render, redirect
 import git
 from git import Git
 from git import Repo
-from github import Github
+from github import Github, GithubException
 
 
 def clone_course_repo(course_id, repo_name, username):
@@ -51,8 +49,8 @@ def submit(user, course_id, file_names, commit_message, branch):
 
 
 def add_student_to_course(username, course_id):
-    #error = Error(text="test 123", user=Person.objects.get(username=username))
-    #error.save()
+    # error = Error(text="test 123", user=Person.objects.get(username=username))
+    # error.save()
     user_directory = os.path.join(MEDIA_ROOT, username, course_id)
     os.makedirs(user_directory)
 
@@ -80,9 +78,6 @@ def add_student_to_course(username, course_id):
         git_ssh_identity_file = os.path.expanduser(config('SSH_KEY_PATH'))
         git_ssh_cmd = "ssh -i {}".format(git_ssh_identity_file)
         with Git(user_directory).custom_environment(GIT_SSH_COMMAND=git_ssh_cmd):
-            course_directory = os.path.join(MEDIA_ROOT, username, course_id)
-            repo_directory = os.path.join(course_directory, ".git")
-            #if not os.path.exists(repo_directory):
             local_repo = Repo.clone_from(repo_url, user_directory)
 
         readme_path = make_readme(username, user_directory)
@@ -118,7 +113,9 @@ def clear_file(assignment_id, file, username):
 
 def get_submission_items(username, course_id, assignment_id):
     if assignment_id:
-        files = File.objects.filter(submission__isnull=False, person__username=username, assignment__id=assignment_id)
+        files = File.objects.filter(submission__isnull=False,
+                                    person__username=username,
+                                    assignment__id=assignment_id)
     else:
         files = File.objects.filter(submission__isnull=False, person__username=username,
                                     assignment__course__id=course_id)
@@ -133,7 +130,9 @@ def get_submission_items(username, course_id, assignment_id):
             submissions[file.submission].append((file, url, filename))
         else:
             submissions[file.submission] = [(file, url, filename)]
-    submissions_items = sorted(submissions.items(), key=lambda submission: submission[0].submitted_at, reverse=True)
+    submissions_items = sorted(submissions.items(),
+                               key=lambda submission: submission[0].submitted_at,
+                               reverse=True)
     return submissions_items
 
 
@@ -145,11 +144,12 @@ def make_readme(username, user_directory):
         readme.close()
     return readme_path
 
+
 def hrender(request, url, vars=None, person=None):
-    if vars == None:
+    if vars is None:
         vars = {}
     if request.user.is_authenticated:
-        if person == None:
+        if person is None:
             person, new = Person.objects.get_or_create(username=request.user.username)
             if new:
                 person.full_name = request.user.first_name + ' ' + request.user.last_name
@@ -157,11 +157,12 @@ def hrender(request, url, vars=None, person=None):
         vars['errors'] = Error.objects.filter(user=person).all()
     return render(request, url, vars)
 
+
 def hredirect(request, url, vars=None, person=None):
-    if vars == None:
+    if vars is None:
         vars = {}
     if request.user.is_authenticated:
-        if person == None:
+        if person is None:
             person, new = Person.objects.get_or_create(username=request.user.username)
             if new:
                 person.full_name = request.user.first_name + ' ' + request.user.last_name
