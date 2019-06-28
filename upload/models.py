@@ -10,7 +10,8 @@ from SubGit.settings import MEDIA_ROOT
 
 
 def content_file_name(instance, filename):
-    """Returns the path to upload the given File instance and name, overwriting the current file at that path (if any).
+    """Returns the path to upload the given File instance and name,
+       overwriting the current file at that path (if any).
        Should only be called when a File object is initialized.
     """
     filename = os.path.join(instance.person.username, instance.assignment.course.id, filename)
@@ -33,10 +34,11 @@ class Course(models.Model):
     # e.g. Introduction to Computer Science
     title = models.CharField(max_length=255, null=True, blank=True)
 
-    #TODO: Maybe should be many to many, we'll deal with that later if needed
-    prof = models.ForeignKey('Person', related_name = "prof", on_delete=models.CASCADE, null=True)
+    # TODO: Maybe should be many to many, we'll deal with that later if needed
+    prof = models.ForeignKey('Person', related_name="prof", on_delete=models.CASCADE, null=True)
 
-    grader = models.ForeignKey('Person', related_name = "grader", on_delete=models.SET_NULL, null=True)
+    grader = models.ForeignKey('Person', related_name="grader", on_delete=models.SET_NULL, null=True)
+
 
 class GitHubAccount(models.Model):
     username = models.CharField(max_length=255, primary_key=True, unique=True)
@@ -54,12 +56,14 @@ class Person(models.Model):
             self.username, self.full_name, self.courses, self.github_accounts
         )
 
+
 class Error(models.Model):
     text = models.TextField()
     user = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.text
+
 
 class Assignment(models.Model):
     title = models.CharField(max_length=255)
@@ -77,7 +81,8 @@ class Submission(models.Model):
 
 
 # TODO: think more carefully about on_delete, nulls
-# TODO: should file know about assignment? if not, need a submitted bool in Submission to handle pending uploads
+# TODO: should file know about assignment? if not,
+# need a submitted bool in Submission to handle pending uploads
 class File(models.Model):
     file = models.FileField(upload_to=content_file_name, null=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)

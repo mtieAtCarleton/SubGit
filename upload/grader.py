@@ -1,17 +1,13 @@
 from upload.forms import FileForm
-from upload.models import *
-from upload.utils import *
+from upload.models import Assignment, Course, Person
+from upload.utils import get_submission_items, hredirect, hrender
 
 import os.path
 import sys
-import threading
 
-from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse
 
-from github import GithubException
+from github import Github, GithubException
 from git import Git
 
 HISTORY_LENGTH = 5
@@ -23,6 +19,7 @@ def courses(request):
     grader = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(grader__exact=grader).all()
     return hrender(request, 'upload/grader/courses.html', {'courses': courses})
+
 
 @login_required
 def course(request, course_id):

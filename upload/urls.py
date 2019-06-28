@@ -13,15 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+
+from django.urls import path
 from . import views
 from . import prof, grader
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
+    path('upload/<str:course_id>/<str:assignment_id>',
+         views.upload_assignment, name='upload_assignment'),
     path('', views.home),
     path('accounts/login/', views.home, name='next'),
     path('logout/', views.logout),
@@ -40,7 +41,8 @@ urlpatterns = [
     path('prof/courses/<str:course_id>', prof.course),
     path('prof/courses/<str:course_id>/<str:assignment_id>/edit_assignment', prof.edit_assignment),
     path('prof/courses/<str:course_id>/create_assignment', prof.create_assignment),
-    path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description', prof.assignment_description),
+    path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description',
+         prof.assignment_description),
     path('prof/courses/<str:course_id>/assign_grader', prof.assign_grader),
     path('prof/create_course/', prof.create_course),
     path('grader/courses/', grader.courses),
