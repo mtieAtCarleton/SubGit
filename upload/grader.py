@@ -3,7 +3,6 @@ from upload.models import Assignment, Course, Person
 from upload.utils import get_submission_items, hredirect, hrender
 
 import os.path
-import sys
 
 from django.contrib.auth.decorators import login_required
 
