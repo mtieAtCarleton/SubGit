@@ -1,0 +1,17 @@
+{% extends "upload/header.html" %}
+
+{% block content %}
+  <div class = "jumbotron">
+    <h1>Remove Grader From  {{ course.title }} </h1>
+    <p>Please fill out the information for the grader you would like to remove below</p>
+  </div>
+  <form method="post" class="was-validated role=form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="grader_username"> Carleton Username:</label>
+      <input type="grader_username" name="grader_username" class="form-control" id="grader_username" required>
+    </div>
+    <input type="submit" value="Remove This Grader" class="submit btn btn-primary">
+    <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button">Cancel</a>
+  </form>
+{% endblock %}

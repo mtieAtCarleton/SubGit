@@ -42,6 +42,9 @@ and back to 'courses.html'-->
         <a href="/prof/courses/{{ course.id }}/assign_grader" class="btn btn-primary" role="button">Assign Grader</a>
         </div>
         <div class="btn-group mr-2">
+        <a href="/prof/courses/{{ course.id }}/delete_grader" class="btn btn-danger" role="button">Delete Grader</a>
+        </div>
+        <div class="btn-group mr-2">
           <form action="" method="post">
             {% csrf_token %}
             <input type="submit" class="btn btn-danger " name="Delete" value="Delete Course" />
