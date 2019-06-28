@@ -37,3 +37,14 @@ def course(request, course_id):
         'course': course,
         'assignments': assignments
     })
+
+@login_required
+def assignment_submissions(request, course_id, assignment_id):
+    course = Course.objects.get(id=course_id)
+    assignment  = Assignment.objects.get(id=assignment_id)
+    submissions =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    return hrender(request, 'upload/grader/assignment_submissions.html', {
+    'submissions': submissions_items[:HISTORY_LENGTH],
+    'course': course,
+    'assignment': assignment
+    })
