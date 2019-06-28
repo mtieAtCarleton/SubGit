@@ -111,6 +111,7 @@ def courses(request):
 def course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
+        #test test test
         course.delete()
         return hredirect(request, '/prof/courses/')
 
