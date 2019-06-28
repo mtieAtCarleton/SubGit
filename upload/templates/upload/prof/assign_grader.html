@@ -9,8 +9,8 @@
   <form method="post" class="was-validated role=form">
     {% csrf_token %}
     <div class="form-group">
-      <label for="username">Username:</label>
-      <input type="title" name="title" class="form-control" id="username" required>
+      <label for="grader_username">Username:</label>
+      <input type="grader_username" name="grader_username" class="form-control" id="grader_username" required>
     </div>
     <input type="submit" value="Assign" class="submit btn btn-primary">
     <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button">Cancel</a>
