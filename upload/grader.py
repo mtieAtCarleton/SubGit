@@ -41,7 +41,14 @@ def course(request, course_id):
 def assignment_submissions(request, course_id, assignment_id):
     course = Course.objects.get(id=course_id)
     assignment  = Assignment.objects.get(id=assignment_id)
-    submission_items =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    submission_list =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    students = Person.objects.filter(courses__in=course_id)
+    #print(students)
+    submission_items = []
+    #print(2)
+    for student in students:
+        submission_items.extend(get_submission_items(username=student.username, course_id=course_id, assignment_id=assignment_id))
+        #print(1)
     return hrender(request, 'upload/grader/assignment_submissions.html', {
     'submissions': submission_items[:HISTORY_LENGTH],
     'course': course,
