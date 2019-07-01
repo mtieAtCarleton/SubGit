@@ -133,9 +133,10 @@ def assign_grader(request, course_id):
             grader = Person.objects.get(pk=grader_username)
             course.grader = grader
             course.save()
+            return hredirect(request, '/prof/courses/{0}'.format(course_id))
         except Exception as e:
             print(e)
-            return hredirect('/error')
+            return hredirect(request, '/error')
     return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
 
 @prof_required
@@ -145,7 +146,8 @@ def delete_grader(request, course_id):
         grader_username = request.POST.get('grader_username')
         try:
             grader = Person.objects.get(pk=grader_username)
-            grader.delete()
+            course.grader = None
+            course.save()
         except Exception as e:
             print(e)
             return hredirect('/error')
