@@ -1,5 +1,5 @@
 from upload.forms import FileForm
-from upload.models import Assignment, Course, Person
+from upload.models import Assignment, Course, Person, Submission
 from upload.utils import get_submission_items, hredirect, hrender
 
 import os.path
@@ -41,9 +41,9 @@ def course(request, course_id):
 def assignment_submissions(request, course_id, assignment_id):
     course = Course.objects.get(id=course_id)
     assignment  = Assignment.objects.get(id=assignment_id)
-    submissions =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    submission_items =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
     return hrender(request, 'upload/grader/assignment_submissions.html', {
-    'submissions': submissions_items[:HISTORY_LENGTH],
+    'submissions': submission_items[:HISTORY_LENGTH],
     'course': course,
     'assignment': assignment
     })
