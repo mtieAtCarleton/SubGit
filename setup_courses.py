@@ -1,7 +1,7 @@
 import django, os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SubGit.settings")
 django.setup()
-from upload.models import Course, Assignment, Person
+from upload.models import Course, Assignment, Person, Submission
 from django.utils.dateparse import parse_date
 from datetime import datetime
 from django.utils.timezone import make_aware
@@ -27,3 +27,11 @@ datastruct, new = Course.objects.get_or_create(id="cs201.00-f18", number="CS 201
 
 Assignment.objects.get_or_create(title="Arrayed Against Us", course=intro,
                                  deadline=datetime(2019, 5, 27, 22, tzinfo=pytz.UTC))
+
+assignment_one, new = Assignment.objects.get_or_create(title="Linked Lists", course=datastruct,
+                                 deadline=datetime(2019, 7, 1, 22, tzinfo=pytz.UTC))
+
+assignment_two, new = Assignment.objects.get_or_create(title="Zelda'd Lists", course=datastruct,
+                                 deadline=datetime(2019, 7, 2, 22, tzinfo=pytz.UTC))
+
+submission_one, new = Submission.objects.get_or_create(description="The Linkiest List", submitted_at=datetime(2019, 6, 2, 22, tzinfo=pytz.UTC), assignment=assignment_one)
