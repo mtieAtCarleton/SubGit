@@ -41,7 +41,7 @@ def course(request, course_id):
 def assignment_submissions(request, course_id, assignment_id):
     course = Course.objects.get(id=course_id)
     assignment  = Assignment.objects.get(id=assignment_id)
-    submission_list =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    #submission_list =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
     students = Person.objects.filter(courses__in=course_id)
     #print(students)
     submission_items = []
