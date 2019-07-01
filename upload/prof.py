@@ -131,7 +131,6 @@ def assign_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
         grader_username = request.POST.get('grader_username')
-        print(grader_username)
         try:
             grader = Person.objects.get(pk=grader_username)
             course.grader = grader
@@ -140,3 +139,16 @@ def assign_grader(request, course_id):
             print(e)
             return hredirect('/error')
     return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
+
+@login_required
+def delete_grader(request, course_id):
+    course = Course.objects.get(id=course_id)
+    if request.method == 'POST':
+        grader_username = request.POST.get('grader_username')
+        try:
+            grader = Person.objects.get(pk=grader_username)
+            grader.delete()
+        except Exception as e:
+            print(e)
+            return hredirect('/error')
+    return hrender(request, 'upload/prof/delete_grader.html', {'course': course})

@@ -5,6 +5,7 @@ Called from prof.py. 'request' and 'course_id' are passed.
 Accessed from courses.html. Directs to 'create_assignment.html', 'assignment_description.html',
 and back to 'courses.html'-->
 {% block content %}
+<h2>Professor View</h2>
   <div class="row">
     <div class="col">
       <div class="jumbotron">
@@ -39,6 +40,9 @@ and back to 'courses.html'-->
         </div>
         <div class="btn-group mr-2">
         <a href="/prof/courses/{{ course.id }}/assign_grader" class="btn btn-primary" role="button">Assign Grader</a>
+        </div>
+        <div class="btn-group mr-2">
+        <a href="/prof/courses/{{ course.id }}/delete_grader" class="btn btn-danger" role="button">Delete Grader</a>
         </div>
         <div class="btn-group mr-2">
           <form action="" method="post">

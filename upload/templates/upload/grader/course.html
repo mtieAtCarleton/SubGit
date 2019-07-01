@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class=header>
-<h2>Grader</h2>
+<h2>Grader View</h2>
 </div>
   <div class="row">
     <div class="col">
@@ -20,7 +20,7 @@
         <hr class="my-3">
         <ul class="list-group list-group-flush">
           {% for assignment in assignments %}
-            <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
+            <a class="list-group-item list-group-item-action" href="/grader/courses/{{ course.id }}/{{ assignment.id }}">
             <h5>{{ assignment.title }}</h5>
             {% if assignment.deadline %}
               <small class="text-muted">Due {{ assignment.deadline }} CST</small>
@@ -39,8 +39,9 @@
           </div>
       </div>
     </div>
-    <div class="col-lg-3">
-      {% include "upload/history-sidebar.html" %}
-    </div>
+  </div>
+  <div class="col-lg-3">
+    {% include "upload/history-sidebar.html" %}
+  </div>
   </div>
 {% endblock %}

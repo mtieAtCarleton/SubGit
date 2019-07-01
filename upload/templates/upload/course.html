@@ -1,6 +1,7 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
+<h2>Student View</h2>
   <div class="row">
     <div class="col">
       <div class="jumbotron">
@@ -32,18 +33,19 @@
         <br>
         <div class="row ml-3">
           <div class="btn-group mr-2">
-            <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
+            <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to Courses</a>
           </div>
           <div class="btn-group mr-2">
             <form action="" method="post">
               {% csrf_token %}
-              <input type="submit" class="btn btn-danger " name="Delete" value="Drop Course" />
+              <input type="submit" class="btn btn-danger " name="Delete" value="Drop This Course" />
             </form>
           </div>
       </div>
     </div>
-    <div class="col-lg-3">
-      {% include "upload/history-sidebar.html" %}
-    </div>
   </div>
+  <div class="col-lg-3">
+    {% include "upload/history-sidebar.html" %}
+  </div>
+</div>
 {% endblock %}
