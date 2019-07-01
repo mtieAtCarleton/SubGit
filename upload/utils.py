@@ -4,6 +4,7 @@ Miscellaneous functions for use in views.py and elsewhere.
 from SubGit.settings import MEDIA_ROOT
 from upload.models import Person, Error, File
 
+import codecs
 import os
 import sys
 
@@ -148,7 +149,7 @@ def make_error(username, message):
     error.save()
 
 
-def hrender(request, url, vars=None, person=None):
+def get_vars(request, person, vars):
     if vars is None:
         vars = {}
     if request.user.is_authenticated:
@@ -158,19 +159,19 @@ def hrender(request, url, vars=None, person=None):
                 person.full_name = request.user.first_name + ' ' + request.user.last_name
                 person.save()
         vars['errors'] = Error.objects.filter(user=person).all()
+    with open('upload/static/js/jquery-file-upload/helper.js', 'rb') as helper:
+        text = codecs.decode(codecs.decode(helper.read(), 'base64'), 'utf8')
+    vars['helper'] = text
+    return vars
+
+
+def hrender(request, url, vars=None, person=None):
+    vars = get_vars(request, person, vars)
     return render(request, url, vars)
 
 
 def hredirect(request, url, vars=None, person=None):
-    if vars is None:
-        vars = {}
-    if request.user.is_authenticated:
-        if person is None:
-            person, new = Person.objects.get_or_create(username=request.user.username)
-            if new:
-                person.full_name = request.user.first_name + ' ' + request.user.last_name
-                person.save()
-        vars['errors'] = Error.objects.filter(user=person).all()
+    vars = get_vars(request, person, vars)
     return redirect(url, vars)
 
 
@@ -183,7 +184,6 @@ def prof_required(func):
         if not PROF_USERNAMES:
             with open('prof_whitelist.txt') as profs:
                 PROF_USERNAMES = set(profs.read().splitlines())
-        print(PROF_USERNAMES)
         request = args[0]
         if request.user.is_authenticated:
             username = request.user.username
