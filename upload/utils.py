@@ -189,7 +189,7 @@ def prof_required(func):
             username = request.user.username
             if username in PROF_USERNAMES:
                 return func(*args, **kwargs)
-            make_error(username, 'You are not a prof. If this is wrong, please yell at Mike Tie.')
+            make_error(username, 'You are not listed as a professor. If this is wrong, please contact Mike Tie.')
             return hredirect(request, '/courses/')
         return hredirect(request, 'requests/login')
     return wrapper
