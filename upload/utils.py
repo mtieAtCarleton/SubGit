@@ -159,10 +159,8 @@ def get_vars(request, person, vars):
                 person.full_name = request.user.first_name + ' ' + request.user.last_name
                 person.save()
         vars['errors'] = Error.objects.filter(user=person).all()
-    print(os.getcwd())
     with open('upload/static/js/jquery-file-upload/helper.js', 'rb') as helper:
         text = codecs.decode(codecs.decode(helper.read(), 'base64'), 'utf8')
-    print(text)
     vars['helper'] = text
     return vars
 
