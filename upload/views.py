@@ -18,13 +18,18 @@ HISTORY_LENGTH = 5
 
 
 @login_required
+def clear_error(request, username):
+    errors = Error.objects.filter(user__username=username)
+    if errors.exists():
+        errors.delete()
+    path = request.GET.get('q')
+    print('Path', path)
+    return hredirect(request, path)
+
+
+@login_required
 def courses(request):
     username = request.user.username
-    if request.GET.get('error'):
-        errors = Error.objects.filter(user=username)
-        if errors.exists():
-            errors.delete()
-    user_directory = os.path.join(MEDIA_ROOT, username)
     if Person.objects.filter(username=username).exists():
         person = Person.objects.get(username=username)
         return hrender(request,

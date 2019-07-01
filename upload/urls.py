@@ -26,6 +26,7 @@ urlpatterns = [
     path('', views.home),
     path('accounts/login/', views.home, name='next'),
     path('logout/', views.logout),
+    path('clear_error/<str:username>/', views.clear_error),
     path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
     path('register/', views.register),
