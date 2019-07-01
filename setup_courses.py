@@ -22,8 +22,8 @@ intro, new = Course.objects.get_or_create(id="cs111.00-f18", number="CS 111", se
 
 datastruct, new = Course.objects.get_or_create(id="cs201.00-f18", number="CS 201", section="00",
                              title="Data Structures",
-                             prof=test_prof2,
-                             grader=testgrader)
+                             prof=test_prof2)
+datastruct.graders.add(testgrader)
 
 Assignment.objects.get_or_create(title="Arrayed Against Us", course=intro,
                                  deadline=datetime(2019, 5, 27, 22, tzinfo=pytz.UTC))
@@ -34,4 +34,6 @@ assignment_one, new = Assignment.objects.get_or_create(title="Linked Lists", cou
 assignment_two, new = Assignment.objects.get_or_create(title="Zelda'd Lists", course=datastruct,
                                  deadline=datetime(2019, 7, 2, 22, tzinfo=pytz.UTC))
 
-submission_one, new = Submission.objects.get_or_create(description="The Linkiest List", submitted_at=datetime(2019, 6, 2, 22, tzinfo=pytz.UTC), assignment=assignment_one)
+submission_one, new = Submission.objects.get_or_create(description="The Linkiest List",
+                                submitted_at=datetime(2019, 6, 2, 22, tzinfo=pytz.UTC),
+                                assignment=assignment_one)

@@ -15,15 +15,15 @@ Accessed from course.html. Directs back to course.html.-->
     {% csrf_token %}
     <div class="form-group">
       <label for="title">Title:</label>
-      <input type="title" name="title" class="form-control" placeholder="Maze" id="title" required>
+      <input type="title" name="title" class="form-control" placeholder="Title of the Assignment" id="title" required>
     </div>
     <div class="form-group">
       <label for="description">Short Description:</label>
-      <input type="text" name="description" class="form-control" id="description" required>
+      <input type="text" name="description" class="form-control" placeholder="Description of the Assignment" id="description" required>
     </div>
     <div class="form-group">
       <label for="due_date">Date and Time Due:</label>
-      <input type="datetime-local" name="due_date" class="form-control" placeholder="03" id="due_date" required>
+      <input type="datetime-local" name="due_date" class="form-control" placeholder=03 id="due_date" required>
     </div>
     <br></br>
     <input type="submit" value="Create" class="submit btn btn-primary">

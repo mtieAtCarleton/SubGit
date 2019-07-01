@@ -17,7 +17,18 @@ and back to 'courses.html'-->
         </nav>
         <h1 class="display-5">{{ course.title }}</h1>
         <p class="lead">{{ course.id }} - {{ course.prof.full_name }}</p>
-        <p> Grader: {{ course.grader.full_name }} </p>
+        <p> <b><big>
+          {% if course.graders.count == 1 %}
+            Grader:
+          {% endif %}
+          {% if course.graders.count > 1 %}
+            Graders:
+          {% endif %}
+        </big></b>
+            {% for grader in course.graders.all %}
+              <br/> {{ grader.full_name }}
+            {% endfor %}
+        </p>
         <h4>Assignments</h4>
         <hr class="my-3">
         <ul class="list-group list-group-flush">

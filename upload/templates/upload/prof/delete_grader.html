@@ -9,7 +9,11 @@
     {% csrf_token %}
     <div class="form-group">
       <label for="grader_username"> Carleton Username:</label>
-      <input type="grader_username" name="grader_username" class="form-control" id="grader_username" required>
+      <select name="grader_username" class="form-control" id="username" required>
+        {% for grader in graders %}
+          <option value="{{ grader.username }}">{{ grader.full_name }} ({{ grader.username }})</option>
+        {% endfor %}
+      </select>
     </div>
     <input type="submit" value="Remove This Grader" class="submit btn btn-primary">
     <a href="/prof/courses/{{ course.id }}" class="btn btn-secondary" role="button">Cancel</a>

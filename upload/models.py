@@ -37,7 +37,7 @@ class Course(models.Model):
     # TODO: Maybe should be many to many, we'll deal with that later if needed
     prof = models.ForeignKey('Person', related_name="prof", on_delete=models.CASCADE, null=True)
 
-    grader = models.ForeignKey('Person', related_name="grader", on_delete=models.SET_NULL, null=True)
+    graders = models.ManyToManyField('Person', related_name="grader")
 
 
 class GitHubAccount(models.Model):

@@ -29,7 +29,7 @@ def create_assignment(request, course_id):
         except Exception as e:
             print(e)
             return hredirect(request, '/error')
-        return hredirect(request, '/prof/')
+        return hredirect(request, '/prof/courses/{0}'.format(course_id))
     return hrender(request,
                    'upload/prof/create_assignment.html', {'course': course})
 
@@ -133,7 +133,7 @@ def assign_grader(request, course_id):
         grader_username = request.POST.get('grader_username')
         try:
             grader = Person.objects.get(pk=grader_username)
-            course.grader = grader
+            course.graders.add(grader)
             course.save()
             return hredirect(request, '/prof/courses/{0}'.format(course_id))
         except Exception as e:
@@ -148,9 +148,11 @@ def delete_grader(request, course_id):
         grader_username = request.POST.get('grader_username')
         try:
             grader = Person.objects.get(pk=grader_username)
-            course.grader = None
+            course.graders.remove(grader)
             course.save()
+            return hredirect(request, '/prof/courses/{0}'.format(course_id))
         except Exception as e:
             print(e)
             return hredirect('/error')
-    return hrender(request, 'upload/prof/delete_grader.html', {'course': course})
+    graders = course.graders.all()
+    return hrender(request, 'upload/prof/delete_grader.html', {'course': course, 'graders': graders})
