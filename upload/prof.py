@@ -4,8 +4,6 @@ from upload.utils import get_submission_items, hredirect, hrender, prof_required
 from datetime import datetime
 from pytz import timezone
 
-from django.contrib.auth.decorators import login_required
-
 HISTORY_LENGTH = 5
 
 

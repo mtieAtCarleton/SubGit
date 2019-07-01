@@ -2,7 +2,7 @@
 Miscellaneous functions for use in views.py and elsewhere.
 """
 from SubGit.settings import MEDIA_ROOT
-from upload.models import Person, Error, File
+from upload.models import Course, Person, Error, File
 
 import codecs
 import os
@@ -188,8 +188,21 @@ def prof_required(func):
         if request.user.is_authenticated:
             username = request.user.username
             if username in PROF_USERNAMES:
-                return func(*args, **kwargs)
-            make_error(username, 'You are not listed as a professor. If this is wrong, please contact Mike Tie.')
+                if len(args) > 1 or len(kwargs):
+                    if 'course_id' in kwargs:
+                        course_id = kwargs['course_id']
+                    else:
+                        course_id = args[1]
+                    course = Course.objects.get(pk=course_id)
+                    if course.prof.username == username:
+                        print('hi')
+                        return func(*args, **kwargs)
+                else:
+                    print(args)
+                    print(kwargs)
+                    return func(*args, **kwargs)
+            make_error(username, '''You are not listed as a professor of this course.
+                                 If this is wrong, please contact Mike Tie.''')
             return hredirect(request, '/courses/')
         return hredirect(request, 'requests/login')
     return wrapper
