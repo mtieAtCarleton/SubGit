@@ -93,7 +93,7 @@ def create_course(request):
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')
 
-
+@prof_required
 def home(request):
     if request.user.username:
         return hredirect(request, "/prof/courses/")
@@ -140,7 +140,7 @@ def assign_grader(request, course_id):
             return hredirect('/error')
     return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
 
-@login_required
+@prof_required
 def delete_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
