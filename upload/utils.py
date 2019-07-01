@@ -62,8 +62,7 @@ def add_student_to_course(username, course_id):
         repo = g.get_user().create_repo(repo_name, private=True)
     except GithubException as e:
         print(e)
-        error = Error(text=repr(e), user=Person.objects.get(username=username))
-        error.save()
+        make_error(username, repr(e))
 
     # TODO: break up this try block, improve error handling
     try:
@@ -89,8 +88,7 @@ def add_student_to_course(username, course_id):
     except Exception as e:
         print(e)
         print("Unexpected error:", sys.exc_info()[0])
-        error = Error(text=repr(e), user=Person.objects.get(username=username))
-        error.save()
+        make_error(username, repr(e))
 
 
 def get_branch_url(repo_name, assignment_title):
@@ -145,6 +143,11 @@ def make_readme(username, user_directory):
     return readme_path
 
 
+def make_error(username, message):
+    error = Error(text=message, user=Person.objects.get(username=username))
+    error.save()
+
+
 def hrender(request, url, vars=None, person=None):
     if vars is None:
         vars = {}
@@ -169,3 +172,24 @@ def hredirect(request, url, vars=None, person=None):
                 person.save()
         vars['errors'] = Error.objects.filter(user=person).all()
     return redirect(url, vars)
+
+
+PROF_USERNAMES = set()
+
+
+def prof_required(func):
+    def wrapper(*args, **kwargs):
+        global PROF_USERNAMES
+        if not PROF_USERNAMES:
+            with open('prof_whitelist.txt') as profs:
+                PROF_USERNAMES = set(profs.read().splitlines())
+        print(PROF_USERNAMES)
+        request = args[0]
+        if request.user.is_authenticated:
+            username = request.user.username
+            if username in PROF_USERNAMES:
+                return func(*args, **kwargs)
+            make_error(username, 'You are not listed as a professor. If this is wrong, please contact Mike Tie.')
+            return hredirect(request, '/courses/')
+        return hredirect(request, 'requests/login')
+    return wrapper

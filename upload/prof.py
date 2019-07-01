@@ -1,5 +1,5 @@
 from upload.models import Person, Course, Assignment
-from upload.utils import get_submission_items, hredirect, hrender
+from upload.utils import get_submission_items, hredirect, hrender, prof_required
 
 from datetime import datetime
 from pytz import timezone
@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 HISTORY_LENGTH = 5
 
 
-@login_required
+@prof_required
 def create_assignment(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
@@ -34,7 +34,7 @@ def create_assignment(request, course_id):
                    'upload/prof/create_assignment.html', {'course': course})
 
 
-@login_required
+@prof_required
 def edit_assignment(request, course_id, assignment_id):
     assignment = Assignment.objects.get(pk=assignment_id)
     course = Course.objects.get(pk=course_id)
@@ -60,7 +60,7 @@ def edit_assignment(request, course_id, assignment_id):
                    {'assignment': assignment, 'course': course})
 
 
-@login_required
+@prof_required
 def assignment_description(request, course_id, assignment_id):
     assignment = Assignment.objects.get(pk=assignment_id)
     if request.method == 'POST':
@@ -73,7 +73,7 @@ def assignment_description(request, course_id, assignment_id):
                    {'assignment': assignment, 'course': course})
 
 
-@login_required
+@prof_required
 def create_course(request):
     if request.method == 'POST':
         course_number = request.POST.get('course_number')
@@ -93,25 +93,24 @@ def create_course(request):
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')
 
-
+@prof_required
 def home(request):
     if request.user.username:
         return hredirect(request, "/prof/courses/")
     return hrender(request, 'upload/home.html')
 
 
-@login_required
+@prof_required
 def courses(request):
     prof = Person.objects.get(pk=request.user.username)
     courses = Course.objects.filter(prof__exact=prof).all()
     return hrender(request, 'upload/prof/courses.html', {'courses': courses}, person=prof)
 
 
-@login_required
+@prof_required
 def course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
-        #test test test
         course.delete()
         return hredirect(request, '/prof/courses/')
 
@@ -127,7 +126,7 @@ def course(request, course_id):
     })
 
 
-@login_required
+@prof_required
 def assign_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
@@ -141,7 +140,7 @@ def assign_grader(request, course_id):
             return hredirect('/error')
     return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
 
-@login_required
+@prof_required
 def delete_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
