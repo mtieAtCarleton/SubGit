@@ -1,10 +1,8 @@
 from upload.forms import FileForm
 from upload.models import Assignment, Course, Person, Submission
-from upload.utils import get_submission_items, hredirect, hrender
+from upload.utils import get_submission_items, hredirect, hrender, grader_required
 
 import os.path
-
-from django.contrib.auth.decorators import login_required
 
 from github import Github, GithubException
 from git import Git
@@ -12,7 +10,7 @@ from git import Git
 HISTORY_LENGTH = 5
 
 
-@login_required
+@grader_required
 def courses(request):
     print("hello world")
     grader = Person.objects.get(pk=request.user.username)
@@ -20,7 +18,7 @@ def courses(request):
     return hrender(request, 'upload/grader/courses.html', {'courses': courses})
 
 
-@login_required
+@grader_required
 def course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
@@ -38,18 +36,16 @@ def course(request, course_id):
     })
 
 
-@login_required
+@grader_required
 def assignment_submissions(request, course_id, assignment_id):
     course = Course.objects.get(id=course_id)
-    assignment  = Assignment.objects.get(id=assignment_id)
-    #submission_list =  Submission.objects.filter(assignment__id=assignment_id).order_by('submitted_at')
+    assignment = Assignment.objects.get(id=assignment_id)
     students = Person.objects.filter(courses__in=course_id)
-    #print(students)
     submission_items = []
-    #print(2)
     for student in students:
-        submission_items.extend(get_submission_items(username=student.username, course_id=course_id, assignment_id=assignment_id))
-        #print(1)
+        submission_items.extend(get_submission_items(username=student.username,
+                                                     course_id=course_id,
+                                                     assignment_id=assignment_id))
     return hrender(request, 'upload/grader/assignment_submissions.html', {
                    'submissions': submission_items[:HISTORY_LENGTH],
                    'course': course,

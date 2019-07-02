@@ -206,3 +206,28 @@ def prof_required(func):
             return hredirect(request, '/courses/')
         return hredirect(request, 'requests/login')
     return wrapper
+
+
+def grader_required(func):
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        if request.user.is_authenticated:
+            username = request.user.username
+            if len(args) > 1 or len(kwargs):
+                if 'course_id' in kwargs:
+                    course_id = kwargs['course_id']
+                else:
+                    course_id = args[1]
+                course = Course.objects.get(pk=course_id)
+                if course.graders.filter(username__in=[username]).exists():
+                    print('hi')
+                    return func(*args, **kwargs)
+            else:
+                print(args)
+                print(kwargs)
+                return func(*args, **kwargs)
+            make_error(username, '''You are not listed as a grader of this course.
+                                 If this is wrong, please contact the professor.''')
+            return hredirect(request, '/courses/')
+        return hredirect(request, 'requests/login')
+    return wrapper
