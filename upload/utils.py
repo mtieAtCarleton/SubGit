@@ -67,10 +67,20 @@ def add_student_to_course(username, course_id):
 
     # TODO: break up this try block, improve error handling
     try:
-        github_accounts = Person.objects.get(username=username).github_accounts.all()
-        for account in github_accounts:
+        course = Course.objects.get(pk=course_id)
+        student = Person.objects.get(username=username)
+        prof = course.prof
+        graders = course.graders.all()
+        student_github_accounts = student.github_accounts.all()
+        for account in student_github_accounts:
             repo.add_to_collaborators(account.username, "push")
-
+        prof_github_accounts = prof.github_accounts.all()
+        for prof_account in prof_github_accounts:
+            repo.add_to_collaborators(prof_account.username, "push")
+        for grader in graders:
+            grader_github_accounts = grader.github_accounts.all()
+            for grader_account in grader_github_accounts:
+                repo.add_to_collaborators(grader_account.username, "pull")
         repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
         # TODO: move to environment variable
