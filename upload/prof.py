@@ -91,6 +91,7 @@ def create_course(request):
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')
 
+
 @prof_required
 def home(request):
     if request.user.username:
@@ -118,10 +119,9 @@ def course(request, course_id):
     submissions_items = get_submission_items(username, course_id, None)
     # TODO: display variable length history (GUI toggle like in Moodle?)
     return hrender(request, 'upload/prof/course.html', {
-        'submissions': submissions_items[:HISTORY_LENGTH],
-        'course': course,
-        'assignments': assignments
-    })
+                   'submissions': submissions_items[:HISTORY_LENGTH],
+                   'course': course,
+                   'assignments': assignments})
 
 
 @prof_required
@@ -139,6 +139,7 @@ def assign_grader(request, course_id):
             return hredirect(request, '/error')
     return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
 
+
 @prof_required
 def delete_grader(request, course_id):
     course = Course.objects.get(id=course_id)
@@ -153,4 +154,5 @@ def delete_grader(request, course_id):
             print(e)
             return hredirect('/error')
     graders = course.graders.all()
-    return hrender(request, 'upload/prof/delete_grader.html', {'course': course, 'graders': graders})
+    return hrender(request, 'upload/prof/delete_grader.html',
+                   {'course': course, 'graders': graders})

@@ -220,11 +220,8 @@ def grader_required(func):
                     course_id = args[1]
                 course = Course.objects.get(pk=course_id)
                 if course.graders.filter(username__in=[username]).exists():
-                    print('hi')
                     return func(*args, **kwargs)
             else:
-                print(args)
-                print(kwargs)
                 return func(*args, **kwargs)
             make_error(username, '''You are not listed as a grader of this course.
                                  If this is wrong, please contact the professor.''')

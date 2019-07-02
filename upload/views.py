@@ -95,7 +95,8 @@ def upload_assignment(request, course_id, assignment_id):
             # then add to Git, commit and push to GitHub
             if pending_submissions:
                 commit_message = request.POST["description"]
-                submission = Submission.objects.create(description=commit_message, assignment=assignment)
+                submission = Submission.objects.create(description=commit_message,
+                                                       assignment=assignment)
 
                 file_paths = []
                 for file in pending_submissions:
