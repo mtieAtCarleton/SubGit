@@ -40,7 +40,7 @@ def course(request, course_id):
 def assignment_submissions(request, course_id, assignment_id):
     course = Course.objects.get(id=course_id)
     assignment = Assignment.objects.get(id=assignment_id)
-    students = Person.objects.filter(courses__in=course_id)
+    students = Person.objects.filter(courses__in=(course_id,)).all()
     submission_items = []
     for student in students:
         submission_items.extend(get_submission_items(username=student.username,
