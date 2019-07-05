@@ -15,6 +15,8 @@ from git import Git
 from git import Repo
 from github import Github, GithubException
 
+PROF_USERNAMES = set()
+
 
 def clone_course_repo(course_id, repo_name, username):
     g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
@@ -58,7 +60,6 @@ def add_student_to_course(username, course_id):
     g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
     repo_name = "{}-{}".format(course_id, username)
 
-    # TODO: create within organization?
     try:
         repo = g.get_user().create_repo(repo_name, private=True)
     except GithubException as e:
@@ -69,18 +70,11 @@ def add_student_to_course(username, course_id):
     try:
         course = Course.objects.get(pk=course_id)
         student = Person.objects.get(username=username)
-        prof = course.prof
-        graders = course.graders.all()
-        student_github_accounts = student.github_accounts.all()
-        for account in student_github_accounts:
-            repo.add_to_collaborators(account.username, "push")
-        prof_github_accounts = prof.github_accounts.all()
-        for prof_account in prof_github_accounts:
-            repo.add_to_collaborators(prof_account.username, "push")
-        for grader in graders:
-            grader_github_accounts = grader.github_accounts.all()
-            for grader_account in grader_github_accounts:
-                repo.add_to_collaborators(grader_account.username, "pull")
+        give_github_permissions(student, repo, "push")
+        give_github_permissions(course.prof, repo, "push")
+        for grader in course.graders.all():
+            give_github_permissions(grader, repo, "pull")
+
         repo_url = "git@github.com:{}/{}.git".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
         # TODO: move to environment variable
@@ -111,6 +105,29 @@ def get_github_url(repo_name):
     return "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
 
 
+def get_github_repo(student_username, course_id):
+    g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
+    repo_name = "{}-{}".format(course_id, student_username)
+
+    try:
+        return g.get_user().get_repo(repo_name)
+    except GithubException as e:
+        print(e)
+        make_error(student_username, repr(e))
+
+
+def remove_github_permissions(user, repo, type):
+    github_accounts = user.github_accounts.all()
+    for account in github_accounts:
+        repo.remove_from_collaborators(account.username, type)
+
+
+def give_github_permissions(user, repo, type):
+    github_accounts = user.github_accounts.all()
+    for account in github_accounts:
+        repo.add_to_collaborators(account.username, type)
+
+
 def clear_file(assignment_id, file, username):
     other_assignment_check = File.objects.filter(file=file.file, person__username=username).exclude(
         assignment__id=assignment_id)
@@ -130,7 +147,7 @@ def get_submission_items(username, course_id, assignment_id):
                                     assignment__course__id=course_id)
     submissions = {}
     repo_name = "{}-{}".format(course_id, username)
-    github_url = "https://github.com/{}/{}".format(config("GITHUB_ADMIN_USERNAME"), repo_name)
+    github_url = get_github_url(repo_name)
     for file in files:
         filename = file.file.name.split('/')[-1]
         corresponding_assignment = file.assignment.title.replace(" ", "_")
@@ -183,9 +200,6 @@ def hrender(request, url, vars=None, person=None):
 def hredirect(request, url, vars=None, person=None):
     vars = get_vars(request, person, vars)
     return redirect(url, vars)
-
-
-PROF_USERNAMES = set()
 
 
 def prof_required(func):
