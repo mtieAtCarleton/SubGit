@@ -1,0 +1,26 @@
+{% extends "upload/header.html" %}
+<!-- Allows a grader to look at all their courses. Displays a list of hyperlinks to courses.
+Called from grader.py. 'request' is passed.
+Accessed from the dropdown menu in header. Directs to 'courses.html' in grader.-->
+{% block content %}
+<div class=header>
+<h2>Grader View</h2>
+</div>
+  <div class="jumbotron">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {#<li class="breadcrumb-item active" aria-current="page">Courses</li>#}
+    </ol>
+  </nav>
+    <h1 class="display-4">Your Courses</h1>
+    <hr class="my-4">
+    <ul class="list-group list-group-flush">
+      {% for course in courses %}
+        <a class="list-group-item list-group-item-action" href="/grader/courses/{{ course.id }}">
+          <h5>{{ course.title }}</h5>
+          <h6> {{ course.id }} </h6>
+        </a>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

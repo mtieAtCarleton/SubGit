@@ -1,14 +1,14 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-<div class="jumbotron">
+  <div class="jumbotron">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-        </ol>
+      <ol class="breadcrumb">
+      </ol>
     </nav>
-      <h1 class="display-4">Login Error</h1>
-      <hr class="my-4">
-      <p>The email you entered was not a valid Carleton email. Please try again with your Carleton credentials.</p>
-      <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
-</div>
+    <h1 class="display-4">Login Error</h1>
+    <hr class="my-4">
+    <p>The email you entered was not a valid Carleton email. Please try again with your Carleton credentials.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'social:begin' 'google-oauth2' %}" role="button">Login</a>
+  </div>
 {% endblock %}

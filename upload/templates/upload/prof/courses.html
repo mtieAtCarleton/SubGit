@@ -1,0 +1,29 @@
+{% extends "upload/header.html" %}
+<!-- Allows a professor to look at all their courses. Displays a list of hyperlinks to courses.
+Has a button to create a new course. Called from prof.py. 'request' is passed.
+Accessed from the dropdown menu in header. Directs to 'courses.html'.-->
+{% block content %}
+<h2>Professor View</h2>
+  <div class="jumbotron">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {#<li class="breadcrumb-item active" aria-current="page">Courses</li>#}
+    </ol>
+  </nav>
+    <h1 class="display-4">Your Courses</h1>
+    <hr class="my-4">
+    <ul class="list-group list-group-flush">
+      {% for course in courses %}
+        <a class="list-group-item list-group-item-action" href="/prof/courses/{{ course.id }}">
+          <h5>{{ course.title }}</h5>
+          <h6> {{ course.id }} </h6>
+        </a>
+      {% endfor %}
+    </ul>
+    <br>
+      <div>
+        <a class="btn btn-primary" href="/prof/create_course">Create Another Course</a>
+      </div>
+    </br>
+  </div>
+{% endblock %}

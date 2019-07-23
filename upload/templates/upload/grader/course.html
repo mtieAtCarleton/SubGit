@@ -1,13 +1,15 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-<h2>Student View</h2>
+<div class=header>
+<h2>Grader View</h2>
+</div>
   <div class="row">
     <div class="col">
       <div class="jumbotron">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item"><a href="/grader/courses">Courses</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ course.id }}</li>
           </ol>
         </nav>
@@ -18,7 +20,7 @@
         <hr class="my-3">
         <ul class="list-group list-group-flush">
           {% for assignment in assignments %}
-            <a class="list-group-item list-group-item-action" href="/upload/{{ course.id }}/{{ assignment.id }}">
+            <a class="list-group-item list-group-item-action" href="/grader/courses/{{ course.id }}/{{ assignment.id }}">
             <h5>{{ assignment.title }}</h5>
             {% if assignment.deadline %}
               <small class="text-muted">Due {{ assignment.deadline }} CST</small>
@@ -33,13 +35,7 @@
         <br>
         <div class="row ml-3">
           <div class="btn-group mr-2">
-            <a href="/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to Courses</a>
-          </div>
-          <div class="btn-group mr-2">
-            <form action="" method="post">
-              {% csrf_token %}
-              <input type="submit" class="btn btn-danger " name="Delete" value="Drop This Course" />
-            </form>
+            <a href="/grader/courses" class="btn btn-secondary" role="button"><span class="fas fa-arrow-left"></span> Back to courses</a>
           </div>
       </div>
     </div>
@@ -47,5 +43,5 @@
   <div class="col-lg-3">
     {% include "upload/history-sidebar.html" %}
   </div>
-</div>
+  </div>
 {% endblock %}

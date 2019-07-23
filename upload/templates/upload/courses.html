@@ -1,25 +1,28 @@
 {% extends "upload/header.html" %}
 
 {% block content %}
-    <div class="jumbotron">
+<h2>Student View</h2>
+  <div class="jumbotron">
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-{#            <li class="breadcrumb-item active" aria-current="page">Courses</li>#}
-        </ol>
+      <ol class="breadcrumb">
+        {#<li class="breadcrumb-item active" aria-current="page">Courses</li>#}
+      </ol>
     </nav>
-        <h1 class="display-4">My Courses</h1>
-        <hr class="my-4">
+    <h1 class="display-4">Courses You Are Enrolled In</h1>
+    <hr class="my-4">
     <ul class="list-group list-group-flush">
-        {% for course in courses %}
-            <a class="list-group-item list-group-item-action" href="/courses/{{ course.id }}">
-                <h5>{{ course.title }}</h5>
-                {{ course.prof }}</a>
-        {% endfor %}
+      {% for course in courses %}
+        <a class="list-group-item list-group-item-action" href="/courses/{{ course.id }}">
+          <h5>{{ course.title }} </h5>
+          <h6> {{ course.id }} </h6>
+          {{ course.prof.full_name }}
+        </a>
+      {% endfor %}
     </ul>
     <br>
-        <div>
-            <a class="btn btn-secondary" href="/register">Add another course</a>
-        </div>
-        <br>
-    </div>
+      <div>
+        <a class="btn btn-primary" href="/register">Add Another Course</a>
+      </div>
+    <br>
+  </div>
 {% endblock %}

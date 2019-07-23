@@ -13,26 +13,43 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+
+from django.urls import path
 from . import views
+from . import prof, grader
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('upload/<str:course_id>/<str:assignment_id>', views.upload_assignment, name='upload_assignment'),
+    path('upload/<str:course_id>/<str:assignment_id>',
+         views.upload_assignment, name='upload_assignment'),
     path('', views.home),
+    path('accounts/login/', views.home, name='next'),
     path('logout/', views.logout),
+    path('clear_error/<str:username>/', views.clear_error),
     path('submitted/<str:course_id>/<str:assignment_id>', views.submitted),
     path('not_registered/', views.not_registered),
     path('register/', views.register),
     path('registered/', views.registered),
     path('error/', views.error),
+    path('login_error/', views.login_error),
     path('courses/', views.courses),
+    path('courses/<str:course_id>', views.course),
     path('connect_github/', views.connect_github),
     path('manage_github/', views.manage_github),
-    path('login_error/', views.login_error),
-    path('courses/<str:course_id>', views.course)
+    path('prof/', prof.home),
+    path('prof/courses/', prof.courses),
+    path('prof/courses/<str:course_id>', prof.course),
+    path('prof/courses/<str:course_id>/<str:assignment_id>/edit_assignment', prof.edit_assignment),
+    path('prof/courses/<str:course_id>/create_assignment', prof.create_assignment),
+    path('prof/courses/<str:course_id>/<str:assignment_id>/assignment_description',
+         prof.assignment_description),
+    path('prof/courses/<str:course_id>/assign_grader', prof.assign_grader),
+    path('prof/courses/<str:course_id>/delete_grader', prof.delete_grader),
+    path('prof/create_course/', prof.create_course),
+    path('grader/courses/', grader.courses),
+    path('grader/courses/<str:course_id>', grader.course),
+    path('grader/courses/<str:course_id>/<str:assignment_id>', grader.assignment_submissions)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # TODO: remove the static urls before deployment, find a better way to serve static files
