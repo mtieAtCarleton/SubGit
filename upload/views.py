@@ -208,6 +208,7 @@ def register(request):
         person = Person.objects.get(username=username)
 
         course_id = request.POST.get('course-id')
+
         try:
             course = Course.objects.get(id=course_id)
         except ObjectDoesNotExist:
