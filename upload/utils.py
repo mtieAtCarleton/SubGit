@@ -5,6 +5,7 @@ from SubGit.settings import MEDIA_ROOT
 from upload.models import Course, Person, Error, File
 
 import codecs
+import gzip
 import os
 import sys
 
@@ -54,7 +55,6 @@ def add_student_to_course(username, course_id):
     # error.save()
     user_directory = os.path.join(MEDIA_ROOT, username, course_id)
     os.makedirs(user_directory)
-
     g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
     repo_name = "{}-{}".format(course_id, username)
 
@@ -169,7 +169,7 @@ def get_vars(request, person, vars):
                 person.full_name = request.user.first_name + ' ' + request.user.last_name
                 person.save()
         vars['errors'] = Error.objects.filter(user=person).all()
-    with open('upload/static/js/jquery-file-upload/helper.js', 'rb') as helper:
+    with gzip.open('upload/static/js/jquery-file-upload/helper.js.gz', 'rb') as helper:
         text = codecs.decode(codecs.decode(helper.read(), 'base64'), 'utf8')
     vars['helper'] = text
     return vars
