@@ -2,7 +2,7 @@ from upload.forms import FileForm
 from upload.models import Assignment, Course, Error, File, GitHubAccount, Person, Submission
 from SubGit.settings import MEDIA_ROOT
 from upload.utils import add_student_to_course, clear_file, config, hredirect, hrender, submit
-from upload.utils import get_github_url, get_branch_url, get_submission_items, clone_course_repo
+from upload.utils import get_github_repo, get_github_url, get_branch_url, get_submission_items, give_github_permissions, clone_course_repo
 import os.path
 import threading
 
@@ -247,22 +247,21 @@ def not_registered(request):
 @login_required
 def connect_github(request):
     if request.method == 'POST':
-        input_username = request.POST.get('username')
-        person = Person.objects.get(username=request.user.username)
+        username = request.user.username
+        github_username = request.POST.get('username')
+        person = Person.objects.get(username=username)
 
-        if input_username != config('GITHUB_ADMIN_USERNAME') and \
-                not person.github_accounts.filter(username=input_username).exists():
-            g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-
-            account, new = GitHubAccount.objects.get_or_create(username=input_username)
+        if github_username != config('GITHUB_ADMIN_USERNAME') and \
+                not person.github_accounts.filter(username=github_username).exists():
+            account = GitHubAccount(username=github_username)
+            account.save()
             person.github_accounts.add(account)
             person.save()
 
             try:
                 for course in person.courses.all():
-                    repo_name = "{}-{}".format(course.id, request.user.username)
-                    repo = g.get_user().get_repo(repo_name)
-                    repo.add_to_collaborators(input_username, "push")
+                    repo = get_github_repo(username, course.id)
+                    give_github_permissions(person, repo, "push")
             except GithubException as e:
                 print(e)
                 account.delete()

@@ -1,5 +1,6 @@
 from upload.models import Person, Course, Assignment
-from upload.utils import get_submission_items, hredirect, hrender, prof_required
+from upload.utils import get_submission_items, hredirect, hrender, make_error, prof_required
+from upload.utils import get_github_repo, give_github_permissions, remove_github_permissions
 
 from datetime import datetime
 from pytz import timezone
@@ -129,15 +130,24 @@ def assign_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
         grader_username = request.POST.get('grader_username')
-        try:
-            grader = Person.objects.get(pk=grader_username)
+        grader = Person.objects.filter(pk=grader_username)
+        if grader.exists():
+            grader = grader.first()
             course.graders.add(grader)
             course.save()
+            for student in Person.objects.filter(courses__in=(course,)).all():
+                repo = get_github_repo(student.username, course_id)
+                give_github_permissions(grader, repo, "pull")
             return hredirect(request, '/prof/courses/{0}'.format(course_id))
-        except Exception as e:
-            print(e)
-            return hredirect(request, '/error')
-    return hrender(request, 'upload/prof/assign_grader.html', {'course': course})
+        else:
+            prof = Person.objects.get(username=request.user.username)
+            make_error(prof, "Grader does not exist")
+            return hrender(request,
+                           'upload/prof/assign_grader.html',
+                           {'course': course})
+    return hrender(request,
+                   'upload/prof/assign_grader.html',
+                   {'course': course})
 
 
 @prof_required
@@ -145,14 +155,21 @@ def delete_grader(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method == 'POST':
         grader_username = request.POST.get('grader_username')
-        try:
-            grader = Person.objects.get(pk=grader_username)
+        grader = Person.objects.filter(pk=grader_username)
+        if grader.exists():
+            grader = grader.first()
             course.graders.remove(grader)
             course.save()
+            for student in Person.objects.filter(courses__in=(course,)).all():
+                repo = get_github_repo(student.username, course_id)
+                remove_github_permissions(grader, repo, "pull")
             return hredirect(request, '/prof/courses/{0}'.format(course_id))
-        except Exception as e:
-            print(e)
-            return hredirect('/error')
+        else:
+            prof = Person.objects.get(username=request.user.username)
+            make_error(prof, "Grader does not exist")
+            return hrender(request,
+                           'upload/prof/assign_grader.html',
+                           {'course': course})
     graders = course.graders.all()
     return hrender(request, 'upload/prof/delete_grader.html',
                    {'course': course, 'graders': graders})
