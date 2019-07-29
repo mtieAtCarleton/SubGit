@@ -35,7 +35,6 @@ def submit(user, course_id, file_names, commit_message, branch):
     # from https://stackoverflow.com/questions/38594717/how-do-i-push-new-files-to-github
     repo_dir = os.path.join(MEDIA_ROOT, user, course_id)
     repo = Repo(repo_dir)
-
     master = repo.heads.master
     repo.git.pull('origin', master)
 
