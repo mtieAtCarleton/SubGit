@@ -277,11 +277,8 @@ def manage_github(request):
     if request.method == "POST":
         account = request.POST.get('account')
         Person.objects.get(username=request.user.username).github_accounts.remove(account)
-
         g = Github(config("GITHUB_ADMIN_USERNAME"), config("GITHUB_ADMIN_PASSWORD"))
-
         person = Person.objects.get(username=request.user.username)
-
         for course in person.courses.all():
             repo_name = "{}-{}".format(course.id, request.user.username)
             repo = g.get_user().get_repo(repo_name)

@@ -59,6 +59,10 @@ body > .container-fluid {
     align-content: left;
 }
 
+input[type="datetime-local"]{
+  width: 16em;
+}
+
 .breadcrumb {
     padding-bottom: 0;
     padding-left: 0;

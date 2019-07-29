@@ -19,6 +19,9 @@ def create_assignment(request, course_id):
         central = timezone('US/Central')
         due_date = central.localize(datetime.strptime(request.POST.get('due_date'),
                                                       '%Y-%m-%dT%H:%M'))
+        if bool(re.sub(r'[\w. -]','',title)):
+            make_error(request.user.username, 'Could not create assignment. Only use alphanumeric characters in the title.')
+            return hredirect(request, '/prof/courses/{0}/create_assignment'.format(course_id))
         try:
             # TODO: you can select any course, even ones you are not the prof of
             assignment = Assignment(title=title,
@@ -46,6 +49,9 @@ def edit_assignment(request, course_id, assignment_id):
         central = timezone('US/Central')
         due_date = central.localize(datetime.strptime(request.POST.get('due_date'),
                                                       '%Y-%m-%dT%H:%M'))
+        if bool(re.sub(r'[\w. -]','',title)):
+            make_error(request.user.username, 'Could not create assignment. Only use alphanumeric characters in the title.')
+            return hredirect(request, '/prof/courses/{0}/{1}/edit_assignment'.format(course_id, assignment_id))
         try:
             assignment.title = title
             assignment.description = description
