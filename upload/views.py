@@ -1,7 +1,7 @@
 from upload.forms import FileForm
 from upload.models import Assignment, Course, Error, File, GitHubAccount, Person, Submission
 from SubGit.settings import MEDIA_ROOT
-from upload.utils import add_student_to_course, clear_file, config, hredirect, hrender, submit
+from upload.utils import add_student_to_course, clear_file, config, hredirect, hrender, submit, make_error
 from upload.utils import get_github_repo, get_github_url, get_branch_url, get_submission_items, give_github_permissions, clone_course_repo
 import os.path
 import threading
@@ -134,8 +134,8 @@ def upload_assignment(request, course_id, assignment_id):
         try:
             clone_course_repo(course_id, repo_name, username)
         except GithubException as e:
-            print(e)
-            return hredirect(request, '/error/')
+            make_error(username, 'Could not upload due to ' + e)
+            return hredirect(request, '/upload/{0}/{1}'.format(course_id, assignment_id))
 
     if Assignment.objects.filter(id=assignment_id).exists():
         assignment = Assignment.objects.get(id=assignment_id)
@@ -212,7 +212,8 @@ def register(request):
         try:
             course = Course.objects.get(id=course_id)
         except ObjectDoesNotExist:
-            hredirect(request, '/error')
+            make_error(username, 'Course does not exist')
+            hredirect(request, '/register')
 
         # If person is not registered for the course
         if not person.courses.filter(id=course_id).exists():
@@ -264,9 +265,9 @@ def connect_github(request):
                     repo = get_github_repo(username, course.id)
                     give_github_permissions(person, repo, "push")
             except GithubException as e:
-                print(e)
+                make_error(username, e)
                 account.delete()
-                return hredirect(request, '/error')
+                return hredirect(request, '/connect_github')
 
             return hredirect(request, "/manage_github/")
 
