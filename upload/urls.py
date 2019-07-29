@@ -37,6 +37,7 @@ urlpatterns = [
     path('courses/<str:course_id>', views.course),
     path('connect_github/', views.connect_github),
     path('manage_github/', views.manage_github),
+
     path('prof/', prof.home),
     path('prof/courses/', prof.courses),
     path('prof/courses/<str:course_id>', prof.course),
@@ -47,6 +48,7 @@ urlpatterns = [
     path('prof/courses/<str:course_id>/assign_grader', prof.assign_grader),
     path('prof/courses/<str:course_id>/delete_grader', prof.delete_grader),
     path('prof/create_course/', prof.create_course),
+
     path('grader/courses/', grader.courses),
     path('grader/courses/<str:course_id>', grader.course),
     path('grader/courses/<str:course_id>/<str:assignment_id>', grader.assignment_submissions)

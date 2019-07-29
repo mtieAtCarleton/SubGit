@@ -26,8 +26,9 @@ def create_assignment(request, course_id):
                                     deadline=due_date)
             assignment.save()
         except Exception as e:
-            print(e)
-            return hredirect(request, '/error')
+            username = request.user.username
+            make_error(username, 'Could not make assignment because '+e)
+            return hredirect(request, '/prof/courses/{0}/{1}/assignment_description'.format(course.id))
         return hredirect(request, '/prof/courses/{0}'.format(course_id))
     return hrender(request,
                    'upload/prof/create_assignment.html', {'course': course})
@@ -52,8 +53,8 @@ def edit_assignment(request, course_id, assignment_id):
             assignment.save()
         except Exception as e:
             print(e)
-            return hredirect(request, '/error')
-        return hredirect(request, '/prof/courses/{0}/{1}/assignment_description'.format(course.id, assignment.id))
+            return hredirect(request, 'prof/courses/{0}/{1}/edit_assignment'.format(course_id, assignment_id))
+        return hredirect(request, '/prof/courses/{0}/{1}/assignment_description'.format(course_id, assignment_id))
     return hrender(request,
                    'upload/prof/edit_assignment.html',
                    {'assignment': assignment, 'course': course})
@@ -87,8 +88,8 @@ def create_course(request):
                             title=title, section=section, prof=prof)
             course.save()
         except Exception as e:
-            print(e)
-            return hredirect(request, '/error', person=prof)
+            make_error(prof, 'Could not create course because '+e)
+            return hredirect(request, '/prof/create_course', person=prof)
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')
 
@@ -144,7 +145,8 @@ def assign_grader(request, course_id):
             make_error(prof, "Grader does not exist")
             return hrender(request,
                            'upload/prof/assign_grader.html',
-                           {'course': course})
+                           {'course': course},
+                           person=prof)
     return hrender(request,
                    'upload/prof/assign_grader.html',
                    {'course': course})
