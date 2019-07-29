@@ -151,10 +151,11 @@ def get_submission_items(username, course_id, assignment_id):
         filename = file.file.name.split('/')[-1]
         corresponding_assignment = file.assignment.title.replace(" ", "_")
         url = "{}/blob/{}/{}".format(github_url, corresponding_assignment, filename)
+        person = file.person.full_name
         if file.submission in submissions:
-            submissions[file.submission].append((file, url, filename))
+            submissions[file.submission].append((file, url, filename, person))
         else:
-            submissions[file.submission] = [(file, url, filename)]
+            submissions[file.submission] = [(file, url, filename, person)]
     submissions_items = sorted(submissions.items(),
                                key=lambda submission: submission[0].submitted_at,
                                reverse=True)

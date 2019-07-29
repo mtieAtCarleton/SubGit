@@ -10,15 +10,15 @@
     {% for submission, files in submissions %}
       <li class="list-group-item">
         <h5 class="lead">{{ submission.description }}</h5>
-        {% for file, url, filename in files %}
+        {% for file, url, filename, person in files %}
           <a href="{{ url }}">{{ filename }}</a><br>
+          <small> Submitted by {{ person }} </small> <br>
         {% endfor %}
         <small class="text-muted">{{ submission.submitted_at }}</small>
         <br>
-          {% if not assignment %}
-            <small class="text-muted">{{ submission.assignment.title }}</small>
-          {% endif %}
-        </br>
+        {% if not assignment %}
+          <small class="text-muted">{{ submission.assignment.title }}</small>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>
