@@ -213,7 +213,7 @@ def register(request):
             course = Course.objects.get(id=course_id)
         except ObjectDoesNotExist:
             make_error(username, 'Course does not exist')
-            hredirect(request, '/register')
+            return hredirect(request, '/register')
 
         # If person is not registered for the course
         if not person.courses.filter(id=course_id).exists():
