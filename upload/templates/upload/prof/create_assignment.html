@@ -9,7 +9,7 @@ Accessed from course.html. Directs back to course.html.-->
 
     <h1>Create New Assignment</h1>
     <h2> {{ course.title }}: <small> {{ course.id }} </small> </h2>
-    <p>Please fill out the information for the assignment you want to create below</p>
+    <p>Please fill out the information for the assignment you want to create below. You must use alphanumeric characters in all fields.</p>
   </div>
   <form method="post" class="was-validated role=form">
     {% csrf_token %}
