@@ -1,6 +1,7 @@
 from upload.models import Person, Course, Assignment
 from upload.utils import get_submission_items, hredirect, hrender, make_error, prof_required
 from upload.utils import get_github_repo, give_github_permissions, remove_github_permissions
+import re
 
 from datetime import datetime
 from pytz import timezone
@@ -82,13 +83,16 @@ def create_course(request):
         term = request.POST.get('term')
         id = '{0}.{1}-{2}'.format(course_number.replace(' ', '-'), section, term)
         prof = Person.objects.get(pk=request.user.username)
+        if bool(re.sub(r'[\w. -]','',id)):
+            make_error(request.user.username, 'Could not create course. Only use alphanumeric characters in the fields.')
+            return hredirect(request, '/prof/create_course', person=prof)
         try:
             # TODO: check for course existence
             course = Course(id=id, number=course_number,
                             title=title, section=section, prof=prof)
             course.save()
         except Exception as e:
-            make_error(prof, 'Could not create course because '+e)
+            make_error(request.user.username, 'Could not create course because '+e)
             return hredirect(request, '/prof/create_course', person=prof)
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')

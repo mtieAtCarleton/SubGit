@@ -268,9 +268,7 @@ def connect_github(request):
                 make_error(username, e)
                 account.delete()
                 return hredirect(request, '/connect_github')
-
             return hredirect(request, "/manage_github/")
-
     return hrender(request, "upload/connect_github.html")
 
 
