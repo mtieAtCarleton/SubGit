@@ -171,8 +171,11 @@ def make_readme(username, user_directory):
     return readme_path
 
 
-def make_error(username, message):
-    error = Error(text=message, user=Person.objects.get(username=username))
+def make_error(user_or_username, message):
+    if type(user_or_username) is str:
+        error = Error(text=message, user=Person.objects.get(username=user_or_username))
+    else:
+        error = Error(text=message, user=user_or_username)
     error.save()
 
 
