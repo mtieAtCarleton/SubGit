@@ -9,6 +9,10 @@ from pytz import timezone
 HISTORY_LENGTH = 5
 
 
+def invalid_url(s):
+    return bool(re.sub(r'[a-zA-Z0-9. -]', '', s))
+
+
 @prof_required
 def create_assignment(request, course_id):
     course = Course.objects.get(id=course_id)
@@ -19,7 +23,7 @@ def create_assignment(request, course_id):
         central = timezone('US/Central')
         due_date = central.localize(datetime.strptime(request.POST.get('due_date'),
                                                       '%Y-%m-%dT%H:%M'))
-        if bool(re.sub(r'[a-zA-Z0-9. -]','',title)):
+        if invalid_url(title):
             make_error(request.user.username, 'Could not create assignment. Only use alphanumeric characters in the title.')
             return hredirect(request, '/prof/courses/{0}/create_assignment'.format(course_id))
         try:
@@ -49,7 +53,7 @@ def edit_assignment(request, course_id, assignment_id):
         central = timezone('US/Central')
         due_date = central.localize(datetime.strptime(request.POST.get('due_date'),
                                                       '%Y-%m-%dT%H:%M'))
-        if bool(re.sub(r'[a-zA-Z0-9. -]','',title)):
+        if invalid_url(title):
             make_error(request.user.username, 'Could not create assignment. Only use alphanumeric characters in the title.')
             return hredirect(request, '/prof/courses/{0}/{1}/edit_assignment'.format(course_id, assignment_id))
         try:
@@ -89,7 +93,7 @@ def create_course(request):
         term = request.POST.get('term')
         id = '{0}.{1}-{2}'.format(course_number.replace(' ', '-'), section, term)
         prof = Person.objects.get(pk=request.user.username)
-        if bool(re.sub(r'[a-zA-Z0-9. -]','',id)):
+        if invalid_url(id):
             make_error(request.user.username, 'Could not create course. Only use alphanumeric characters in the fields.')
             return hredirect(request, '/prof/create_course', person=prof)
         try:
