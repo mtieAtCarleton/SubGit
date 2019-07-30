@@ -212,8 +212,8 @@ def register(request):
         try:
             course = Course.objects.get(id=course_id)
         except ObjectDoesNotExist:
-            make_error(username, 'Course does not exist')
-            return hredirect(request, '/register')
+            make_error(person, 'Course does not exist')
+            return hredirect(request, '/register', person=person)
 
         # If person is not registered for the course
         if not person.courses.filter(id=course_id).exists():
@@ -265,10 +265,10 @@ def connect_github(request):
                     repo = get_github_repo(username, course.id)
                     give_github_permissions(person, repo, "push")
             except GithubException as e:
-                make_error(username, e)
+                make_error(person, e)
                 account.delete()
-                return hredirect(request, '/connect_github')
-            return hredirect(request, "/manage_github/")
+                return hredirect(request, '/connect_github', person=person)
+            return hredirect(request, "/manage_github/", person=person)
     return hrender(request, "upload/connect_github.html")
 
 

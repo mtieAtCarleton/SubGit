@@ -94,7 +94,7 @@ def create_course(request):
         id = '{0}.{1}-{2}'.format(course_number.replace(' ', '-'), section, term)
         prof = Person.objects.get(pk=request.user.username)
         if invalid_url(id):
-            make_error(request.user.username, 'Could not create course. Only use alphanumeric characters in the fields.')
+            make_error(prof, 'Could not create course. Only use alphanumeric characters in the fields.')
             return hredirect(request, '/prof/create_course', person=prof)
         try:
             # TODO: check for course existence
@@ -102,7 +102,7 @@ def create_course(request):
                             title=title, section=section, prof=prof)
             course.save()
         except Exception as e:
-            make_error(request.user.username, 'Could not create course because '+e)
+            make_error(prof, 'Could not create course because '+e)
             return hredirect(request, '/prof/create_course', person=prof)
         return hredirect(request, '/prof', person=prof)
     return hrender(request, 'upload/prof/create_course.html')
